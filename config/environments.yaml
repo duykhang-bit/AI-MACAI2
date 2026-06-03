@@ -1,0 +1,20 @@
+# Cấu hình apps cho chuỗi Pharmacy (Nhà thuốc)
+# Sửa file này để thêm/đổi URL.
+
+apps:
+  rsa:
+    baseUrl: "https://ci-rsa-web.frt.vn"
+    description: "Pharmacy (Nhà thuốc) — rsa"
+  rsa-ecom:
+    baseUrl: "https://ci-rsa-ecom.frt.vn"
+    description: "Pharmacy (Nhà thuốc) — rsa-ecom"
+  web-eho:
+    baseUrl: "https://ci-eho-web.frt.vn"
+    description: "Pharmacy (Nhà thuốc) — web-eho"
+
+default_app: rsa
+
+settings:
+  timeout: 30000
+  headless: false
+  screenshotOnFail: true
