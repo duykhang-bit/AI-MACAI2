@@ -1,7 +1,7 @@
 # Flow: Tao don hang ban tai quay
 # Author: recorder
 # Created: 2026-06-03
-# Run: npm run play -- --app rsa tao-don-hang-ban-tai-quay.yaml
+# Run: frt-test play --app rsa --env ci tao-don-hang-ban-tai-quay.yaml
 
 name: Tao don hang ban tai quay
 description: "Recorded flow: Tao don hang ban tai quay"

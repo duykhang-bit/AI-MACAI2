@@ -5,7 +5,7 @@
 # File này là TEMPLATE. Mỗi chuỗi cần tự record login flow riêng.
 #
 # Cách làm:
-#   1. Chạy: npm run record -- -n "Login <chuỗi>" -u <BASE_URL>
+#   1. Chạy: frt-test record -n "Login <chuỗi>" -u <BASE_URL>
 #   2. Thực hiện login trên browser (nhập user/pass, bấm đăng nhập)
 #   3. Dừng record → file YAML được tạo tự động
 #   4. Copy nội dung vào flows/_shared/login.yaml (ghi đè file này)
