@@ -31,7 +31,7 @@ public class PromotionUATDH extends BaseTest1 {
         // =================================================
         // FULL FLOW - TẠO CTKM (TC01 → TC06)
         // =================================================
-        @Test(priority = 1, description = "FLOW 1 - CTKM SẢN PHẨM")
+        @Test(priority = 1, description = "FLOW 1 - CTKM SẢN PHẨM", enabled = false)
 
         public void testCreatePromotionFlowNhomCTKMSanphamUAT() {
 
@@ -369,30 +369,30 @@ public class PromotionUATDH extends BaseTest1 {
         }
 
         // FLOW CTKM ĐƠN HÀNG
-        @Test(priority = 2, description = "FLOW 2 - CTKM \u0110\u01A0N H\u00C0NG")
+        @Test(priority = 2, description = "FLOW 2 - CTKM ĐƠN HÀNG")
         public void testCreatePromotionFlowNhomCTKMDonhang() throws InterruptedException {
 
-                ExtentTest tc01 = test.createNode("TC01 - Login h\u1EC7 th\u1ED1ng");
-                tc01.info("Nh\u1EADp username");
+                ExtentTest tc01 = test.createNode("TC01 - Login hệ thống");
+                tc01.info("Nhập username");
                 WebElement userNameBox2 = wait.until(
                                 ExpectedConditions.elementToBeClickable(
                                                 By.name("LoginInput.UserNameOrEmailAddress")));
                 userNameBox2.clear();
                 userNameBox2.sendKeys("giant");
 
-                tc01.info("Nh\u1EADp password");
+                tc01.info("Nhập password");
                 WebElement passwordBox2 = wait.until(
                                 ExpectedConditions.elementToBeClickable(
                                                 By.name("LoginInput.Password")));
                 passwordBox2.clear();
                 passwordBox2.sendKeys("********");
 
-                tc01.info("Click \u0111\u0103ng nh\u1EADp");
+                tc01.info("Click đăng nhập");
                 driver.findElement(By.id("kt_login_signin_submit")).click();
                 wait.until(ExpectedConditions.urlContains("manager"));
-                tc01.pass("Login th\u00E0nh c\u00F4ng");
+                tc01.pass("Login thành công");
 
-                ExtentTest tc02 = test.createNode("TC02 - T\u1EA1o CTKM");
+                ExtentTest tc02 = test.createNode("TC02 - Tạo CTKM");
                 wait.until(ExpectedConditions.elementToBeClickable(
                                 By.xpath("//div[contains(@class,'actionHeader')]"))).click();
 
@@ -400,9 +400,9 @@ public class PromotionUATDH extends BaseTest1 {
                 String promoName2 = "AT_DH_" + LocalDateTime.now().format(formatter2);
                 wait.until(ExpectedConditions.visibilityOfElementLocated(
                                 By.id("promotiongeneralinfor_name"))).sendKeys(promoName2);
-                tc02.pass("T\u1EA1o CTKM OK: " + promoName2);
+                tc02.pass("Tạo CTKM OK: " + promoName2);
 
-                ExtentTest tc03 = test.createNode("TC03 - Th\u1EDDi gian");
+                ExtentTest tc03 = test.createNode("TC03 - Thời gian");
                 String today2 = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
                 wait.until(ExpectedConditions.elementToBeClickable(
                                 By.xpath("//div[contains(@class,'ant-picker-range')]"))).click();
@@ -414,9 +414,9 @@ public class PromotionUATDH extends BaseTest1 {
                                 By.xpath("//div[contains(@class,'ant-select-selector')]"))).click();
                 wait.until(ExpectedConditions.elementToBeClickable(
                                 By.xpath("//div[text()='Zalo']"))).click();
-                tc03.pass("Th\u1EDDi gian OK");
+                tc03.pass("Thời gian OK");
 
-                ExtentTest tc04 = test.createNode("TC04 - Chi\u1EBFn d\u1ECBch");
+                ExtentTest tc04 = test.createNode("TC04 - Chiến dịch");
                 WebElement campaignBox2 = wait.until(
                                 ExpectedConditions.elementToBeClickable(
                                                 By.id("promotiongeneralinfor_campaignId")));
@@ -425,39 +425,39 @@ public class PromotionUATDH extends BaseTest1 {
                                 By.xpath("//div[contains(@class,'ant-select-item-option') and contains(.,'CD-0626-046')]")))
                                 .click();
                 wait.until(ExpectedConditions.elementToBeClickable(
-                                By.xpath("//span[contains(text(),'Ti\u1EBFp theo')]"))).click();
-                tc04.pass("Chi\u1EBFn d\u1ECBch OK");
+                                By.xpath("//span[contains(text(),'Tiếp theo')]"))).click();
+                tc04.pass("Chiến dịch OK");
 
-                ExtentTest tc05 = test.createNode("TC05 - Nh\u00F3m CTKM: \u0110\u01A1n h\u00E0ng");
+                ExtentTest tc05 = test.createNode("TC05 - Nhóm CTKM: Đơn hàng");
                 WebElement nhom2 = wait.until(
                                 ExpectedConditions.elementToBeClickable(By.id("promotionClassId")));
-                nhom2.sendKeys("\u0110\u01A1n h\u00E0ng");
+                nhom2.sendKeys("Đơn hàng");
                 wait.until(ExpectedConditions.elementToBeClickable(
-                                By.xpath("//div[contains(@class,'ant-select-item-option-content') and contains(.,'\u0110\u01A1n h\u00E0ng')]")))
+                                By.xpath("//div[contains(@class,'ant-select-item-option-content') and contains(.,'Đơn hàng')]")))
                                 .click();
-                tc05.pass("Nh\u00F3m CTKM OK");
+                tc05.pass("Nhóm CTKM OK");
 
-                ExtentTest tc06 = test.createNode("TC06 - Lo\u1EA1i CTKM: T\u1ED5ng Ti\u1EC1n \u0110\u01A1n H\u00E0ng");
+                ExtentTest tc06 = test.createNode("TC06 - Loại CTKM: Tổng Tiền Đơn Hàng");
                 WebElement loai2 = wait.until(ExpectedConditions.elementToBeClickable(By.id("promotionTypeID")));
                 loai2.click();
-                loai2.sendKeys("T\u1ED5ng Ti\u1EC1n \u0110\u01A1n H\u00E0ng");
+                loai2.sendKeys("Tổng Tiền Đơn Hàng");
                 wait.until(ExpectedConditions.elementToBeClickable(
-                                By.xpath("//div[contains(@class,'ant-select-item-option-content') and contains(.,'T\u1ED5ng Ti\u1EC1n \u0110\u01A1n H\u00E0ng')]")))
+                                By.xpath("//div[contains(@class,'ant-select-item-option-content') and contains(.,'Tổng Tiền Đơn Hàng')]")))
                                 .click();
-                tc06.pass("Lo\u1EA1i CTKM OK");
+                tc06.pass("Loại CTKM OK");
 
-                ExtentTest tc07 = test.createNode("TC07 - Khu v\u1EF1c hi\u1EC3n th\u1ECB");
+                ExtentTest tc07 = test.createNode("TC07 - Khu vực hiển thị");
                 By displayArea2 = By.xpath(
-                                "//label[contains(text(),'Khu v\u1EF1c hi\u1EC3n th\u1ECB khuy\u1EBFn m\u00E3i')]" +
+                                "//label[contains(text(),'Khu vực hiển thị khuyến mãi')]" +
                                                 "/ancestor::div[contains(@class,'ant-form-item')]" +
                                                 "//div[contains(@class,'ant-select-selector')]");
                 wait.until(ExpectedConditions.elementToBeClickable(displayArea2)).click();
                 wait.until(ExpectedConditions.elementToBeClickable(
-                                By.xpath("//div[contains(@class,'ant-select-item-option-content') and contains(.,'Khuy\u1EBFn m\u00E3i c\u00F3 li\u00EAn quan \u0111\u1EBFn gi\u00E1 tr\u1ECB bill')]")))
+                                By.xpath("//div[contains(@class,'ant-select-item-option-content') and contains(.,'Khuyến mãi có liên quan đến giá trị bill')]")))
                                 .click();
-                tc07.pass("Khu v\u1EF1c hi\u1EC3n th\u1ECB OK");
+                tc07.pass("Khu vực hiển thị OK");
 
-                ExtentTest tc08 = test.createNode("TC08 - Chi ph\u00ED ph\u00F2ng ban");
+                ExtentTest tc08 = test.createNode("TC08 - Chi phí phòng ban");
                 WebDriverWait wait2 = new WebDriverWait(driver, Duration.ofSeconds(10));
                 WebElement uploadInput2 = wait2.until(
                                 ExpectedConditions.presenceOfElementLocated(By.xpath("//input[@type='file']")));
@@ -466,96 +466,96 @@ public class PromotionUATDH extends BaseTest1 {
                 uploadInput2.sendKeys(imagePath2.toAbsolutePath().toString());
 
                 By dropdownCPPB2 = By.xpath(
-                                "//label[contains(text(),'Chi ph\u00ED ph\u00F2ng ban')]" +
+                                "//label[contains(text(),'Chi phí phòng ban')]" +
                                                 "/ancestor::div[contains(@class,'ant-form-item')]" +
                                                 "//div[contains(@class,'ant-select-selector')]");
                 wait.until(ExpectedConditions.elementToBeClickable(dropdownCPPB2)).click();
                 By optionCPPB2 = By.xpath(
                                 "//div[contains(@class,'ant-select-dropdown') and not(contains(@style,'display: none'))]" +
                                                 "//div[contains(@class,'ant-select-item-option-content') and " +
-                                                "normalize-space()='Ph\u00F2ng ki\u1EC3m so\u00E1t ngh\u00E0nh h\u00E0ng / KSNH']");
+                                                "normalize-space()='Phòng kiểm soát nghành hàng / KSNH']");
                 wait.until(ExpectedConditions.elementToBeClickable(optionCPPB2)).click();
-                tc08.pass("Chi ph\u00ED ph\u00F2ng ban OK");
+                tc08.pass("Chi phí phòng ban OK");
 
                 wait.until(ExpectedConditions.elementToBeClickable(
-                                By.xpath("//span[contains(text(),'Ti\u1EBFp theo')]"))).click();
+                                By.xpath("//span[contains(text(),'Tiếp theo')]"))).click();
 
-                // Step 3 - Thi\u1EBFt l\u1EADp \u0111i\u1EC1u ki\u1EC7n
-                ExtentTest tc09 = test.createNode("TC09 - \u0110i\u1EC1u ki\u1EC7n \u0111\u1EA7u v\u00E0o: T\u1ED5ng \u0111\u01A1n h\u00E0ng");
+                // Step 3 - Thiết lập điều kiện
+                ExtentTest tc09 = test.createNode("TC09 - Điều kiện đầu vào: Tổng đơn hàng");
                 
-                // Click dropdown "Ch\u1ECDn \u0111i\u1EC1u ki\u1EC7n"
+                // Click dropdown "Chọn điều kiện"
                 By dropdownDK = By.xpath(
-                                "(//div[contains(@class,'ant-select-selector')]//span[contains(text(),'Ch\u1ECDn \u0111i\u1EC1u ki\u1EC7n') or contains(text(),'Ch\u1ECDn \u0111i\u1EC3u ki\u1EC7n')])[1]/ancestor::div[contains(@class,'ant-select-selector')]");
+                                "(//div[contains(@class,'ant-select-selector')]//span[contains(text(),'Chọn điều kiện') or contains(text(),'Chọn điểu kiện')])[1]/ancestor::div[contains(@class,'ant-select-selector')]");
                 wait.until(ExpectedConditions.elementToBeClickable(dropdownDK)).click();
-                // Ch\u1ECDn "T\u1ED5ng \u0111\u01A1n h\u00E0ng"
+                // Chọn "Tổng đơn hàng"
                 By optionDK = By.xpath(
                                 "//div[contains(@class,'ant-select-dropdown') and not(contains(@style,'display: none'))]" +
                                                 "//div[contains(@class,'ant-select-item-option-content') and " +
-                                                "contains(.,'T\u1ED5ng \u0111\u01A1n h\u00E0ng')]");
+                                                "contains(.,'Tổng đơn hàng')]");
                 wait.until(ExpectedConditions.elementToBeClickable(optionDK)).click();
-                tc09.pass("\u0110i\u1EC1u ki\u1EC7n \u0111\u1EA7u v\u00E0o OK");
+                tc09.pass("Điều kiện đầu vào OK");
 
-                ExtentTest tc10 = test.createNode("TC10 - Ph\u00E9p to\u00E1n: Nh\u1ECF h\u01A1n ho\u1EB7c b\u1EB1ng");
-                // Click dropdown Ph\u00E9p to\u00E1n
+                ExtentTest tc10 = test.createNode("TC10 - Phép toán: Nhỏ hơn hoặc bằng");
+                // Click dropdown Phép toán
                 By dropdownPT2 = By.xpath(
-                                "(//div[contains(@class,'ant-select-selector')]//span[contains(text(),'Ch\u1ECDn ph\u00E9p') or contains(text(),'ph\u00E9p to\u00E1n')])[1]/ancestor::div[contains(@class,'ant-select-selector')]");
+                                "(//div[contains(@class,'ant-select-selector')]//span[contains(text(),'Chọn phép') or contains(text(),'phép toán')])[1]/ancestor::div[contains(@class,'ant-select-selector')]");
                 wait.until(ExpectedConditions.elementToBeClickable(dropdownPT2)).click();
                 By optionPT2 = By.xpath(
                                 "//div[contains(@class,'ant-select-dropdown') and not(contains(@style,'display: none'))]" +
                                                 "//div[contains(@class,'ant-select-item-option-content') and " +
-                                                "contains(.,'Nh\u1ECF h\u01A1n ho\u1EB7c b\u1EB1ng')]");
+                                                "contains(.,'Nhỏ hơn hoặc bằng')]");
                 wait.until(ExpectedConditions.elementToBeClickable(optionPT2)).click();
-                tc10.pass("Ph\u00E9p to\u00E1n OK");
+                tc10.pass("Phép toán OK");
 
-                ExtentTest tc11 = test.createNode("TC11 - Gi\u00E1 tr\u1ECB: 300000");
+                ExtentTest tc11 = test.createNode("TC11 - Giá trị: 300000");
                 WebElement giaTriInput = wait.until(ExpectedConditions.elementToBeClickable(
-                                By.xpath("//input[@placeholder='Gi\u00E1 tr\u1ECB' or @placeholder='Nh\u1EADp gi\u00E1 tr\u1ECB']")));
+                                By.xpath("//input[@placeholder='Giá trị' or @placeholder='Nhập giá trị']")));
                 giaTriInput.sendKeys("300000");
-                tc11.pass("Gi\u00E1 tr\u1ECB OK");
+                tc11.pass("Giá trị OK");
 
-                // \u0110i\u1EC1u ki\u1EC7n \u0111\u1EA7u ra
-                ExtentTest tc12 = test.createNode("TC12 - Lo\u1EA1i \u0111\u1EA7u ra: Phi\u1EBFu Mua H\u00E0ng");
-                // Click dropdown Lo\u1EA1i (d\u00F2ng \u0111\u1EA7u ra)
+                // Điều kiện đầu ra
+                ExtentTest tc12 = test.createNode("TC12 - Loại đầu ra: Phiếu Mua Hàng");
+                // Click dropdown Loại (dòng đầu ra)
                 By dropdownLoaiOut = By.xpath(
-                                "(//div[contains(@class,'ant-select-selector')]//span[contains(text(),'Ch\u1ECDn lo\u1EA1i') or contains(text(),'Ch\u1ECDn Lo\u1EA1i')])[1]/ancestor::div[contains(@class,'ant-select-selector')]");
+                                "(//div[contains(@class,'ant-select-selector')]//span[contains(text(),'Chọn loại') or contains(text(),'Chọn Loại')])[1]/ancestor::div[contains(@class,'ant-select-selector')]");
                 wait.until(ExpectedConditions.elementToBeClickable(dropdownLoaiOut)).click();
                 By optionLoaiOut = By.xpath(
                                 "//div[contains(@class,'ant-select-dropdown') and not(contains(@style,'display: none'))]" +
                                                 "//div[contains(@class,'ant-select-item-option-content') and " +
-                                                "contains(.,'Phi\u1EBFu Mua H\u00E0ng')]");
+                                                "contains(.,'Phiếu Mua Hàng')]");
                 wait.until(ExpectedConditions.elementToBeClickable(optionLoaiOut)).click();
-                tc12.pass("Lo\u1EA1i \u0111\u1EA7u ra OK");
+                tc12.pass("Loại đầu ra OK");
 
-                ExtentTest tc13 = test.createNode("TC13 - Ph\u00E9p to\u00E1n \u0111\u1EA7u ra: B\u1EB1ng");
+                ExtentTest tc13 = test.createNode("TC13 - Phép toán đầu ra: Bằng");
                 By dropdownPTOut = By.xpath(
-                                "(//div[contains(@class,'ant-select-selector')]//span[contains(text(),'Ch\u1ECDn ph\u00E9p') or contains(text(),'ph\u00E9p to\u00E1n')])[1]/ancestor::div[contains(@class,'ant-select-selector')]");
+                                "(//div[contains(@class,'ant-select-selector')]//span[contains(text(),'Chọn phép') or contains(text(),'phép toán')])[1]/ancestor::div[contains(@class,'ant-select-selector')]");
                 wait.until(ExpectedConditions.elementToBeClickable(dropdownPTOut)).click();
                 By optionPTOut = By.xpath(
                                 "//div[contains(@class,'ant-select-dropdown') and not(contains(@style,'display: none'))]" +
                                                 "//div[contains(@class,'ant-select-item-option-content') and " +
-                                                "normalize-space()='B\u1EB1ng']");
+                                                "normalize-space()='Bằng']");
                 wait.until(ExpectedConditions.elementToBeClickable(optionPTOut)).click();
-                tc13.pass("Ph\u00E9p to\u00E1n \u0111\u1EA7u ra OK");
+                tc13.pass("Phép toán đầu ra OK");
 
-                ExtentTest tc14 = test.createNode("TC14 - Gi\u00E1 tr\u1ECB PMH: 215216216");
-                // Click v\u00E0o \u00F4 Gi\u00E1 tr\u1ECB \u0111\u1EC3 m\u1EDF popup "Phi\u1EBFu mua h\u00E0ng"
+                ExtentTest tc14 = test.createNode("TC14 - Giá trị PMH: 216216216");
+                // Click vào ô Giá trị để mở popup "Phiếu mua hàng"
                 WebElement giaTriBtn = wait.until(ExpectedConditions.elementToBeClickable(
-                                By.xpath("//span[text()='S\u1EEDa' or text()='Ch\u1ECDn']/ancestor::button | //input[@value='0']/following-sibling::*[contains(text(),'S\u1EEDa')] | //button[contains(.,'S\u1EEDa')]")));
+                                By.xpath("//span[text()='Sửa' or text()='Chọn']/ancestor::button | //input[@value='0']/following-sibling::*[contains(text(),'Sửa')] | //button[contains(.,'Sửa')]")));
                 giaTriBtn.click();
                 
-                // \u0110\u1EE3i popup xu\u1EA5t hi\u1EC7n
+                // Đợi popup xuất hiện
                 Thread.sleep(2000);
                 
-                // Nh\u1EADp m\u00E3 v\u00E0o \u00F4 t\u00ECm ki\u1EBFm b\u00EAn tr\u00E1i
+                // Nhập mã vào ô tìm kiếm bên trái
                 WebElement searchPMH = wait.until(ExpectedConditions.elementToBeClickable(
-                                By.xpath("//div[contains(@class,'ant-modal')]//input[@placeholder='T\u00ECm ki\u1EBFm m\u00E3, t\u00EAn' or contains(@placeholder,'T\u00ECm')]")));
+                                By.xpath("//div[contains(@class,'ant-modal')]//input[@placeholder='Tìm kiếm mã, tên' or contains(@placeholder,'Tìm')]")));
                 searchPMH.clear();
-                searchPMH.sendKeys("215216216");
+                searchPMH.sendKeys("216216216");
                 Thread.sleep(2000);
                 
-                // Click d\u1EA5u + b\u00EAn c\u1EA1nh k\u1EBFt qu\u1EA3
+                // Click dấu + bên cạnh kết quả
                 WebElement addPMH = wait.until(ExpectedConditions.elementToBeClickable(
-                                By.xpath("//div[contains(@class,'ant-modal')]//tr[contains(.,'215216216')]//span[contains(@class,'anticon-plus')] | //div[contains(@class,'ant-modal')]//tr[contains(.,'215216216')]//td[1]")));
+                                By.xpath("//div[contains(@class,'ant-modal')]//tr[contains(.,'216216216')]//span[contains(@class,'anticon-plus')] | //div[contains(@class,'ant-modal')]//tr[contains(.,'216216216')]//td[1]")));
                 addPMH.click();
                 Thread.sleep(1000);
                 
@@ -564,26 +564,26 @@ public class PromotionUATDH extends BaseTest1 {
                                 By.xpath("//div[contains(@class,'ant-modal')]//button[.//span[text()='OK']]")));
                 btnOK.click();
                 Thread.sleep(1000);
-                tc14.pass("Gi\u00E1 tr\u1ECB PMH 215216216 OK");
+                tc14.pass("Giá trị PMH 216216216 OK");
 
-                ExtentTest tc15 = test.createNode("TC15 - S\u1ED1 l\u01B0\u1EE3ng: 1");
+                ExtentTest tc15 = test.createNode("TC15 - Số lượng: 1");
                 WebElement soLuong = wait.until(ExpectedConditions.elementToBeClickable(
-                                By.xpath("//input[@placeholder='S\u1ED1 l\u01B0\u1EE3ng' or contains(@placeholder,'s\u1ED1 l\u01B0\u1EE3ng')]")));
+                                By.xpath("//input[@placeholder='Số lượng' or contains(@placeholder,'số lượng')]")));
                 soLuong.clear();
                 soLuong.sendKeys("1");
-                tc15.pass("S\u1ED1 l\u01B0\u1EE3ng OK");
+                tc15.pass("Số lượng OK");
 
-                // X\u00E1c nh\u1EADn
+                // Xác nhận
                 WebElement btnXACNHAN2 = wait.until(
                                 ExpectedConditions.elementToBeClickable(
-                                                By.xpath("//button[.//span[normalize-space()='X\u00E1c nh\u1EADn']]")));
+                                                By.xpath("//button[.//span[normalize-space()='Xác nhận']]")));
                 btnXACNHAN2.click();
 
                 By btnDongY2 = By.xpath(
-                                "//div[contains(@class,'ant-modal-footer')]//button[.//span[normalize-space()='\u0110\u1ED3ng \u00FD']]");
+                                "//div[contains(@class,'ant-modal-footer')]//button[.//span[normalize-space()='Đồng ý']]");
                 wait.until(ExpectedConditions.elementToBeClickable(btnDongY2)).click();
 
-                test.pass("\u2705 Ho\u00E0n th\u00E0nh t\u1EA1o CTKM \u0110\u01A1n H\u00E0ng - T\u1ED5ng Ti\u1EC1n \u0110\u01A1n H\u00E0ng");
+                test.pass("✅ Hoàn thành tạo CTKM Đơn Hàng - Tổng Tiền Đơn Hàng");
         }
 
 }

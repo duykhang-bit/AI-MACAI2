@@ -21,7 +21,7 @@ import java.time.Duration;
 
 
 @Listeners(TestListener.class)
-public class PromotionUAT extends BaseTest1 {
+public class PromotionUATSP extends BaseTest1 {
 
         @Override
         protected String getBaseUrl() {
