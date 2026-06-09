@@ -437,12 +437,12 @@ public class PromotionUATDH extends BaseTest1 {
                                 .click();
                 tc05.pass("Nhóm CTKM OK");
 
-                ExtentTest tc06 = test.createNode("TC06 - Loại CTKM: Tổng Tiền Đơn Hàng");
+                ExtentTest tc06 = test.createNode("TC06 - Loại CTKM: Tổng Tiền Đơn Hàng Theo Sản phẩm");
                 WebElement loai2 = wait.until(ExpectedConditions.elementToBeClickable(By.id("promotionTypeID")));
                 loai2.click();
-                loai2.sendKeys("Tổng Tiền Đơn Hàng");
+                loai2.sendKeys("Tổng Tiền Đơn Hàng Theo Sản phẩm");
                 wait.until(ExpectedConditions.elementToBeClickable(
-                                By.xpath("//div[contains(@class,'ant-select-item-option-content') and contains(.,'Tổng Tiền Đơn Hàng')]")))
+                                By.xpath("//div[contains(@class,'ant-select-item-option-content') and contains(.,'Tổng Tiền Đơn Hàng Theo Sản phẩm')]")))
                                 .click();
                 tc06.pass("Loại CTKM OK");
 
@@ -509,9 +509,43 @@ public class PromotionUATDH extends BaseTest1 {
 
                 ExtentTest tc11 = test.createNode("TC11 - Giá trị: 300000");
                 WebElement giaTriInput = wait.until(ExpectedConditions.elementToBeClickable(
-                                By.xpath("//input[@placeholder='Giá trị' or @placeholder='Nhập giá trị']")));
+                                By.xpath("//input[@placeholder='Giá trị' or @placeholder='Nhập giá trị' or @placeholder='Nhập số tiền']")));
                 giaTriInput.sendKeys("300000");
                 tc11.pass("Giá trị OK");
+
+                // Thêm điều kiện vào: Mã Nhóm hàng
+                ExtentTest tc11b = test.createNode("TC11b - Thêm điều kiện: Mã Nhóm hàng");
+                
+                // Click "+ Thêm điều kiện vào"
+                wait.until(ExpectedConditions.elementToBeClickable(
+                                By.xpath("//span[contains(text(),'Thêm điều kiện vào') or contains(text(),'Thêm điều kiện và')]"))).click();
+                
+                // Chọn Loại: Mã Nhóm hàng (dòng thứ 2)
+                By dropdownLoai2 = By.xpath(
+                                "(//div[contains(@class,'ant-select-selector')]//span[contains(text(),'Chọn điều kiện') or contains(text(),'Chọn điểu kiện')])[1]/ancestor::div[contains(@class,'ant-select-selector')]");
+                wait.until(ExpectedConditions.elementToBeClickable(dropdownLoai2)).click();
+                By optionMaNhomHang = By.xpath(
+                                "//div[contains(@class,'ant-select-dropdown') and not(contains(@style,'display: none'))]" +
+                                                "//div[contains(@class,'ant-select-item-option-content') and " +
+                                                "contains(.,'Mã Nhóm hàng')]");
+                wait.until(ExpectedConditions.elementToBeClickable(optionMaNhomHang)).click();
+                
+                // Chọn Phép toán: Chứa
+                By dropdownPTNhom = By.xpath(
+                                "(//div[contains(@class,'ant-select-selector')]//span[contains(text(),'Chọn phép') or contains(text(),'phép toán')])[1]/ancestor::div[contains(@class,'ant-select-selector')]");
+                wait.until(ExpectedConditions.elementToBeClickable(dropdownPTNhom)).click();
+                By optionChua = By.xpath(
+                                "//div[contains(@class,'ant-select-dropdown') and not(contains(@style,'display: none'))]" +
+                                                "//div[contains(@class,'ant-select-item-option-content') and " +
+                                                "normalize-space()='Chứa']");
+                wait.until(ExpectedConditions.elementToBeClickable(optionChua)).click();
+                
+                // Nhập giá trị mã nhóm hàng
+                WebElement maNhomInput = wait.until(ExpectedConditions.elementToBeClickable(
+                                By.xpath("(//input[@placeholder='Giá trị' or @placeholder='Nhập giá trị' or @placeholder='Nhập số tiền'])[1]")));
+                maNhomInput.sendKeys("1880311b-e95a-e98d-b715-3a190984608c");
+                
+                tc11b.pass("Thêm Mã Nhóm hàng OK");
 
                 // Điều kiện đầu ra
                 ExtentTest tc12 = test.createNode("TC12 - Loại đầu ra: Phiếu Mua Hàng");
