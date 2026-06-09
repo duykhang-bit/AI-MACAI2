@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "name": "Auto Search MCP Context",
+  "description": "Mỗi khi user gửi tin nhắn, tự động gọi search_context từ MCP ai-context-engine để lấy context liên quan trước khi trả lời",
+  "version": "1",
+  "when": {
+    "type": "promptSubmit"
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Trước khi trả lời câu hỏi của user, hãy tự động gọi tool `company_search_context` từ MCP server `ai-context-engine` với query là nội dung câu hỏi của user. Dùng kết quả tìm được để bổ sung context vào câu trả lời. Nếu không tìm thấy kết quả liên quan thì vẫn trả lời bình thường."
+  }
+}

@@ -1,0 +1,49 @@
+---
+description: Requirements Document Format — chuẩn format EARS syntax, user stories, acceptance criteria khi sinh requirements.
+globs:
+alwaysApply: true
+---
+
+# Requirements Document Format
+
+Khi sinh requirements document, PHẢI tuân theo format sau.
+
+## Cấu trúc bắt buộc
+
+```markdown
+# Requirements Document
+
+## Introduction
+- Bối cảnh, vấn đề cần giải quyết
+- Dependencies, design principles
+
+## Glossary
+- Định nghĩa thuật ngữ, viết tắt, tên module/class/tool
+- Format: **Term**: Mô tả ngắn gọn
+
+## Requirements
+### Requirement N: Tên requirement
+**User Story:** Là một [role], tôi muốn [action], để [benefit].
+#### Acceptance Criteria
+1. WHEN [condition], THE [component] SHALL [behavior].
+2. IF [condition], THEN THE [component] SHALL [behavior].
+```
+
+## EARS Keywords
+
+| Keyword | Dùng khi | Ví dụ |
+|---------|----------|-------|
+| WHEN | Event-driven | WHEN user clicks submit, THE system SHALL validate |
+| IF...THEN | Conditional | IF input empty, THEN THE system SHALL return error |
+| SHALL | Bắt buộc | THE API SHALL return HTTP 200 |
+| SHALL NOT | Cấm | THE system SHALL NOT expose internal errors |
+| WHILE | State-driven | WHILE processing, THE UI SHALL show loading |
+
+## Quy tắc
+1. Mỗi requirement có User Story + Acceptance Criteria
+2. Acceptance criteria dùng EARS format, đánh số
+3. Mỗi criterion phải testable
+4. Dùng tên component cụ thể
+5. Glossary đầy đủ
+6. Error handling → requirement riêng
+7. Config → requirement cho env var, default value

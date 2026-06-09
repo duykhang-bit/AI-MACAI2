@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "ai-context-engine-company": {
+      "url": "https://ai-context-mcp.frt.vn/mcp",
+      "headers": {
+        "X-API-Key": "ac2b798978c5ed0af70fab4b9df4b993ac0565604319a0199d6aaa56d5561823",
+        "X-Member-Id": "<your-email-or-username>",
+        "X-GitLab-Token": "<your-gitlab-pat>",
+        "X-Confluence-Token": "<your-confluence-token>",
+        "X-Confluence-Username": "<your-confluence-username-if-needed>",
+        "X-Jira-Token": "<your-jira-token>"
+      }
+    }
+  }
+}

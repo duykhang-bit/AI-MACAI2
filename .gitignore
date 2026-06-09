@@ -1,0 +1,4 @@
+.env
+*.local.json
+.kiro/settings/mcp.json
+.kiro/.env

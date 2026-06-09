@@ -1,0 +1,32 @@
+schema_version: 2
+environments:
+  ci:
+    label: CI
+  uat:
+    label: UAT
+  prod:
+    label: PROD
+apps:
+  rsa:
+    description: Pharmacy (Nhà thuốc) — rsa
+    urls:
+      ci: https://ci-rsa-web.frt.vn
+      uat: null
+      prod: null
+  rsa-ecom:
+    description: Pharmacy (Nhà thuốc) — rsa-ecom
+    urls:
+      ci: https://ci-rsa-ecom.frt.vn
+      uat: null
+      prod: null
+  web-eho:
+    description: Pharmacy (Nhà thuốc) — web-eho
+    urls:
+      ci: https://ci-eho-web.frt.vn
+      uat: null
+      prod: null
+default_app: rsa
+settings:
+  timeout: 30000
+  headless: false
+  screenshotOnFail: true

@@ -1,0 +1,53 @@
+---
+description: Bilingual Code Comments EN/VI — bắt buộc inline comment song ngữ cho mọi code mới/sửa.
+globs:
+alwaysApply: true
+---
+
+# Bilingual Code Comments (EN/VI)
+
+Mọi code thêm mới hoặc sửa đổi bởi AI PHẢI có inline comment song ngữ Anh-Việt.
+
+## Format
+
+```python
+# English description / Mô tả tiếng Việt
+code_here()
+```
+
+## Quy tắc
+
+1. Function/class: docstring song ngữ
+```python
+def calculate_capacity(days: float, norm_sp: float) -> float:
+    """Calculate sprint capacity from dev-days.
+    Tính capacity sprint từ số ngày làm việc.
+    """
+```
+
+2. Logic block: inline comment phía trên
+```python
+# Validate input is not empty / Kiểm tra input không rỗng
+if not value.strip():
+    raise ValueError("Empty input")
+```
+
+3. Error handling / edge case
+```python
+# Fallback to capacity mode when no velocity data / Dùng capacity mode khi không có velocity
+if average_velocity <= 0:
+    planning_mode = "capacity"
+```
+
+## KHÔNG comment cho
+- Import statements
+- Closing brackets
+- Code hiển nhiên (`return result`)
+- Boilerplate (`if __name__ == "__main__"`)
+
+## Áp dụng cho mọi ngôn ngữ
+- Python: `# English / Tiếng Việt`
+- TS/JS/Java/C#/Go: `// English / Tiếng Việt`
+- SQL: `-- English / Tiếng Việt`
+- Shell: `# English / Tiếng Việt`
+- KHÔNG áp dụng cho config files, markdown, JSON, YAML

@@ -1,0 +1,58 @@
+---
+description: Design Document Format — chuẩn format Mermaid diagrams, data models, correctness properties khi sinh design.
+globs:
+alwaysApply: true
+---
+
+# Design Document Format
+
+Khi sinh design document, PHẢI tuân theo format sau.
+
+## Cấu trúc bắt buộc
+
+```markdown
+# Design Document — [Tên Feature]
+
+## Overview
+- Scope, mục tiêu, components mới
+- Design decisions table
+
+## Architecture
+- Mermaid component diagram
+- Sequence diagram cho flow chính
+
+## Components and Interfaces
+- Files mới (table: path + trách nhiệm)
+- Files sửa đổi (table: path + thay đổi)
+- Interface signatures (type hints + docstrings)
+
+## Data Models
+- Dataclass definitions
+- Response shapes (JSON success + error)
+- Config changes (Settings fields)
+
+## Correctness Properties
+- Formal properties cho property-based testing
+- Mỗi property validates requirements nào
+
+## Error Handling
+- Error table: tình huống + error key + HTTP code
+- Error response contract
+
+## Testing Strategy
+- Unit test plan
+- Property-based test plan (hypothesis)
+```
+
+## Bắt buộc
+
+1. Mermaid diagrams (architecture + sequence)
+2. Design decisions table (quyết định + lý do)
+3. Interface signatures với type hints
+4. Correctness properties format:
+```
+### Property N: Tên
+*For any* [input], when [condition], [component] SHALL [behavior].
+**Validates: Requirements X.Y**
+```
+5. Error handling table

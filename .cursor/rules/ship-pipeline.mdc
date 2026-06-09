@@ -1,0 +1,57 @@
+---
+description: Ship Pipeline — orchestrate CI→UAT→PROD với quality gates và HITL approval. Áp dụng khi user yêu cầu deploy, ship, promote, rollback.
+globs:
+alwaysApply: true
+---
+
+# Ship Pipeline — CI→UAT→PROD
+
+## Pipeline Flow
+
+```
+qge_analyze_shape → Build → qge_pre_ci_gate → trigger_ci_pipeline
+  → qge_pre_uat_gate → promote_to_uat → qge_pre_prod_gate
+  → promote_to_prod → check_post_deploy_health
+```
+
+## Steps
+
+### 1. Post-Shape Gate
+`qge_analyze_shape(requirements_doc, design_doc, chain_id?)` — requirements completeness, design feasibility, domain compliance.
+
+### 2. Pre-CI Gate
+`qge_pre_ci_gate(source_id, branch, chain_id?)` — automated, no HITL. Unit tests, lint, secrets.
+
+### 3. Trigger CI
+`trigger_ci_pipeline(source_id, branch, issue_key, jenkins_job?)` — trigger Jenkins, comment Jira.
+
+### 4. Pre-UAT Gate
+`qge_pre_uat_gate(service, build_number, issue_key)` — **tạo HITL approval** cho Quality Reviewer. Chờ approval trước khi promote.
+
+### 5. Promote UAT
+`promote_to_uat(service, build_number, issue_key, jenkins_deploy_job, approval_id)` — cần approval_id.
+
+### 6. Pre-PROD Gate
+`qge_pre_prod_gate(service, build_number, issue_key)` — **tạo HITL approval** cho Quality Reviewer + System Operator.
+
+### 7. Promote PROD
+`promote_to_prod(service, build_number, issue_key, jenkins_deploy_job, approval_id)` — approval bắt buộc.
+
+### 8. Health Check
+`check_post_deploy_health(service, environment, build_number, issue_key)` — PROD rollback cần HITL, CI/UAT auto-rollback.
+
+## Rollback
+`rollback(service, environment, to_build_number, issue_key, reason?)` — PROD cần HITL approval.
+
+## Impact Analysis
+`ship_impact_analysis(source_id, chain_id, max_depth?)` — intra-chain impact trước khi deploy.
+
+## Gate Summary
+
+| Gate | Automated? | HITL? | Who Approves? |
+|------|-----------|-------|---------------|
+| Post-Shape | AI 80% | Human review | Intent Owner + Solution Reviewer |
+| Pre-CI | 100% | No | — |
+| Pre-UAT | AI 90% | Yes | Quality Reviewer |
+| Pre-PROD | AI 80% | Yes | Quality Reviewer + System Operator |
+| Post-Deploy | AI detect | PROD rollback only | System Operator |

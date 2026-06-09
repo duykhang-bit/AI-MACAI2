@@ -1,0 +1,453 @@
+{
+  "info": {
+    "_postman_id": "a62140ec-cc09-4707-ac26-2be8ba1f347a",
+    "name": "Family p",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "27780803",
+    "_collection_link": "https://go.postman.co/collection/27780803-a62140ec-cc09-4707-ac26-2be8ba1f347a?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "📁 Customer Identity",
+      "item": [
+        {
+          "name": "check sdt đã có gia đình chưa",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://ci-customer-identity-application-v2.lc.frt.local/api/v1/internal/customers/identities?identifierType=contact&identifierValue=0901933138",
+              "protocol": "http",
+              "host": ["ci-customer-identity-application-v2", "lc", "frt", "local"],
+              "path": ["api", "v1", "internal", "customers", "identities"],
+              "query": [
+                { "key": "identifierType", "value": "contact" },
+                { "key": "identifierValue", "value": "0901933138" }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "1 ge cusid",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "lấy cccd theo sdt",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "📁 Family Core",
+      "item": [
+        {
+          "name": "get thành viên gia đình",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "accept", "value": "text/plain" },
+              { "key": "X-Requested-With", "value": "XMLHttpRequest" }
+            ],
+            "url": {
+              "raw": "http://ci-family-core.lc.frt.local/api/v1/families/customerId/fe531a5c-94e3-a9b3-def4-3a1e37415126",
+              "protocol": "http",
+              "host": ["ci-family-core", "lc", "frt", "local"],
+              "path": ["api", "v1", "families", "customerId", "fe531a5c-94e3-a9b3-def4-3a1e37415126"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "xóa từng thành viên",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "accept", "value": "text/plain" },
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Requested-With", "value": "XMLHttpRequest" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"modifiedBy\": \"string\",\r\n  \"modifiedByName\": \"string\",\r\n  \"reason\": \"string\"\r\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "http://ci-family-core.lc.frt.local/api/v1/families/3fa85f64-5717-4562-b3fc-2c963f66afa6/members/9e49ccd2-8c7f-b901-2ce4-3a1e375d29bf/status/inactivate",
+              "protocol": "http",
+              "host": ["ci-family-core", "lc", "frt", "local"],
+              "path": ["api", "v1", "families", "3fa85f64-5717-4562-b3fc-2c963f66afa6", "members", "9e49ccd2-8c7f-b901-2ce4-3a1e375d29bf", "status", "inactivate"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "xóa family",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "accept", "value": "text/plain" },
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Requested-With", "value": "XMLHttpRequest" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"modifiedBy\": \"string\",\r\n  \"modifiedByName\": \"string\",\r\n  \"note\": \"string\"\r\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "http://ci-family-core.lc.frt.local/api/v1/families/3fa85f64-5717-4562-b3fc-2c963f66afa6/submit-inactivate",
+              "protocol": "http",
+              "host": ["ci-family-core", "lc", "frt", "local"],
+              "path": ["api", "v1", "families", "3fa85f64-5717-4562-b3fc-2c963f66afa6", "submit-inactivate"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "📁 Loyalty & Points",
+      "item": [
+        {
+          "name": "loyalty",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "___0964802464", "type": "string" }]
+            },
+            "method": "GET",
+            "header": [{ "key": "accept", "value": "application/json" }],
+            "url": {
+              "raw": "http://uat-ecom-customer-api.lc.frt.local/api/customer-api/v3/token/families/family-loyalty/point?TimeRange=6",
+              "protocol": "http",
+              "host": ["uat-ecom-customer-api", "lc", "frt", "local"],
+              "path": ["api", "customer-api", "v3", "token", "families", "family-loyalty", "point"],
+              "query": [{ "key": "TimeRange", "value": "6" }]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get điểm gia đình",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "accept", "value": "text/plain" },
+              { "key": "X-Requested-With", "value": "XMLHttpRequest" }
+            ],
+            "url": {
+              "raw": "http://ci-fpt-loyalty-app-api-lc.frt.local/api/loyalty/8d207a84-900e-9373-c640-3a1fc3f9f7fe/point?includeExpiryPoint=false",
+              "protocol": "http",
+              "host": ["ci-fpt-loyalty-app-api-lc", "frt", "local"],
+              "path": ["api", "loyalty", "8d207a84-900e-9373-c640-3a1fc3f9f7fe", "point"],
+              "query": [{ "key": "includeExpiryPoint", "value": "false" }]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get points list (nhiều customer)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "accept", "value": "text/plain" },
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Requested-With", "value": "XMLHttpRequest" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"customerIds\": [\r\n    \"3a1dfe9d-ccd0-874c-8bbd-d2c82aa282d8\",\"5c6a1b07-af7c-af68-b808-3a1dc714712c\"\r\n  ]\r\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "http://ci-fpt-loyalty-app-api-lc.frt.local/api/loyalty/customers/points/list",
+              "protocol": "http",
+              "host": ["ci-fpt-loyalty-app-api-lc", "frt", "local"],
+              "path": ["api", "loyalty", "customers", "points", "list"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "cho điểm active",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "accept", "value": "text/plain" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isZaloLc\": true,\n  \"isApplc\": true\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "http://uat-core-customer-service.lc.frt.local/api/customer/2a689c6c-4096-8518-2047-3a205a8a2a82/subscribe/0",
+              "protocol": "http",
+              "host": ["uat-core-customer-service", "lc", "frt", "local"],
+              "path": ["api", "customer", "2a689c6c-4096-8518-2047-3a205a8a2a82", "subscribe", "0"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "📁 Gamification",
+      "item": [
+        {
+          "name": "suggestion",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "accept", "value": "text/plain" },
+              { "key": "X-Requested-With", "value": "XMLHttpRequest" }
+            ],
+            "url": {
+              "raw": "http://ci-gamification-orchestrator.lc.frt.local/api/gamification/suggestion/item?familyId=3a1fca7d-9313-3b35-778c-a58da00874f5",
+              "protocol": "http",
+              "host": ["ci-gamification-orchestrator", "lc", "frt", "local"],
+              "path": ["api", "gamification", "suggestion", "item"],
+              "query": [{ "key": "familyId", "value": "3a1fca7d-9313-3b35-778c-a58da00874f5" }]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get sl gd từng chặng",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "accept", "value": "application/json" }],
+            "url": {
+              "raw": "http://uat-be-family-api.lc.frt.local/api/v1/family-package-reward/gameId/00000000-0000-0000-0000-000000000001/familyId/3a1c0199-88fe-c948-59e1-a66280b7c9e9/family-game",
+              "protocol": "http",
+              "host": ["uat-be-family-api", "lc", "frt", "local"],
+              "path": ["api", "v1", "family-package-reward", "gameId", "00000000-0000-0000-0000-000000000001", "familyId", "3a1c0199-88fe-c948-59e1-a66280b7c9e9", "family-game"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get gd từng chặng real",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "accept", "value": "text/plain" },
+              { "key": "X-Requested-With", "value": "XMLHttpRequest" }
+            ],
+            "url": {
+              "raw": "http://uat-game-core-v2.lc.frt.local/api/v1/family-reward/gameId/00000000-0000-0000-0000-000000000001/familyId/3a1c0199-88fe-c948-59e1-a66280b7c9e9/family-game",
+              "protocol": "http",
+              "host": ["uat-game-core-v2", "lc", "frt", "local"],
+              "path": ["api", "v1", "family-reward", "gameId", "00000000-0000-0000-0000-000000000001", "familyId", "3a1c0199-88fe-c948-59e1-a66280b7c9e9", "family-game"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "📁 VAC",
+      "item": [
+        {
+          "name": "check phải gia đình vac k",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer ___0964802464" }
+            ],
+            "url": {
+              "raw": "http://uat-ecom-customer-api.lc.frt.local/api/customer-api/v3/token/families/check-migrate-vac",
+              "protocol": "http",
+              "host": ["uat-ecom-customer-api", "lc", "frt", "local"],
+              "path": ["api", "customer-api", "v3", "token", "families", "check-migrate-vac"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "revert chi tiêu vac",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "accept", "value": "/" },
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Requested-With", "value": "XMLHttpRequest" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"famiyId\": \"608e3865-7d82-4587-a526-afeb762cbdb2\",\r\n  \"customerId\": \"3a201340-e176-a59a-19f2-f6b006548ec3\",\r\n  \"refEventCode\": \"3a201340-e176-a59a-19f2-f6b006548ec3\",\r\n  \"refCode\": \"3a201340-e176-a59a-19f2-f6b006548ec3\",\r\n  \"eventValue\": 200000000,\r\n  \"description\": \"\",\r\n  \"source\": \"vac\",\r\n  \"transactionType\": \"RETURN\"\r\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "http://uat-family-metric-core.lc.frt.local/api/family-metrics/event",
+              "protocol": "http",
+              "host": ["uat-family-metric-core", "lc", "frt", "local"],
+              "path": ["api", "family-metrics", "event"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "📁 Voucher & Wallet",
+      "item": [
+        {
+          "name": "get voucher by series-ids",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "accept", "value": "text/plain" }],
+            "url": {
+              "raw": "http://ci-voucher-core.lc.frt.local/api/v2/voucher/series-ids?seriesIds=cd3ab1b1-041e-b980-1149-3a1eecb302bd&voucherType=2",
+              "protocol": "http",
+              "host": ["ci-voucher-core", "lc", "frt", "local"],
+              "path": ["api", "v2", "voucher", "series-ids"],
+              "query": [
+                { "key": "seriesIds", "value": "cd3ab1b1-041e-b980-1149-3a1eecb302bd" },
+                { "key": "voucherType", "value": "2" }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update time 24 USED VC (template)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "accept", "value": "text/plain" },
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Requested-With", "value": "XMLHttpRequest" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"time\": \"2026-04-09T11:38:59.139Z\",\r\n  \"voucherIds\": [\r\n    \"string\"\r\n  ]\r\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "http://uat-wallet-core.lc.frt.local/api/v1/wallet/updated-creationTime-by-voucherid",
+              "protocol": "http",
+              "host": ["uat-wallet-core", "lc", "frt", "local"],
+              "path": ["api", "v1", "wallet", "updated-creationTime-by-voucherid"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update time 24 USED VC (real data)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "accept", "value": "text/plain" },
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Requested-With", "value": "XMLHttpRequest" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"time\": \"2026-04-08\",\r\n  \"voucherIds\": [\r\n    \"34ef9c54-d480-4182-af73-7941b3e43b5d\"\r\n  ]\r\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "http://uat-wallet-core.lc.frt.local/api/v1/wallet/updated-creationTime-by-voucherid",
+              "protocol": "http",
+              "host": ["uat-wallet-core", "lc", "frt", "local"],
+              "path": ["api", "v1", "wallet", "updated-creationTime-by-voucherid"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "📁 Fsell",
+      "item": [
+        {
+          "name": "update ngày hết hạn fsell",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "accept", "value": "/" },
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Requested-With", "value": "XMLHttpRequest" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n\"transactionIds\": [\r\n\"53d7c233-13b9-4478-9dd9-02a4b18ae558\",\r\n\"a9495750-a156-49b5-bee5-0d04daedbf3b\",\r\n\"970dca3a-8551-460e-adfb-286a85bbc85d\",\r\n\"e43b55f9-dca1-4465-8e7b-38bb594c1b2e\"\r\n],\r\n\"expireTime\": \"2026-03-31\"\r\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "http://ci-fpt-loyalty-consumer-api.frt.local/api/common/update-transaction-expire-time",
+              "protocol": "http",
+              "host": ["ci-fpt-loyalty-consumer-api", "frt", "local"],
+              "path": ["api", "common", "update-transaction-expire-time"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "📁 PIM - Sản phẩm",
+      "item": [
+        {
+          "name": "lấy sản phẩm thuộc tpcp",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "accept", "value": "text/plain" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n\"skipCount\": 0,\r\n\"maxResultCount\": 10,\r\n\"sortType\": 0,\r\n\"category\":[\"thuc-pham-chuc-nang\"]\r\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "http://uat-pim-search-service.lc.frt.local/api/products/ecom/product/search/cate",
+              "protocol": "http",
+              "host": ["uat-pim-search-service", "lc", "frt", "local"],
+              "path": ["api", "products", "ecom", "product", "search", "cate"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [""]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [""]
+      }
+    }
+  ],
+  "variable": [
+    { "key": "customerId", "value": "" },
+    { "key": "familyId", "value": "" },
+    { "key": "id", "value": "", "type": "default" }
+  ]
+}

@@ -1,0 +1,318 @@
+# Role-Specific Tools: Developer (Dev)
+
+**Mục đích**: Lọc và hiển thị chỉ 25 công cụ MCP phù hợp với vai trò Developer để tránh choáng ngợp bởi 85 công cụ.
+
+**Áp dụng cho**: Users có role = "dev" hoặc "developer"
+
+---
+
+## 🎯 Developer Workflow
+
+```
+Context → Plan → Code → Test → Review → Deploy
+```
+
+Developer cần công cụ để:
+1. **Tìm context** - Hiểu codebase, patterns, dependencies
+2. **Đọc Jira** - Hiểu requirements từ tickets
+3. **Code** - Tạo branch, commit, MR
+4. **Test** - Chạy quality gates
+5. **Build** - Trigger CI pipeline
+
+---
+
+## ✅ 25 Công Cụ Cho Developer
+
+### 1. Context Tools (13 tools) - Tìm Hiểu Codebase
+
+**Mục đích**: Tìm code examples, patterns, dependencies trước khi implement.
+
+| Tool | Khi Nào Dùng | Performance |
+|------|--------------|-------------|
+| `search_context_hybrid` ⭐ | Tìm code với filters (domain, tech_stack, module) | FAST (<1s) |
+| `search_context` | Tìm code đơn giản không cần filters | FAST (<1s) |
+| `get_repo_structure` | Xem cấu trúc repo, build commands | FAST (<1s) |
+| `get_confluence_page` | Đọc design doc từ Confluence | FAST (<1s) |
+| `get_task_brief` | Tạo brief đầy đủ cho task | FAST (<1s) |
+| `get_work_context` | Aggregate context từ Jira + Confluence + Git | FAST (<1s) |
+| `get_build_context` | Lấy deep code context cho brownfield development | FAST (<1s) |
+| `impact_analysis_graph` | Xem services nào bị ảnh hưởng khi sửa code | FAST (<1s) |
+| `ship_impact_analysis` | Intra-chain impact analysis | FAST (<1s) |
+| `trace_source` | Trace source lifecycle và ingest state | FAST (<1s) |
+| `trace_related_sources` | Trace related sources trong graph | FAST (<1s) |
+| `sync_sources` | Sync repo về latest (trước khi code) | SLOW (>30s) ⚠️ |
+| `list_sources` | List tất cả sources (chỉ khi cần) | SLOW (>10s) ⚠️ |
+
+**Best Practices**:
+- Luôn dùng `search_context_hybrid` với `chain_id` + `tech_stack` + `domain`
+- Gọi `sync_sources` trước khi đọc/sửa code để đảm bảo latest
+- Dùng `get_build_context` cho brownfield development (sửa code có sẵn)
+- Dùng `impact_analysis_graph` trước khi merge để biết ảnh hưởng
+
+**Ví dụ**:
+```python
+# Tìm code xử lý payment trong OMS
+search_context_hybrid(
+    query="payment validation logic",
+    chain_id="ICT",
+    domain="ict_oms",
+    tech_stack="nestjs",
+    role="dev"
+)
+
+# Sync repo trước khi code
+sync_sources(source_id="git:ict-oms-service")
+
+# Lấy deep context cho brownfield
+get_build_context(
+    issue_key="FI-12345",
+    source_id="git:ict-oms-service",
+    design_doc="...",
+    chain_id="ICT"
+)
+```
+
+---
+
+### 2. Jira Tools (5 tools) - Đọc Requirements
+
+**Mục đích**: Hiểu requirements, acceptance criteria từ Jira tickets.
+
+| Tool | Khi Nào Dùng | Performance |
+|------|--------------|-------------|
+| `jira_get_issue` | Đọc chi tiết ticket (summary, description, comments) | FAST (<1s) |
+| `jira_brief_from_ticket` | Sinh brief đầy đủ từ ticket ID | FAST (<1s) |
+| `jira_search` | Tìm related tickets | FAST (<1s) |
+| `jira_add_comment` | Add comment vào ticket (progress update) | FAST (<1s) |
+| `jira_transition` | Chuyển ticket sang In Progress / Done | FAST (<1s) |
+
+**Best Practices**:
+- Dùng `jira_brief_from_ticket` để có brief đầy đủ trước khi code
+- Dùng `jira_add_comment` để update progress (MR created, CI passed, etc.)
+- Dùng `jira_transition` để chuyển ticket sang "In Progress" khi bắt đầu code
+
+**Ví dụ**:
+```python
+# Lấy brief đầy đủ từ ticket
+jira_brief_from_ticket(issue_key="FI-12345", chain_id="ICT")
+
+# Add comment khi tạo MR
+jira_add_comment(
+    issue_key="FI-12345",
+    comment_body="🔀 MR created: [feat(FI-12345): payment validation](https://git.../merge_requests/123)"
+)
+
+# Chuyển ticket sang In Progress
+jira_transition(issue_key="FI-12345", transition_name="In Progress")
+```
+
+---
+
+### 3. Build Tools (4 tools) - Tạo Branch, Commit, MR
+
+**Mục đích**: Tạo feature branch, commit code, tạo MR trên GitLab.
+
+| Tool | Khi Nào Dùng | Performance |
+|------|--------------|-------------|
+| `create_feature_branch` | Tạo branch mới từ main | MEDIUM (1-2s) |
+| `commit_changes` | Commit code changes lên branch | MEDIUM (1-2s) |
+| `create_merge_request` | Tạo MR và link với Jira | MEDIUM (1-2s) |
+| `cgp_generate_commit_message` | Sinh conventional commit message | FAST (<1s) |
+
+**Best Practices**:
+- Branch naming: `features/{dev}-{issue_key}-{description}`
+- Dùng `cgp_generate_commit_message` để sinh commit message chuẩn
+- Luôn link MR với Jira ticket
+
+**Ví dụ**:
+```python
+# Tạo feature branch
+create_feature_branch(
+    source_id="git:ict-oms-service",
+    issue_key="FI-12345",
+    description="payment validation"
+)
+# → Branch: features/datnm11-FI-12345-payment-validation
+
+# Commit changes
+commit_changes(
+    source_id="git:ict-oms-service",
+    branch_name="features/datnm11-FI-12345-payment-validation",
+    files=[
+        {"file_path": "src/payments/payment.service.ts", "content": "...", "action": "update"}
+    ],
+    message="feat(FI-12345): add payment validation logic"
+)
+
+# Tạo MR
+create_merge_request(
+    source_id="git:ict-oms-service",
+    branch_name="features/datnm11-FI-12345-payment-validation",
+    issue_key="FI-12345",
+    title="feat(FI-12345): add payment validation logic"
+)
+```
+
+---
+
+### 4. QGE Tools (2 tools) - Quality Gates
+
+**Mục đích**: Chạy quality gates trước khi merge để đảm bảo code quality.
+
+| Tool | Khi Nào Dùng | Performance |
+|------|--------------|-------------|
+| `qge_analyze` | Chạy tất cả quality gates trên diff | FAST (<1s) |
+| `qge_generate_tests` | Sinh pytest skeleton cho code mới | FAST (<1s) |
+
+**Best Practices**:
+- Chạy `qge_analyze` trước khi tạo MR
+- Fix tất cả CRITICAL và HIGH findings trước khi merge
+- Dùng `qge_generate_tests` để sinh test skeleton nhanh
+
+**Ví dụ**:
+```python
+# Chạy quality gates
+qge_analyze(diff="...", collection="knowledge")
+
+# Sinh test skeleton
+qge_generate_tests(diff="...")
+```
+
+---
+
+### 5. Jenkins Tools (1 tool) - Trigger CI
+
+**Mục đích**: Trigger CI pipeline sau khi tạo MR.
+
+| Tool | Khi Nào Dùng | Performance |
+|------|--------------|-------------|
+| `trigger_ci_pipeline` | Trigger CI pipeline cho branch | SLOW (>10s) ⚠️ |
+
+**Best Practices**:
+- Trigger CI sau khi tạo MR
+- Đợi CI pass trước khi request review
+
+**Ví dụ**:
+```python
+# Trigger CI pipeline
+trigger_ci_pipeline(
+    source_id="git:ict-oms-service",
+    branch="features/datnm11-FI-12345-payment-validation",
+    issue_key="FI-12345"
+)
+```
+
+---
+
+## 🚫 Công Cụ KHÔNG Ưu Tiên Cho Developer
+
+Developer **KHÔNG NÊN** dùng các công cụ sau trong workflow thông thường (dành cho BA, Ops, SM/DM).
+
+**LƯU Ý**: Đây là **gợi ý**, không phải **hard block**. Nếu Dev thực sự cần (ví dụ: tạo bug ticket, tạo sub-task), vẫn có thể dùng với confirmation.
+
+### BA Tools (không ưu tiên cho Dev)
+- `jira_create_from_intent` - Tạo Epic/Story (BA làm) - **Exception**: Dev có thể tạo Bug/Sub-task
+- `jira_create_issue` - Tạo issue với full control - **Exception**: Dev có thể tạo Bug/Sub-task
+- `publish_requirements_to_confluence` - Publish requirements (BA làm)
+- `publish_design_to_confluence` - Publish design (BA làm)
+- `rde_*` tools - Requirements & Design Engine (BA làm)
+
+### Ops Tools (không dành cho Dev)
+- `promote_to_uat` - Deploy UAT (Ops làm)
+- `promote_to_prod` - Deploy PROD (Ops làm)
+- `rollback` - Rollback deployment (Ops làm)
+- `ams_*` tools - AMS workflow (Ops làm)
+
+### Planning Tools (không dành cho Dev)
+- `suggest_sprint_plan` - Sprint planning (SM/DM làm)
+- `smart_sprint_plan` - AI sprint planning (SM/DM làm)
+- `estimate_ticket` - Estimate tickets (SM/DM làm)
+
+---
+
+## 📋 Developer Workflow Checklist
+
+### Trước Khi Code
+- [ ] Đọc Jira ticket: `jira_brief_from_ticket`
+- [ ] Tìm related code: `search_context_hybrid`
+- [ ] Xem repo structure: `get_repo_structure`
+- [ ] Sync repo latest: `sync_sources`
+- [ ] Lấy deep context: `get_build_context` (brownfield)
+- [ ] Chuyển ticket sang In Progress: `jira_transition`
+
+### Khi Code
+- [ ] Tạo feature branch: `create_feature_branch`
+- [ ] Implement code (trong repo thật `data/workspaces/repos/`)
+- [ ] Commit changes: `commit_changes`
+
+### Sau Khi Code
+- [ ] Chạy quality gates: `qge_analyze`
+- [ ] Fix CRITICAL/HIGH findings
+- [ ] Tạo MR: `create_merge_request`
+- [ ] Trigger CI: `trigger_ci_pipeline`
+- [ ] Add Jira comment: `jira_add_comment`
+- [ ] Đợi CI pass + code review
+
+---
+
+## 🎯 Quick Reference - Top 10 Tools Cho Dev
+
+1. **`search_context_hybrid`** ⭐ - Tìm code với filters
+2. **`get_build_context`** - Deep context cho brownfield
+3. **`sync_sources`** - Sync repo latest
+4. **`jira_brief_from_ticket`** - Lấy brief từ ticket
+5. **`create_feature_branch`** - Tạo branch
+6. **`commit_changes`** - Commit code
+7. **`create_merge_request`** - Tạo MR
+8. **`qge_analyze`** - Quality gates
+9. **`trigger_ci_pipeline`** - Trigger CI
+10. **`jira_add_comment`** - Update progress
+
+---
+
+## 💡 Tips & Tricks
+
+### Tip 1: Brownfield Development Pattern
+```
+search_context_hybrid (hiểu patterns) →
+get_repo_structure (hiểu structure) →
+sync_sources (latest code) →
+get_build_context (deep context) →
+[code trong repo thật] →
+create_feature_branch → commit_changes → create_merge_request
+```
+
+### Tip 2: Always Filter chain_id
+```
+✅ GOOD:
+search_context_hybrid("payment logic", chain_id="ICT", tech_stack="nestjs")
+
+❌ BAD:
+search_context_hybrid("payment logic")  # Trả về cả VAC, LAB, PHARMACY
+```
+
+### Tip 3: Use Impact Analysis Before Merge
+```python
+# Xem services nào bị ảnh hưởng
+ship_impact_analysis(
+    source_id="git:ict-oms-service",
+    chain_id="ICT",
+    max_depth=2
+)
+```
+
+### Tip 4: Auto-Generate Commit Message
+```python
+# Sinh commit message từ diff
+cgp_generate_commit_message(
+    diff="...",
+    task_description="add payment validation"
+)
+# → "feat(FI-12345): add payment validation logic"
+```
+
+---
+
+**Version**: 1.0  
+**Last Updated**: 2026-04-16  
+**Owner**: AI Context Engine Team

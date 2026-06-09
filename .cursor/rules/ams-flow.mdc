@@ -1,0 +1,63 @@
+---
+description: AMS Flow — Incident Resolution L2+L3 với HITL Protocol. Áp dụng khi user báo incident, triage, diagnose, hotfix, RCA.
+globs:
+alwaysApply: true
+---
+
+# Client-Orchestrated AMS Flow — HITL Protocol
+
+Khi user báo incident hoặc yêu cầu xử lý bug/incident từ Jira, PHẢI tuân theo workflow sau với HITL checkpoints.
+
+## Flow
+
+```
+Triage → [Gate] → Diagnose → [Gate] → Fix (L2/L3)
+  → [Gate] → [MR Review] → Ship (CI→UAT→PROD) → Resolved
+  → RCA Report → [RCA Review] → Closed
+```
+
+## Phase 1: Triage
+1. `incident_triage(issue_key, chain_id)` — suggest severity, affected services
+2. `ams_post_triage_gate(issue_key, chain_id)` — validate completeness
+
+**⏸️ CHECKPOINT 1:** Trình bày triage result. Hỏi: "Severity đúng không? L2 hay L3?"
+- Confirm → `ams_transition_incident(issue_key, "Triaged")`
+
+## Phase 2: Diagnose
+3. `incident_diagnose(issue_key, chain_id)` — root cause, evidence, design gaps
+
+**⏸️ CHECKPOINT 2:** Trình bày diagnosis. Hỏi: "Root cause đúng không?"
+
+## Phase 3A: L2 Workaround
+4. `suggest_workaround(issue_key, diagnosis)` — ranked options with rollback plans
+
+**⏸️ CHECKPOINT 3A:** Trình bày options. Hỏi: "Chọn workaround nào?"
+
+## Phase 3B: L3 Hotfix
+5. `ams_pre_hotfix_gate(issue_key, chain_id, diagnosis)`
+6. `start_hotfix(issue_key, chain_id, source_id, diagnosis)` — branch + MR
+
+**⏸️ CHECKPOINT 3B:** Trình bày MR. Hỏi: "Review code xong chưa?"
+
+## Phase 4: Verify & Ship
+7. `ams_post_hotfix_gate(issue_key, mr_url)`
+8. `ams_request_hotfix_review(issue_key, mr_url)` — Solution_Reviewer approve
+9. Ship: `ams_ship_hotfix` qua CI → UAT → PROD
+
+**⏸️ CHECKPOINT 5:** Mỗi bước ship hỏi confirm: "CI passed. Promote UAT?" → "UAT OK. Promote PROD?"
+
+## Phase 5: Post-Mortem (bắt buộc P1/P2)
+10. `generate_rca_report(issue_key)` — publish Confluence
+11. `ams_request_rca_review(issue_key, rca_report)`
+
+**⏸️ CHECKPOINT 6:** Review RCA. Confirm → `ams_transition_incident(issue_key, "Closed")`
+
+## Escalation
+`ams_escalate_incident(issue_key, reason)` — P1=15min, P2=30min, P3=2h, P4=8h
+
+## Quy tắc
+1. LUÔN dừng lại hỏi user sau mỗi checkpoint
+2. LUÔN hiển thị gate results
+3. LUÔN chờ approval trước khi ship
+4. P1/P2 fast-track nhưng KHÔNG skip gates
+5. Post-Mortem bắt buộc cho P1/P2
