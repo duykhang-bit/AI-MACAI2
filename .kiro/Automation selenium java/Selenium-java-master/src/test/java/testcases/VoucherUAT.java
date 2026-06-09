@@ -26,7 +26,7 @@ public class VoucherUAT extends BaseTest1 {
         // =================================================
         // FLOW - TẠO VOUCHER
         // =================================================
-        @Test(priority = 1, description = "FLOW - Tạo Voucher CI")
+        @Test(priority = 1, description = "FLOW - Tạo Voucher UAT")
         public void testCreateVoucherFlowUAT() {
 
                 /*

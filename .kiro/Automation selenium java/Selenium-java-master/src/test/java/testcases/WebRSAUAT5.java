@@ -277,10 +277,11 @@ public class WebRSAUAT5 extends BaseTest1 {
         js.executeScript("arguments[0].click(); arguments[0].focus();", productInput);
         Thread.sleep(500);
 
-        // Clear ô search bằng select all + delete
-        productInput.sendKeys(Keys.chord(Keys.COMMAND, "a"));
+        // Clear ô search (Windows: JS clear + CTRL+A + DELETE)
+        js.executeScript("arguments[0].value = ''", productInput);
+        productInput.sendKeys(Keys.chord(Keys.CONTROL, "a"));
         Thread.sleep(200);
-        productInput.sendKeys(Keys.BACK_SPACE);
+        productInput.sendKeys(Keys.DELETE);
         Thread.sleep(500);
 
         // Nhập mã sản phẩm
@@ -362,10 +363,11 @@ public class WebRSAUAT5 extends BaseTest1 {
         js.executeScript("arguments[0].click(); arguments[0].focus();", productInput2);
         Thread.sleep(500);
 
-        // Clear ô search bằng select all + delete (Ant Design input không hỗ trợ .clear())
-        productInput2.sendKeys(Keys.chord(Keys.COMMAND, "a"));
+        // Clear ô search (Windows: JS clear + CTRL+A + DELETE)
+        js.executeScript("arguments[0].value = ''", productInput2);
+        productInput2.sendKeys(Keys.chord(Keys.CONTROL, "a"));
         Thread.sleep(200);
-        productInput2.sendKeys(Keys.BACK_SPACE);
+        productInput2.sendKeys(Keys.DELETE);
         Thread.sleep(500);
 
         // Nhập mã sản phẩm mới
@@ -523,3 +525,4 @@ public class WebRSAUAT5 extends BaseTest1 {
         test.pass("✅ Hoàn thành flow tạo đơn bán hàng RSA Web. Mã đơn: " + orderCode);
     }
 }
+

@@ -160,12 +160,12 @@ public class CreatePMHUAT extends BaseTest1 {
          input.click();
          
          /* 2️⃣ Gõ mã sản phẩm */
-         input.sendKeys("14579413");
+         input.sendKeys("0003568");
          
          /* 3️⃣ Đợi dropdown render option rồi click */
          By option = By.xpath(
                  "//div[contains(@class,'ant-select-item-option-content')" +
-                 " and contains(normalize-space(),'14579413')]"
+                 " and contains(normalize-space(),'0003568')]"
          );
          
          WebElement optionEl = wait.until(
@@ -174,7 +174,7 @@ public class CreatePMHUAT extends BaseTest1 {
          
          optionEl.click();
          
-         tc09.pass("Chọn mã sản phẩm 14579413");
+         tc09.pass("Chọn mã sản phẩm 0003568");
          
  
          /* =========================

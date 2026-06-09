@@ -167,33 +167,77 @@ async def run_flow():
 
             # ── Step 10: Click vào menu đầu tiên (tạo đơn) ──────────────
             print("[ 8] Navigate to Bán hàng/Tạo đơn")
-            await page.wait_for_timeout(1000)
+            await page.wait_for_timeout(2000)
             nav_sels = [
                 ".home-layout > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > a",
                 "div:nth-of-type(1) > div > div > section > section > main > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > a"
             ]
             ok = await try_click(page, nav_sels)
             if not ok:
-                print("  ⚠ Nav click failed, thử link trực tiếp")
+                # Thử tìm link/button chứa text bán hàng
+                print("  ⚠ Nav click failed, thử tìm theo text")
+                for text in ["Bán hàng", "Tạo đơn", "POS", "Bán tại quầy"]:
+                    try:
+                        el = page.get_by_text(text, exact=False).first
+                        if await el.is_visible(timeout=2000):
+                            await el.click()
+                            print(f"  ✓ Clicked: '{text}'")
+                            break
+                    except Exception:
+                        continue
+                else:
+                    # Thử href chứa "pos" hoặc "ban-hang"
+                    try:
+                        link = page.locator("a[href*='pos'], a[href*='ban-hang'], a[href*='order'], a[href*='sell']").first
+                        await link.click(timeout=5000)
+                    except Exception as e:
+                        print(f"  ⚠ Không tìm được nav link: {e}")
             await page.wait_for_load_state("networkidle")
+            await page.wait_for_timeout(1500)
             steps_passed += 1
 
             # ── Step 11: Chọn nhân viên Trần Thị Thanh Thảo ─────────────
             print("[ 9] Chọn NV 'Trần Thị Thanh Thảo (00017)'")
-            await page.wait_for_timeout(1000)
+            await page.wait_for_timeout(2000)
             try:
-                employee_sel = "#cmb-employee"
-                await page.wait_for_selector(employee_sel, timeout=10000)
-                await page.click(employee_sel)
-                await page.wait_for_timeout(500)
-                await page.keyboard.type("Thảo")
-                await page.wait_for_timeout(1000)
-                option = page.locator(".ant-select-item-option", has_text="Trần Thị Thanh Thảo")
-                if await option.count() > 0:
-                    await option.first.click()
+                # Thử nhiều selector cho combobox nhân viên
+                employee_sels = [
+                    "#cmb-employee",
+                    "[id*='cmb-employee']",
+                    "[placeholder*='nhân viên']",
+                    "[placeholder*='NV']",
+                ]
+                found = False
+                for emp_sel in employee_sels:
+                    try:
+                        await page.wait_for_selector(emp_sel, timeout=5000, state="visible")
+                        await page.click(emp_sel)
+                        found = True
+                        break
+                    except Exception:
+                        continue
+                if not found:
+                    # Tìm theo text label
+                    label = page.locator("label, span", has_text="Lựa chọn NV")
+                    if await label.count() > 0:
+                        # Click vào input gần label
+                        parent = label.first.locator("..").locator("input, [role='combobox']")
+                        await parent.first.click(timeout=5000)
+                        found = True
+                if found:
+                    await page.wait_for_timeout(500)
+                    await page.keyboard.type("Thảo")
+                    await page.wait_for_timeout(1500)
+                    option = page.locator(".ant-select-item-option", has_text="Trần Thị Thanh Thảo")
+                    if await option.count() > 0:
+                        await option.first.click()
+                        print("  ✓ Chọn NV thành công")
+                    else:
+                        option2 = page.locator("[class*='option']", has_text="00017")
+                        if await option2.count() > 0:
+                            await option2.first.click()
                 else:
-                    option2 = page.locator("[class*='option']", has_text="00017")
-                    await option2.first.click()
+                    print("  ⚠ Không tìm thấy employee combobox, bỏ qua")
             except Exception as e:
                 print(f"  ⚠ Employee select: {e}")
             steps_passed += 1
@@ -383,8 +427,14 @@ async def run_flow():
             else:
                 print("❌ FLOW FAILED")
             print("="*60)
-            await page.wait_for_timeout(3000)
-            await browser.close()
+            try:
+                await page.wait_for_timeout(3000)
+            except Exception:
+                pass
+            try:
+                await browser.close()
+            except Exception:
+                pass
 
 if __name__ == "__main__":
     asyncio.run(run_flow())

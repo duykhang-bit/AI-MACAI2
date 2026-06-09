@@ -142,10 +142,10 @@ public class PromotionCI extends BaseTest1 {
                 WebElement campaignBox = wait.until(
                                 ExpectedConditions.elementToBeClickable(
                                                 By.id("promotiongeneralinfor_campaignId")));
-                campaignBox.sendKeys("CD-1225-237");
+                campaignBox.sendKeys("CD-0326-042");
 
                 wait.until(ExpectedConditions.elementToBeClickable(
-                                By.xpath("//div[contains(@class,'ant-select-item-option') and contains(.,'CD-1225-237')]")))
+                                By.xpath("//div[contains(@class,'ant-select-item-option') and contains(.,'CD-0326-042')]")))
                                 .click();
 
                 wait.until(ExpectedConditions.elementToBeClickable(
@@ -289,7 +289,7 @@ public class PromotionCI extends BaseTest1 {
                                 "//div[contains(@class,'ant-select-dropdown') and not(contains(@style,'display: none'))]"
                                                 +
                                                 "//div[contains(@class,'ant-select-item-option-content') and " +
-                                                "normalize-space()='Bằng']");
+                                                "normalize-space()='Ch\u1EE9a']");
 
                 wait.until(ExpectedConditions.elementToBeClickable(optionPTBy)).click();
 
@@ -487,10 +487,10 @@ public class PromotionCI extends BaseTest1 {
 //                 WebElement campaignBox = wait.until(
 //                                 ExpectedConditions.elementToBeClickable(
 //                                                 By.id("promotiongeneralinfor_campaignId")));
-//                 campaignBox.sendKeys("CD-1225-237");
+//                 campaignBox.sendKeys("CD-0326-042");
 
 //                 wait.until(ExpectedConditions.elementToBeClickable(
-//                                 By.xpath("//div[contains(@class,'ant-select-item-option') and contains(.,'CD-1225-237')]")))
+//                                 By.xpath("//div[contains(@class,'ant-select-item-option') and contains(.,'CD-0326-042')]")))
 //                                 .click();
 
 //                 wait.until(ExpectedConditions.elementToBeClickable(
@@ -617,7 +617,7 @@ public class PromotionCI extends BaseTest1 {
 //                                 "//div[contains(@class,'ant-select-dropdown') and not(contains(@style,'display: none'))]"
 //                                                 +
 //                                                 "//div[contains(@class,'ant-select-item-option-content') and " +
-//                                                 "normalize-space()='Bằng']");
+//                                                 "normalize-space()='B?ng']");
 
 //                 wait.until(ExpectedConditions.elementToBeClickable(optionPTBy1)).click();
 

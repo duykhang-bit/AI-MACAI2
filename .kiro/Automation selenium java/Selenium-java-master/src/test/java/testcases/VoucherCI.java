@@ -82,7 +82,7 @@ public class VoucherCI extends BaseTest1 {
                                 By.xpath("//div[contains(@class,'actionHeader')]"))).click();
 
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMyyyy_HHmmss");
-                String voucherName = "FamilyPackage topic update serial_" + LocalDateTime.now().format(formatter);
+                String voucherName = "Automation test_" + LocalDateTime.now().format(formatter);
 
                 wait.until(ExpectedConditions.visibilityOfElementLocated(
                                 By.id("inputID"))).sendKeys(voucherName);
