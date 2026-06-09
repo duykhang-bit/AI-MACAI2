@@ -513,24 +513,28 @@ public class PromotionUATDH extends BaseTest1 {
                 giaTriInput.sendKeys("300000");
                 tc11.pass("Giá trị OK");
 
-                // Thêm điều kiện vào: Mã Nhóm hàng
-                ExtentTest tc11b = test.createNode("TC11b - Thêm điều kiện: Mã Nhóm hàng");
+                // Thêm điều kiện vào: Mã Ngành hàng
+                ExtentTest tc11b = test.createNode("TC11b - Thêm điều kiện: Mã Ngành hàng");
                 
                 // Click "+ Thêm điều kiện vào"
                 wait.until(ExpectedConditions.elementToBeClickable(
                                 By.xpath("//span[contains(text(),'Thêm điều kiện vào') or contains(text(),'Thêm điều kiện và')]"))).click();
                 
-                // Chọn Loại: Mã Nhóm hàng (dòng thứ 2)
+                // Click dropdown dòng mới (dòng thứ 2 - ô "Chọn điều kiện")
+                Thread.sleep(1000);
                 By dropdownLoai2 = By.xpath(
                                 "(//div[contains(@class,'ant-select-selector')]//span[contains(text(),'Chọn điều kiện') or contains(text(),'Chọn điểu kiện')])[1]/ancestor::div[contains(@class,'ant-select-selector')]");
                 wait.until(ExpectedConditions.elementToBeClickable(dropdownLoai2)).click();
-                By optionMaNhomHang = By.xpath(
+                
+                // Chọn "Mã Ngành hàng"
+                By optionMaNganhHang = By.xpath(
                                 "//div[contains(@class,'ant-select-dropdown') and not(contains(@style,'display: none'))]" +
                                                 "//div[contains(@class,'ant-select-item-option-content') and " +
-                                                "contains(.,'Mã Nhóm hàng')]");
-                wait.until(ExpectedConditions.elementToBeClickable(optionMaNhomHang)).click();
+                                                "contains(.,'Mã Ngành hàng')]");
+                wait.until(ExpectedConditions.elementToBeClickable(optionMaNganhHang)).click();
                 
                 // Chọn Phép toán: Chứa
+                Thread.sleep(500);
                 By dropdownPTNhom = By.xpath(
                                 "(//div[contains(@class,'ant-select-selector')]//span[contains(text(),'Chọn phép') or contains(text(),'phép toán')])[1]/ancestor::div[contains(@class,'ant-select-selector')]");
                 wait.until(ExpectedConditions.elementToBeClickable(dropdownPTNhom)).click();
@@ -540,12 +544,13 @@ public class PromotionUATDH extends BaseTest1 {
                                                 "normalize-space()='Chứa']");
                 wait.until(ExpectedConditions.elementToBeClickable(optionChua)).click();
                 
-                // Nhập giá trị mã nhóm hàng
-                WebElement maNhomInput = wait.until(ExpectedConditions.elementToBeClickable(
-                                By.xpath("(//input[@placeholder='Giá trị' or @placeholder='Nhập giá trị' or @placeholder='Nhập số tiền'])[1]")));
-                maNhomInput.sendKeys("1880311b-e95a-e98d-b715-3a190984608c");
+                // Nhập giá trị mã ngành hàng - click "Sửa" rồi nhập
+                Thread.sleep(500);
+                WebElement maNganhInput = wait.until(ExpectedConditions.elementToBeClickable(
+                                By.xpath("(//input[@placeholder='Chọn giá trị' or @placeholder='Giá trị' or @placeholder='Nhập giá trị'])[1]")));
+                maNganhInput.sendKeys("1880311b-e95a-e98d-b715-3a190984608c");
                 
-                tc11b.pass("Thêm Mã Nhóm hàng OK");
+                tc11b.pass("Thêm Mã Ngành hàng OK");
 
                 // Điều kiện đầu ra
                 ExtentTest tc12 = test.createNode("TC12 - Loại đầu ra: Phiếu Mua Hàng");
