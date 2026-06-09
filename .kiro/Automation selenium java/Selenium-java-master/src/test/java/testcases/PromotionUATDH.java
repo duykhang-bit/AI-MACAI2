@@ -520,17 +520,23 @@ public class PromotionUATDH extends BaseTest1 {
                 wait.until(ExpectedConditions.elementToBeClickable(
                                 By.xpath("//span[contains(text(),'Thêm điều kiện vào') or contains(text(),'Thêm điều kiện và')]"))).click();
                 
-                // Click dropdown dòng mới (dòng thứ 2 - ô "Chọn điều kiện")
+                // Click dropdown dòng mới rồi search "Mã Ngành hàng"
                 Thread.sleep(1000);
                 By dropdownLoai2 = By.xpath(
                                 "(//div[contains(@class,'ant-select-selector')]//span[contains(text(),'Chọn điều kiện') or contains(text(),'Chọn điểu kiện')])[1]/ancestor::div[contains(@class,'ant-select-selector')]");
                 wait.until(ExpectedConditions.elementToBeClickable(dropdownLoai2)).click();
                 
-                // Chọn "Mã Ngành hàng"
+                // Gõ tìm kiếm "Mã Ngành" trong ô search của dropdown
+                Thread.sleep(500);
+                By searchInput = By.xpath(
+                                "//div[contains(@class,'ant-select-dropdown') and not(contains(@style,'display: none'))]//input[contains(@class,'ant-select-search') or contains(@class,'ant-input')] | //input[contains(@class,'ant-select-selection-search-input')]");
+                WebElement searchBox = wait.until(ExpectedConditions.presenceOfElementLocated(searchInput));
+                searchBox.sendKeys("Mã Ngành");
+                
+                Thread.sleep(500);
+                // Chọn "Mã Ngành hàng" từ kết quả
                 By optionMaNganhHang = By.xpath(
-                                "//div[contains(@class,'ant-select-dropdown') and not(contains(@style,'display: none'))]" +
-                                                "//div[contains(@class,'ant-select-item-option-content') and " +
-                                                "contains(.,'Mã Ngành hàng')]");
+                                "//div[contains(@class,'ant-select-item-option-content') and contains(.,'Mã Ngành hàng')]");
                 wait.until(ExpectedConditions.elementToBeClickable(optionMaNganhHang)).click();
                 
                 // Chọn Phép toán: Chứa
@@ -544,7 +550,7 @@ public class PromotionUATDH extends BaseTest1 {
                                                 "normalize-space()='Chứa']");
                 wait.until(ExpectedConditions.elementToBeClickable(optionChua)).click();
                 
-                // Nhập giá trị mã ngành hàng - click "Sửa" rồi nhập
+                // Nhập giá trị mã ngành hàng
                 Thread.sleep(500);
                 WebElement maNganhInput = wait.until(ExpectedConditions.elementToBeClickable(
                                 By.xpath("(//input[@placeholder='Chọn giá trị' or @placeholder='Giá trị' or @placeholder='Nhập giá trị'])[1]")));

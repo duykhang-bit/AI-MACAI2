@@ -31,6 +31,7 @@ cd "/Users/leduykhang/Documents/Automation/AI-MAC-main/.kiro/Automation selenium
 cd ".kiro\Automation selenium java\Selenium-java-master"; mvn clean test
 
 
+
 === MỞ REPORT ===duykhang/Documents/Automation/AI-MAC-main/.kiro/Automation selenium java/Selenium-java-master/test-output/ExtentReport.html"
 
 open "/Users/le
