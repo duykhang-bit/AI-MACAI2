@@ -1,0 +1,216 @@
+# Flow: kiem ke all shop
+# Author: recorder
+# Created: 2026-06-10
+# Run: frt-test play --app web-eho kiem-ke-all-shop.yaml
+
+name: kiem ke all shop
+description: "Recorded flow: kiem ke all shop"
+tags:
+  - recorded
+author: recorder
+created: "2026-06-10"
+config:
+  baseUrl: https://ci-eho-web.frt.vn
+  timeout: 30000
+variables: {}
+steps:
+  - name: Navigate to https://ci-eho-web.frt.vn
+    action: goto
+    value: https://ci-eho-web.frt.vn
+    waitAfter: networkIdle
+  - name: Click ".mat-form-field-infix" trong "Tài khoản *"
+    action: click
+    selectorFallback: .kt-form > div:nth-of-type(3) > mat-form-field > div > div:nth-of-type(1) > div
+    relative:
+      form: A
+      anchor:
+        text: Tài khoản *
+        dynamic: false
+      scope:
+        by: css
+        css: .form-group
+      target:
+        type: selector
+        selector: .mat-form-field-infix
+  - name: "Click #mat-input-3"
+    action: click
+    selectorFallback: >-
+      #mat-input-3 || .kt-form > div:nth-of-type(3) > mat-form-field > div > div:nth-of-type(1) > div > input || div >
+      div > div > div > div > form > div:nth-of-type(3) > mat-form-field > div > div:nth-of-type(1) > div > input
+    selector: "#mat-input-3"
+  - name: "Fill #mat-input-3"
+    action: fill
+    value: ngocdtm3
+    selectorFallback: >-
+      #mat-input-3 || .kt-form > div:nth-of-type(3) > mat-form-field > div > div:nth-of-type(1) > div > input || div >
+      div > div > div > div > form > div:nth-of-type(3) > mat-form-field > div > div:nth-of-type(1) > div > input
+    selector: "#mat-input-3"
+  - name: "Click #mat-input-4"
+    action: click
+    selectorFallback: >-
+      #mat-input-4 || .kt-form > div:nth-of-type(4) > mat-form-field > div > div:nth-of-type(1) > div > input || div >
+      div > div > div > div > form > div:nth-of-type(4) > mat-form-field > div > div:nth-of-type(1) > div > input
+    selector: "#mat-input-4"
+  - name: "Fill #mat-input-4"
+    action: fill
+    value: "1"
+    selectorFallback: >-
+      #mat-input-4 || .kt-form > div:nth-of-type(4) > mat-form-field > div > div:nth-of-type(1) > div > input || div >
+      div > div > div > div > form > div:nth-of-type(4) > mat-form-field > div > div:nth-of-type(1) > div > input
+    selector: "#mat-input-4"
+    pressAfter: Enter
+  - name: Click link "Kiểm kê All shop"
+    action: click
+    selectorFallback: >-
+      .pb-4 > div:nth-of-type(10) > a || div > div:nth-of-type(1) > div > main > div:nth-of-type(1) > div:nth-of-type(2)
+      > div:nth-of-type(10) > a
+    role:
+      type: link
+      name: Kiểm kê All shop
+    waitAfter: networkIdle
+  - name: Click button "Tạo yêu cầu"
+    action: click
+    selectorFallback: >-
+      .py-3 > div > div > span:nth-of-type(2) > button || div > div:nth-of-type(1) > div > div:nth-of-type(2) > div >
+      div > span:nth-of-type(2) > button
+    role:
+      type: button
+      name: Tạo yêu cầu
+  - name: Chọn "80009 - LC HCM 1008-1010 Âu Cơ"
+    action: selectOption
+    trigger:
+      selector: "#rc_select_3"
+      selectorFallback: >-
+        #rc_select_3 || div:nth-of-type(2) > div > div:nth-of-type(2) > div > div:nth-of-type(1) > div >
+        div:nth-of-type(2) > form > div > div:nth-of-type(1) > div:nth-of-type(1) > div > div > div:nth-of-type(2) > div
+        > div > div > div > span > span:nth-of-type(1) > input
+    value: 80009 - LC HCM 1008-1010 Âu Cơ
+    search: true
+    searchText: "80009"
+  - name: Chọn "80009073 - L9-Kho hàng chờ xử lý" ở "Chọn kho"
+    action: selectOption
+    trigger:
+      relative:
+        form: A
+        anchor:
+          text: Chọn kho
+          dynamic: false
+        scope:
+          by: css
+          css: .ant-select-selection-wrap
+        target:
+          type: selector
+          selector: .ant-select-selection-overflow
+      selectorFallback: >-
+        div:nth-of-type(2) > div > div:nth-of-type(2) > div > div:nth-of-type(1) > div > div:nth-of-type(2) > form > div
+        > div:nth-of-type(1) > div:nth-of-type(2) > div > div > div:nth-of-type(2) > div > div > div > div > span > div
+    value: 80009073 - L9-Kho hàng chờ xử lý
+    search: true
+    searchText: "80009073"
+  - name: Click "input" trong "Ngày bắt đầu kiểm"
+    action: click
+    selectorFallback: >-
+      #startDate || div:nth-of-type(2) > div > div:nth-of-type(2) > div > div:nth-of-type(1) > div > div:nth-of-type(2)
+      > form > div > div:nth-of-type(2) > div:nth-of-type(1) > div > div:nth-of-type(2) > div > div > div > div > input
+    relative:
+      form: A
+      anchor:
+        text: Ngày bắt đầu kiểm
+        dynamic: false
+      scope:
+        by: css
+        css: .ant-row
+      target:
+        type: selector
+        selector: input
+  - name: >-
+      Click div:nth-of-type(5) > div > div > div > div > div:nth-of-type(1) > div > div:nth-of-type(2) > table > tbody >
+      tr:nth-of-type(2) > td:nth-of-type(3) > div
+    action: click
+    selectorFallback: >-
+      div:nth-of-type(5) > div > div > div > div > div:nth-of-type(1) > div > div:nth-of-type(2) > table > tbody >
+      tr:nth-of-type(2) > td:nth-of-type(3) > div
+    selector: >-
+      div:nth-of-type(5) > div > div > div > div > div:nth-of-type(1) > div > div:nth-of-type(2) > table > tbody >
+      tr:nth-of-type(2) > td:nth-of-type(3) > div
+  - name: Click "input" trong "Ngày kết thúc kiểm"
+    action: click
+    selectorFallback: >-
+      #endDate || div:nth-of-type(2) > div > div:nth-of-type(2) > div > div:nth-of-type(1) > div > div:nth-of-type(2) >
+      form > div > div:nth-of-type(2) > div:nth-of-type(2) > div > div:nth-of-type(2) > div > div > div > div > input
+    relative:
+      form: A
+      anchor:
+        text: Ngày kết thúc kiểm
+        dynamic: false
+      scope:
+        by: css
+        css: .ant-row
+      target:
+        type: selector
+        selector: input
+  - name: >-
+      Click div:nth-of-type(6) > div > div > div > div > div:nth-of-type(1) > div > div:nth-of-type(2) > table > tbody >
+      tr:nth-of-type(2) > td:nth-of-type(7) > div
+    action: click
+    selectorFallback: >-
+      div:nth-of-type(6) > div > div > div > div > div:nth-of-type(1) > div > div:nth-of-type(2) > table > tbody >
+      tr:nth-of-type(2) > td:nth-of-type(7) > div
+    selector: >-
+      div:nth-of-type(6) > div > div > div > div > div:nth-of-type(1) > div > div:nth-of-type(2) > table > tbody >
+      tr:nth-of-type(2) > td:nth-of-type(7) > div
+  - name: Click div:nth-of-type(2) > div > div:nth-of-type(2) > div > div:nth-of-type(1) > div > div:nth-of-type(3) > button
+    action: click
+    selectorFallback: div:nth-of-type(2) > div > div:nth-of-type(2) > div > div:nth-of-type(1) > div > div:nth-of-type(3) > button
+    selector: div:nth-of-type(2) > div > div:nth-of-type(2) > div > div:nth-of-type(1) > div > div:nth-of-type(3) > button
+  - name: Click button "Xác nhận"
+    action: click
+    selectorFallback: >-
+      div:nth-of-type(7) > div > div:nth-of-type(2) > div > div:nth-of-type(1) > div > div:nth-of-type(2) >
+      button:nth-of-type(2)
+    role:
+      type: button
+      name: Xác nhận
+    waitAfter: networkIdle
+  - name: Click .msg-alert > a
+    action: click
+    selectorFallback: .msg-alert > a || div:nth-of-type(2) > div > div > a
+    selector: .msg-alert > a
+  - name: Click button "Hoàn thành"
+    action: click
+    selectorFallback: >-
+      .right-content > button:nth-of-type(4) || div > div:nth-of-type(1) > div > div:nth-of-type(2) > div >
+      div:nth-of-type(2) > button:nth-of-type(4)
+    role:
+      type: button
+      name: Hoàn thành
+    waitAfter: networkIdle
+  - name: Verify "Tạo phiếu thành công!"
+    action: assert
+    assertType: text
+    expected: Tạo phiếu thành công!
+    selectorFallback: .msg-alert > div > div || div:nth-of-type(2) > div > div > div > div
+    text: Tạo phiếu thành công!
+  - name: Click ".mb-2" trong "Kiểm kê"
+    action: click
+    selectorFallback: .py-3 > div
+    relative:
+      form: A
+      anchor:
+        text: Kiểm kê
+        dynamic: false
+      scope:
+        by: css
+        css: .ant-layout
+      target:
+        type: selector
+        selector: .mb-2
+  - name: Press Enter
+    action: keyboard
+    key: Enter
+assertions: []
+recorded_against:
+  app: web-eho
+  env: ci
+  url: https://ci-eho-web.frt.vn
+  date: "2026-06-10"
