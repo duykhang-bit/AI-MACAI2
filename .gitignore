@@ -2,3 +2,6 @@
 *.local.json
 .kiro/settings/mcp.json
 .kiro/.env
+
+# Large JDK folder
+oracleJdk-26/

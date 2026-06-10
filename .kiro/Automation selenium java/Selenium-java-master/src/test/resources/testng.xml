@@ -12,6 +12,8 @@
         <classes>
 
            <class name="testcases.PromotionUATDH"/>
+                 <!-- <class name="testcases.PromotionUATSP"/> -->
+
 
             <!-- <class name="testcases.WebRSAUAT"/>
             <class name="testcases.WebRSAUAT1"/>
