@@ -78,7 +78,7 @@ public class PromotionUATDH extends BaseTest1 {
 
                 tc02.info("Nhập tên CTKM");
 
-                String promoName = "Mã ngành hàng 25052026_115716";
+                String promoName = "Automation test 25052026_115716";
 
                 wait.until(ExpectedConditions.visibilityOfElementLocated(
                                 By.id("promotiongeneralinfor_name"))).sendKeys(promoName);
@@ -397,7 +397,7 @@ public class PromotionUATDH extends BaseTest1 {
                                 By.xpath("//div[contains(@class,'actionHeader')]"))).click();
 
                 DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("ddMMyyyy_HHmmss");
-                String promoName2 = "AT_DH_" + LocalDateTime.now().format(formatter2);
+                String promoName2 = "Nhóm hàng giảm giá_" + LocalDateTime.now().format(formatter2);/// NOTE NAME
                 wait.until(ExpectedConditions.visibilityOfElementLocated(
                                 By.id("promotiongeneralinfor_name"))).sendKeys(promoName2);
                 tc02.pass("Tạo CTKM OK: " + promoName2);
