@@ -1,0 +1,144 @@
+# Flow: Genlink PM chao hang
+# Author: recorder
+# Created: 2026-06-08
+# Run: frt-test play --app mrp genlink-pm-chao-hang.yaml
+
+name: Genlink PM chao hang
+description: "Recorded flow: Genlink PM chao hang"
+tags:
+  - recorded
+author: recorder
+created: "2026-06-08"
+config:
+  baseUrl: https://ci-mrp.frt.vn/
+  timeout: 30000
+variables: {}
+steps:
+  - name: Navigate to https://ci-mrp.frt.vn/
+    action: goto
+    value: https://ci-mrp.frt.vn/
+    waitAfter: networkIdle
+  - name: "Click #mat-input-3"
+    action: click
+    selectorFallback: >-
+      #mat-input-3 || .kt-form > div:nth-of-type(3) > mat-form-field > div > div:nth-of-type(1) > div > input || div >
+      div > div > div > div > form > div:nth-of-type(3) > mat-form-field > div > div:nth-of-type(1) > div > input
+    selector: "#mat-input-3"
+  - name: "Fill #mat-input-3"
+    action: fill
+    value: anhth33
+    selectorFallback: >-
+      #mat-input-3 || .kt-form > div:nth-of-type(3) > mat-form-field > div > div:nth-of-type(1) > div > input || div >
+      div > div > div > div > form > div:nth-of-type(3) > mat-form-field > div > div:nth-of-type(1) > div > input
+    selector: "#mat-input-3"
+  - name: Press Tab
+    action: keyboard
+    key: Tab
+  - name: "Fill #mat-input-4"
+    action: fill
+    value: "1"
+    selectorFallback: >-
+      #mat-input-4 || .kt-form > div:nth-of-type(4) > mat-form-field > div > div:nth-of-type(1) > div > input || div >
+      div > div > div > div > form > div:nth-of-type(4) > mat-form-field > div > div:nth-of-type(1) > div > input
+    selector: "#mat-input-4"
+    pressAfter: Enter
+  - name: Click "div:nth-of-type(5) > a" trong "Danh sách NCC"
+    action: click
+    selectorFallback: >-
+      .min-h-70 > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(5) > a || div >
+      div:nth-of-type(1) > div > div > div > main > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) >
+      div:nth-of-type(5) > a
+    relative:
+      form: A
+      anchor:
+        text: Danh sách NCC
+        dynamic: false
+      scope:
+        by: css
+        css: .ant-row
+      target:
+        type: selector
+        selector: div:nth-of-type(5) > a
+    waitAfter: networkIdle
+  - name: Click button "Tạo link chào hàng NCC"
+    action: click
+    selectorFallback: >-
+      .-mt-2 > div:nth-of-type(1) > div:nth-of-type(2) > button:nth-of-type(2) || div > div:nth-of-type(1) > div > div >
+      div > div > form > div > div:nth-of-type(1) > div:nth-of-type(2) > button:nth-of-type(2)
+    role:
+      type: button
+      name: Tạo link chào hàng NCC
+  - name: Click "input[type="text"]" trong "Số điện thoại"
+    action: click
+    selectorFallback: >-
+      #phone || .mb-3 > div > div:nth-of-type(2) > div > div > input || div:nth-of-type(2) > div > div:nth-of-type(2) >
+      div > div:nth-of-type(1) > div > div:nth-of-type(2) > div > form > div > div > div:nth-of-type(2) > div > div >
+      input
+    relative:
+      form: A
+      anchor:
+        text: Số điện thoại
+        dynamic: false
+      scope:
+        by: css
+        css: .ant-row
+      target:
+        type: selector
+        selector: input[type="text"]
+  - name: Fill "input[type="text"]" trong "Số điện thoại"
+    action: fill
+    value: "0"
+    selectorFallback: >-
+      #phone || .mb-3 > div > div:nth-of-type(2) > div > div > input || div:nth-of-type(2) > div > div:nth-of-type(2) >
+      div > div:nth-of-type(1) > div > div:nth-of-type(2) > div > form > div > div > div:nth-of-type(2) > div > div >
+      input
+    relative:
+      form: A
+      anchor:
+        text: Số điện thoại
+        dynamic: false
+      scope:
+        by: css
+        css: .ant-row
+      target:
+        type: selector
+        selector: input[type="text"]
+  - name: Fill "input[type="text"]" trong "Số điện thoại phải có đúng 10 chữ số!"
+    action: fill
+    value: "0973006118"
+    selectorFallback: >-
+      #phone || .mb-3 > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div > input || div:nth-of-type(2)
+      > div > div:nth-of-type(2) > div > div:nth-of-type(1) > div > div:nth-of-type(2) > div > form > div >
+      div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div > input
+    relative:
+      form: A
+      anchor:
+        text: Số điện thoại phải có đúng 10 chữ số!
+        dynamic: false
+      scope:
+        by: css
+        css: .ant-col
+      target:
+        type: selector
+        selector: input[type="text"]
+  - name: Click button "Tiếp tục"
+    action: click
+    selectorFallback: >-
+      div:nth-of-type(2) > div > div:nth-of-type(2) > div > div:nth-of-type(1) > div > div:nth-of-type(3) >
+      button:nth-of-type(2)
+    role:
+      type: button
+      name: Tiếp tục
+  - name: Verify "Sao chép QR" visible trong dialog
+    action: assert
+    assertType: visible
+    expected: Sao chép QR
+    role:
+      type: button
+      name: Sao chép QR
+assertions: []
+recorded_against:
+  app: mrp
+  env: ci
+  url: https://ci-mrp.frt.vn/
+  date: "2026-06-08"
