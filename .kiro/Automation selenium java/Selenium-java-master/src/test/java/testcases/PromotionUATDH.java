@@ -78,7 +78,7 @@ public class PromotionUATDH extends BaseTest1 {
 
                 tc02.info("Nhập tên CTKM");
 
-                String promoName = "Automation test 25052026_115716";
+                String promoName = "Mã ngành hàng 25052026_115716";
 
                 wait.until(ExpectedConditions.visibilityOfElementLocated(
                                 By.id("promotiongeneralinfor_name"))).sendKeys(promoName);
@@ -420,9 +420,9 @@ public class PromotionUATDH extends BaseTest1 {
                 WebElement campaignBox2 = wait.until(
                                 ExpectedConditions.elementToBeClickable(
                                                 By.id("promotiongeneralinfor_campaignId")));
-                campaignBox2.sendKeys("CD-0626-046");
+                campaignBox2.sendKeys("CD-1225-073");
                 wait.until(ExpectedConditions.elementToBeClickable(
-                                By.xpath("//div[contains(@class,'ant-select-item-option') and contains(.,'CD-0626-046')]")))
+                                By.xpath("//div[contains(@class,'ant-select-item-option') and contains(.,'CD-1225-073')]")))
                                 .click();
                 wait.until(ExpectedConditions.elementToBeClickable(
                                 By.xpath("//span[contains(text(),'Tiếp theo')]"))).click();
@@ -513,50 +513,67 @@ public class PromotionUATDH extends BaseTest1 {
                 giaTriInput.sendKeys("300000");
                 tc11.pass("Giá trị OK");
 
-                // Thêm điều kiện vào: Mã Ngành hàng
-                ExtentTest tc11b = test.createNode("TC11b - Thêm điều kiện: Mã Ngành hàng");
+                // Thêm điều kiện vào: Mã Nhóm hàng
+                ExtentTest tc11b = test.createNode("TC11b - Thêm điều kiện: Mã Nhóm hàng");
                 
                 // Click "+ Thêm điều kiện vào"
                 wait.until(ExpectedConditions.elementToBeClickable(
                                 By.xpath("//span[contains(text(),'Thêm điều kiện vào') or contains(text(),'Thêm điều kiện và')]"))).click();
                 
-                // Click dropdown dòng mới rồi search "Mã Ngành hàng"
+                // Click dropdown dòng mới
                 Thread.sleep(1000);
                 By dropdownLoai2 = By.xpath(
-                                "(//div[contains(@class,'ant-select-selector')]//span[contains(text(),'Chọn điều kiện') or contains(text(),'Chọn điểu kiện')])[1]/ancestor::div[contains(@class,'ant-select-selector')]");
+                                "(//div[contains(@class,'ant-select-selector')]//span[contains(text(),'Chọn điều kiện') or contains(text(),'Chọn điểu kiện')])[last()]/ancestor::div[contains(@class,'ant-select-selector')]");
                 wait.until(ExpectedConditions.elementToBeClickable(dropdownLoai2)).click();
                 
-                // Gõ tìm kiếm "Mã Ngành" trong ô search của dropdown
+                // Gõ "Mã Nhóm" rồi nhấn ENTER để chọn
                 Thread.sleep(500);
-                By searchInput = By.xpath(
-                                "//div[contains(@class,'ant-select-dropdown') and not(contains(@style,'display: none'))]//input[contains(@class,'ant-select-search') or contains(@class,'ant-input')] | //input[contains(@class,'ant-select-selection-search-input')]");
-                WebElement searchBox = wait.until(ExpectedConditions.presenceOfElementLocated(searchInput));
-                searchBox.sendKeys("Mã Ngành");
+                WebElement activeSearchInput = driver.switchTo().activeElement();
+                activeSearchInput.sendKeys("Mã Nhóm");
+                Thread.sleep(1000);
+                activeSearchInput.sendKeys(org.openqa.selenium.Keys.ENTER);
                 
+                // Chọn Phép toán: Chứa - dùng ID trực tiếp
+                Thread.sleep(1000);
+                // Click vào select element bằng ID
+                WebElement phepToanSelect = wait.until(ExpectedConditions.elementToBeClickable(
+                                By.id("includeInput_0_groupCode_1_operatorId")));
+                phepToanSelect.click();
                 Thread.sleep(500);
-                // Chọn "Mã Ngành hàng" từ kết quả
-                By optionMaNganhHang = By.xpath(
-                                "//div[contains(@class,'ant-select-item-option-content') and contains(.,'Mã Ngành hàng')]");
-                wait.until(ExpectedConditions.elementToBeClickable(optionMaNganhHang)).click();
+                phepToanSelect.sendKeys("Chứa");
+                Thread.sleep(1000);
+                phepToanSelect.sendKeys(org.openqa.selenium.Keys.ENTER);
                 
-                // Chọn Phép toán: Chứa
+                // Click nút "Sửa" bên cạnh ô "Chọn nhóm hàng" để mở popup
+                Thread.sleep(1000);
+                // Tìm input placeholder="Chọn nhóm hàng" rồi click addon "Sửa" bên cạnh
+                WebElement maNhomBtn = wait.until(ExpectedConditions.elementToBeClickable(
+                                By.xpath("//input[@placeholder='Chọn nhóm hàng']/following-sibling::span[contains(@class,'ant-input-group-addon')] | //input[@placeholder='Chọn nhóm hàng']/parent::*//span[contains(@class,'ant-input-group-addon')]")));
+                maNhomBtn.click();
+                
+                // Đợi popup xuất hiện
+                Thread.sleep(1500);
+                
+                // Search "chống nắng toàn thân" trong popup bên trái
+                WebElement searchNhom = wait.until(ExpectedConditions.elementToBeClickable(
+                                By.xpath("(//div[contains(@class,'ant-modal')]//input[contains(@placeholder,'Tìm') or contains(@placeholder,'tìm')])[1]")));
+                searchNhom.clear();
+                searchNhom.sendKeys("chống nắng toàn thân");
+                Thread.sleep(1500);
+                
+                // Click dấu + bên cạnh "CHỐNG NẮNG TOÀN THÂN"
+                WebElement addNhom = wait.until(ExpectedConditions.elementToBeClickable(
+                                By.xpath("//div[contains(@class,'ant-modal')]//tr[contains(.,'CHỐNG NẮNG TOÀN THÂN')]//span[contains(@class,'anticon-plus') or contains(@class,'anticon-plus-circle')]")));
+                addNhom.click();
                 Thread.sleep(500);
-                By dropdownPTNhom = By.xpath(
-                                "(//div[contains(@class,'ant-select-selector')]//span[contains(text(),'Chọn phép') or contains(text(),'phép toán')])[1]/ancestor::div[contains(@class,'ant-select-selector')]");
-                wait.until(ExpectedConditions.elementToBeClickable(dropdownPTNhom)).click();
-                By optionChua = By.xpath(
-                                "//div[contains(@class,'ant-select-dropdown') and not(contains(@style,'display: none'))]" +
-                                                "//div[contains(@class,'ant-select-item-option-content') and " +
-                                                "normalize-space()='Chứa']");
-                wait.until(ExpectedConditions.elementToBeClickable(optionChua)).click();
                 
-                // Nhập giá trị mã ngành hàng
+                // Click OK
+                WebElement btnOKNhom = wait.until(ExpectedConditions.elementToBeClickable(
+                                By.xpath("//div[contains(@class,'ant-modal')]//button[.//span[text()='OK']]")));
+                btnOKNhom.click();
                 Thread.sleep(500);
-                WebElement maNganhInput = wait.until(ExpectedConditions.elementToBeClickable(
-                                By.xpath("(//input[@placeholder='Chọn giá trị' or @placeholder='Giá trị' or @placeholder='Nhập giá trị'])[1]")));
-                maNganhInput.sendKeys("1880311b-e95a-e98d-b715-3a190984608c");
                 
-                tc11b.pass("Thêm Mã Ngành hàng OK");
+                tc11b.pass("Thêm Mã Nhóm hàng: 1880311b-e95a-e98d-d715-3a190984608c OK");
 
                 // Điều kiện đầu ra
                 ExtentTest tc12 = test.createNode("TC12 - Loại đầu ra: Phiếu Mua Hàng");
@@ -583,9 +600,9 @@ public class PromotionUATDH extends BaseTest1 {
                 tc13.pass("Phép toán đầu ra OK");
 
                 ExtentTest tc14 = test.createNode("TC14 - Giá trị PMH: 216216216");
-                // Click vào ô Giá trị để mở popup "Phiếu mua hàng"
+                // Click nút "Sửa" ở dòng Điều kiện đầu ra (Chọn phiếu mua hàng)
                 WebElement giaTriBtn = wait.until(ExpectedConditions.elementToBeClickable(
-                                By.xpath("//span[text()='Sửa' or text()='Chọn']/ancestor::button | //input[@value='0']/following-sibling::*[contains(text(),'Sửa')] | //button[contains(.,'Sửa')]")));
+                                By.xpath("//input[@placeholder='Chọn phiếu mua hàng']/following-sibling::span[contains(@class,'ant-input-group-addon')] | //input[contains(@placeholder,'phiếu mua hàng')]/parent::*//span[contains(@class,'addon')]")));
                 giaTriBtn.click();
                 
                 // Đợi popup xuất hiện
