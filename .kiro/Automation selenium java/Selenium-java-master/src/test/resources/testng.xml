@@ -11,7 +11,7 @@
     <test name="UAT Tests">
         <classes>
 
-           <class name="testcases.PromotionUATDH"/>
+           <class name="testcases.MudCI"/>
                  <!-- <class name="testcases.PromotionUATSP"/> -->
 
 
