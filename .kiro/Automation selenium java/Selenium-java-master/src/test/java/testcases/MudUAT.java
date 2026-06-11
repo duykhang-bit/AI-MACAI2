@@ -156,7 +156,7 @@ public class MudUAT extends BaseTest1 {
                                                                                 "/ancestor::div[contains(@class,'ant-form-item')]"
                                                                                 +
                                                                                 "//input")));
-                soluong.sendKeys("1");
+                soluong.sendKeys("15");
 
                 // GROUP CODE
                 WebElement groupcode = wait.until(

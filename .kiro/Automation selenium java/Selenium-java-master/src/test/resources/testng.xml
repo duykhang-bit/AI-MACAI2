@@ -11,7 +11,7 @@
     <test name="UAT Tests">
         <classes>
 
-           <class name="testcases.MudCI"/>
+           <class name="testcases.PromotionDHCI"/>
                  <!-- <class name="testcases.PromotionUATSP"/> -->
 
 
@@ -31,6 +31,10 @@
 === LỆNH RUN TERMINAL ===
 cd "/Users/leduykhang/Documents/Automation/AI-MAC-main/.kiro/Automation selenium java/Selenium-java-master" && rm -f test-output/ExtentReport.html && mvn test -Dfile.encoding=UTF-8
 cd ".kiro\Automation selenium java\Selenium-java-master"; mvn clean test
+
+CMD
+cd /d "C:\Users\khangld10\Documents\AI-MACAI1-main\.kiro\Automation selenium java\Selenium-java-master" & mvn clean test -Dfile.encoding=UTF-8
+
 
 
 

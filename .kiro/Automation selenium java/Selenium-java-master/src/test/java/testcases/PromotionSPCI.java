@@ -20,7 +20,7 @@ import java.time.Duration;
 
 
 @Listeners(TestListener.class)
-public class PromotionCI extends BaseTest1 {
+public class PromotionSPCI extends BaseTest1 {
 
         @Override
         protected String getBaseUrl() {
