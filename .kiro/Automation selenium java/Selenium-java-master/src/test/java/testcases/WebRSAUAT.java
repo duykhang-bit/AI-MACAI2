@@ -1,24 +1,28 @@
 package testcases;
 
-import base.BaseTest1;
-import com.aventstack.extentreports.ExtentTest;
-import listeners.TestListener;
-import org.openqa.selenium.*;
+import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.testng.Assert;
+import org.testng.ITestResult;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
-import java.time.Duration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.aventstack.extentreports.ExtentTest;
 
+import base.BaseTest1;
 import io.github.bonigarcia.wdm.WebDriverManager;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.testng.ITestResult;
-import org.testng.annotations.BeforeMethod;
+import listeners.TestListener;
 
 @Listeners(TestListener.class)
 public class WebRSAUAT extends BaseTest1 {
@@ -252,7 +256,7 @@ public class WebRSAUAT extends BaseTest1 {
                 .until(ExpectedConditions.elementToBeClickable(
                         By.cssSelector("input[type='phone']")));
         phoneInput.click();
-        phoneInput.sendKeys("0835089254");
+        phoneInput.sendKeys("0923153712");
         phoneInput.sendKeys(Keys.ENTER);
         Thread.sleep(2000);
 
