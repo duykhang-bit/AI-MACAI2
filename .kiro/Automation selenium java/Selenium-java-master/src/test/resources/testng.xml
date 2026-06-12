@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+
+<!-- parallel="classes" + thread-count="6" = 6 class chạy cùng lúc -->
+<suite name="RSA  CI Suite" verbose="1" parallel="classes" thread-count="6">
+
+    <listeners>
+        <listener class-name="listeners.TestListener"/>
+    </listeners>
+
+    <test name="UAT Tests">
+        <classes>
+
+           <class name="testcases.PromotionDHCI"/>
+                 <!-- <class name="testcases.PromotionUATSP"/> -->
+
+
+            <!-- <class name="testcases.WebRSAUAT"/>
+            <class name="testcases.WebRSAUAT1"/>
+            <class name="testcases.WebRSAUAT2"/>
+            <class name="testcases.WebRSAUAT3"/>
+            <class name="testcases.WebRSAUAT4"/>
+            <class name="testcases.WebRSAUAT5"/>
+            <class name="testcases.WebRSAUAT6"/>  -->
+        </classes>
+    </test>
+
+</suite>
+// test commit
+
+<!--
+=== LỆNH RUN TERMINAL ===
+cd "/Users/leduykhang/Documents/Automation/AI-MAC-main/.kiro/Automation selenium java/Selenium-java-master" && rm -f test-output/ExtentReport.html && mvn test -Dfile.encoding=UTF-8
+cd ".kiro\Automation selenium java\Selenium-java-master"; mvn clean test
+
+CMD
+cd /d "C:\Users\khangld10\Documents\AI-MACAI1-main\.kiro\Automation selenium java\Selenium-java-master" & mvn clean test -Dfile.encoding=UTF-8
+
+
+
+
+=== MỞ REPORT ===duykhang/Documents/Automation/AI-MAC-main/.kiro/Automation selenium java/Selenium-java-master/test-output/ExtentReport.html"
+
+open "/Users/le
+=== ĐỔI SỐ LẦN CHẠY ===
+Mở file WebRSAUAT*.java, sửa invocationCount = 2 thành số lần muốn chạy
+-->
