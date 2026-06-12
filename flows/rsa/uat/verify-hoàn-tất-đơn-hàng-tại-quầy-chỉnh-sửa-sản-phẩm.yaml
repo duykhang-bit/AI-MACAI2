@@ -1,0 +1,259 @@
+# Flow: Verify hoàn tất đơn hàng tại quầy - chỉnh sửa sản phẩm
+# Author: recorder
+# Created: 2026-06-08
+# Run: frt-test play --app rsa verify-hoàn-tất-đơn-hàng-tại-quầy-chỉnh-sửa-sản-phẩm.yaml
+
+name: Verify hoàn tất đơn hàng tại quầy - chỉnh sửa sản phẩm
+description: "Recorded flow: Verify hoàn tất đơn hàng tại quầy - chỉnh sửa sản phẩm"
+tags:
+  - recorded
+author: recorder
+created: "2026-06-08"
+config:
+  baseUrl: https://uat-rsa-web.frt.vn
+  timeout: 30000
+variables: {}
+steps:
+  - name: Navigate to https://uat-rsa-web.frt.vn
+    action: goto
+    value: https://uat-rsa-web.frt.vn
+    waitAfter: networkIdle
+  - name: "Click #mat-input-3"
+    action: click
+    selectorFallback: >-
+      #mat-input-3 || .kt-form > div:nth-of-type(3) > mat-form-field > div > div:nth-of-type(1) > div > input || div >
+      div > div > div > div > form > div:nth-of-type(3) > mat-form-field > div > div:nth-of-type(1) > div > input
+    selector: "#mat-input-3"
+  - name: "Fill #mat-input-3"
+    action: fill
+    value: chinnt3
+    selectorFallback: >-
+      #mat-input-3 || .kt-form > div:nth-of-type(3) > mat-form-field > div > div:nth-of-type(1) > div > input || div >
+      div > div > div > div > form > div:nth-of-type(3) > mat-form-field > div > div:nth-of-type(1) > div > input
+    selector: "#mat-input-3"
+  - name: "Click #mat-input-4"
+    action: click
+    selectorFallback: >-
+      #mat-input-4 || .kt-form > div:nth-of-type(4) > mat-form-field > div > div:nth-of-type(1) > div > input || div >
+      div > div > div > div > form > div:nth-of-type(4) > mat-form-field > div > div:nth-of-type(1) > div > input
+    selector: "#mat-input-4"
+  - name: "Fill #mat-input-4"
+    action: fill
+    value: "12321"
+    selectorFallback: >-
+      #mat-input-4 || .kt-form > div:nth-of-type(4) > mat-form-field > div > div:nth-of-type(1) > div > input || div >
+      div > div > div > div > form > div:nth-of-type(4) > mat-form-field > div > div:nth-of-type(1) > div > input
+    selector: "#mat-input-4"
+  - name: Click button "Đăng nhập"
+    action: click
+    selectorFallback: >-
+      #kt_login_signin_submit || .kt-login__actions > button || div > div > div > div > div > form > div:nth-of-type(7)
+      > button
+    role:
+      type: button
+      name: Đăng nhập
+    waitAfter: networkIdle
+  - name: Click button "Hoàn tất"
+    action: click
+    selectorFallback: >-
+      div:nth-of-type(2) > div > div:nth-of-type(2) > div > div:nth-of-type(2) > div:nth-of-type(3) >
+      button:nth-of-type(2)
+    role:
+      type: button
+      name: Hoàn tất
+    waitAfter: networkIdle
+  - name: Click button "Đóng"
+    action: click
+    selectorFallback: >-
+      #btn__close--modal || div:nth-of-type(3) > div > div:nth-of-type(2) > div > div:nth-of-type(2) >
+      div:nth-of-type(3) > button
+    role:
+      type: button
+      name: Đóng
+  - name: >-
+      Click .home-layout > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) >
+      div:nth-of-type(1) > a
+    action: click
+    selectorFallback: >-
+      .home-layout > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) >
+      div:nth-of-type(1) > a || div:nth-of-type(1) > div > div > section > section > main > div:nth-of-type(1) >
+      div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > a
+    selector: >-
+      .home-layout > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) >
+      div:nth-of-type(1) > a
+    waitAfter: networkIdle
+  - name: Chọn "Trần Thị Thanh Thảo (00017)" ở "Lựa chọn NV chỉ dành cho bản thử nghiệm"
+    action: selectOption
+    trigger:
+      relative:
+        form: A
+        anchor:
+          text: Lựa chọn NV chỉ dành cho bản thử nghiệm
+          dynamic: false
+        scope:
+          by: css
+          css: .ant-select-selector
+        target:
+          type: selector
+          selector: "[role=\"combobox\"]"
+      selectorFallback: "#cmb-employee"
+    value: Trần Thị Thanh Thảo (00017)
+  - name: Click ô tìm sản phẩm (F1)
+    action: click
+    selector: ".product-search-input input"
+    selectorFallback: >-
+      .product-search-input > div > span:nth-of-type(1) > input
+  - name: Nhập "para" để tìm sản phẩm
+    action: fill
+    value: para
+    selector: ".product-search-input input"
+    selectorFallback: >-
+      .product-search-input > div > span:nth-of-type(1) > input
+    delay: 2500
+  - name: Chọn PARACETAMOL STADA 500MG theo đơn vị Hộp (49,000 ₫/Hộp)
+    # Dropdown gộp 3 đơn vị (Viên/Vỉ/Hộp) trong 1 option; phải click đúng ô giá
+    # "49,000 ₫/Hộp" để thêm sản phẩm với đơn vị Hộp (click cả option -> mặc định Viên).
+    action: click
+    force: true
+    selector: 'text="49,000 ₫/Hộp"'
+    selectorFallback: >-
+      .unit__search--product:has-text('49,000 ₫/Hộp') || p:has-text('49,000 ₫/Hộp')
+    delay: 1500
+  - name: Tăng số lượng lần 1 (1 -> 2)
+    action: click
+    selector: "button.button-change-value:has-text('+')"
+    selectorFallback: ".item-quantity > span > button:nth-of-type(2)"
+    delay: 300
+  - name: Tăng số lượng lần 2 (2 -> 3)
+    action: click
+    selector: "button.button-change-value:has-text('+')"
+    selectorFallback: ".item-quantity > span > button:nth-of-type(2)"
+    delay: 300
+  - name: Tăng số lượng lần 3 (3 -> 4)
+    action: click
+    selector: "button.button-change-value:has-text('+')"
+    selectorFallback: ".item-quantity > span > button:nth-of-type(2)"
+    delay: 300
+  - name: Tăng số lượng lần 4 (4 -> 5)
+    action: click
+    selector: "button.button-change-value:has-text('+')"
+    selectorFallback: ".item-quantity > span > button:nth-of-type(2)"
+    delay: 300
+  - name: Tăng số lượng lần 5 (5 -> 6)
+    action: click
+    selector: "button.button-change-value:has-text('+')"
+    selectorFallback: ".item-quantity > span > button:nth-of-type(2)"
+    delay: 300
+  - name: Tăng số lượng lần 6 (6 -> 7)
+    action: click
+    selector: "button.button-change-value:has-text('+')"
+    selectorFallback: ".item-quantity > span > button:nth-of-type(2)"
+    delay: 300
+  - name: Tăng số lượng lần 7 (7 -> 8)
+    action: click
+    selector: "button.button-change-value:has-text('+')"
+    selectorFallback: ".item-quantity > span > button:nth-of-type(2)"
+    delay: 300
+  - name: Tăng số lượng lần 8 (8 -> 9)
+    action: click
+    selector: "button.button-change-value:has-text('+')"
+    selectorFallback: ".item-quantity > span > button:nth-of-type(2)"
+    delay: 300
+  - name: Tăng số lượng lần 9 (9 -> 10)
+    action: click
+    selector: "button.button-change-value:has-text('+')"
+    selectorFallback: ".item-quantity > span > button:nth-of-type(2)"
+    delay: 300
+  - name: Click placeholder "Số điện thoại (F2)"
+    action: click
+    selectorFallback: >-
+      [id^="focus__phone--number_session"] || .c-info-form > div:nth-of-type(1) > div > div > div > div > div > input ||
+      div:nth-of-type(1) > div > div > section > section > main > div > div > div:nth-of-type(2) > div > div >
+      div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > form > div > div:nth-of-type(1) > div > div > div >
+      div > div > input
+    placeholder: Số điện thoại (F2)
+  - name: Fill placeholder "Số điện thoại (F2)"
+    action: fill
+    value: "0972675947"
+    selectorFallback: >-
+      [id^="focus__phone--number_session"] || .c-info-form > div:nth-of-type(1) > div > div > div > div:nth-of-type(1) >
+      div > input || div:nth-of-type(1) > div > div > section > section > main > div > div > div:nth-of-type(2) > div >
+      div > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > form > div > div:nth-of-type(1) > div > div >
+      div > div:nth-of-type(1) > div > input
+    placeholder: Số điện thoại (F2)
+    pressAfter: Tab
+    waitAfter: networkIdle
+    delay: 3500
+  # Đã bỏ bước "Click [role=tabpanel]" (artifact recorder): nó click sang tabpanel khác
+  # làm mất context đơn, khiến bấm "Tạo đơn" không mở được màn thanh toán.
+  - name: Click button "Tạo đơn (F4)"
+    action: click
+    selector: "button:has-text('Tạo đơn (F4)')"
+    selectorFallback: >-
+      button:has-text('Tạo đơn') || [id^="create-order_session"]
+    waitAfter: networkIdle
+    delay: 5000
+    timeout: 30000
+  - name: Wait màn payment hiện input tiền mặt
+    action: assert
+    assertType: visible
+    selector: "input.input-price-payment.float-right"
+    selectorFallback: "input[id^='payment-cash-input']"
+    timeout: 30000
+  - name: Fill ".float-right" trong "Tiền mặt khách đưa"
+    action: fill
+    value: "500000"
+    selector: "input.input-price-payment.float-right"
+    selectorFallback: >-
+      input[id^="payment-cash-input"] || .ant-input.float-right:not([disabled])
+    pressAfter: Tab
+  - name: Click button "Hoàn tất (F4)"
+    action: click
+    selectorFallback: >-
+      [id^="btn__finish--F4"] || #btn-finish > button || div:nth-of-type(1) > div > div > section > section > main > div
+      > div > div:nth-of-type(2) > div > div > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > button
+    role:
+      type: button
+      name: Hoàn tất (F4)
+  - name: Chọn "Trần Thị Thanh Thảo (00017)" ở "Lựa chọn NV chỉ dành cho bản thử nghiệm"
+    action: selectOption
+    trigger:
+      relative:
+        form: B
+        anchor:
+          text: Lựa chọn NV chỉ dành cho bản thử nghiệm
+          dynamic: false
+        ancestor:
+          xpath: xpath=ancestor::*[contains(concat(" ",normalize-space(@class)," ")," ant-select-selector ")][1]
+      selectorFallback: >-
+        .sc-jgbSNz > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div > div || div:nth-of-type(4) >
+        div > div:nth-of-type(2) > div > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div > div
+    value: Trần Thị Thanh Thảo (00017)
+  - name: Click vào "Mã ĐH" trên popup hoàn tất để mở chi tiết đơn hàng
+    # Click h4 "Mã ĐH: <số đơn>" -> redirect sang /open-orders/history-orders/<id>
+    action: click
+    selector: ".text-center > h4"
+    selectorFallback: >-
+      .ant-modal .text-center h4 || div:nth-of-type(4) > div > div:nth-of-type(2) > div > div:nth-of-type(2) >
+      div:nth-of-type(1) > div > div:nth-of-type(1) > h4
+    waitAfter: networkIdle
+    delay: 5000
+  - name: Verify đã chuyển sang màn "Chi tiết đơn hàng"
+    action: assert
+    assertType: visible
+    selector: "text=Chi tiết đơn hàng"
+    timeout: 30000
+  - name: Verify URL là màn lịch sử/chi tiết đơn hàng
+    action: assert
+    assertType: url
+    expected: history-orders
+    timeout: 30000
+  - name: Đợi load đầy đủ thông tin đơn hàng
+    action: wait
+    delay: 5000
+assertions: []
+recorded_against:
+  app: rsa
+  env: uat
+  url: https://uat-rsa-web.frt.vn
+  date: "2026-06-08"
