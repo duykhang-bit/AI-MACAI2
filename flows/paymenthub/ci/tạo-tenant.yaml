@@ -1,0 +1,218 @@
+# Flow: tạo tenant
+# Author: recorder
+# Created: 2026-06-12
+# Run: frt-test play --app paymenthub tạo-tenant.yaml
+
+name: tạo tenant
+description: "Recorded flow: tạo tenant"
+tags:
+  - recorded
+author: recorder
+created: "2026-06-12"
+config:
+  baseUrl: http://ci-paymenthub-portal-web.frt.local
+  timeout: 30000
+variables: {}
+steps:
+  - name: Navigate to http://ci-paymenthub-portal-web.frt.local
+    action: goto
+    value: http://ci-paymenthub-portal-web.frt.local
+    waitAfter: networkIdle
+  - name: Click placeholder "Tài khoản"
+    action: click
+    selectorFallback: >-
+      #username || #root > div > div > form > div:nth-of-type(1) > div > div > div > div > span > input || div > div >
+      div > form > div:nth-of-type(1) > div > div > div > div > span > input
+    placeholder: Tài khoản
+  - name: Fill placeholder "Tài khoản"
+    action: fill
+    value: admin
+    selectorFallback: >-
+      #username || #root > div > div > form > div:nth-of-type(1) > div > div > div > div > span > input || div > div >
+      div > form > div:nth-of-type(1) > div > div > div > div > span > input
+    placeholder: Tài khoản
+  - name: "Click #root > div > div > form > div:nth-of-type(2) > div > div > div > div > span"
+    action: click
+    selectorFallback: >-
+      #root > div > div > form > div:nth-of-type(2) > div > div > div > div > span || div > div > div > form >
+      div:nth-of-type(2) > div > div > div > div > span
+    selector: "#root > div > div > form > div:nth-of-type(2) > div > div > div > div > span"
+  - name: Click placeholder "Mật khẩu"
+    action: click
+    selectorFallback: >-
+      #password || #root > div > div > form > div:nth-of-type(2) > div > div > div > div > span > input || div > div >
+      div > form > div:nth-of-type(2) > div > div > div > div > span > input
+    placeholder: Mật khẩu
+  - name: Fill placeholder "Mật khẩu"
+    action: fill
+    value: FrtP@ssw0rd123
+    selectorFallback: >-
+      #password || #root > div > div > form > div:nth-of-type(2) > div > div > div > div > span > input || div > div >
+      div > form > div:nth-of-type(2) > div > div > div > div > span > input
+    placeholder: Mật khẩu
+    pressAfter: Enter
+  - name: "Click #root > div > aside > div > ul"
+    action: click
+    selectorFallback: "#root > div > aside > div > ul || div > div > aside > div > ul"
+    selector: "#root > div > aside > div > ul"
+  - name: Click menuitem "Quản lý Tenants"
+    action: click
+    selectorFallback: >-
+      #root > div > aside > div > ul > li:nth-of-type(2) > ul > li:nth-of-type(1) || div > div > aside > div > ul >
+      li:nth-of-type(2) > ul > li:nth-of-type(1)
+    role:
+      type: menuitem
+      name: Quản lý Tenants
+    waitAfter: networkIdle
+  - name: Click button "+ Tạo Tenant Mới"
+    action: click
+    selectorFallback: >-
+      #root > div > div > main > div > div:nth-of-type(1) > button || div > div > div > main > div > div:nth-of-type(1)
+      > button
+    role:
+      type: button
+      name: + Tạo Tenant Mới
+  - name: Fill "input[type="text"]" trong "Tenant Code"
+    action: fill
+    value: fpt
+    selectorFallback: >-
+      #tenantCode || div:nth-of-type(2) > div > div:nth-of-type(2) > div > div:nth-of-type(1) > div > div:nth-of-type(2)
+      > form > div:nth-of-type(1) > div > div:nth-of-type(2) > div > div > input
+    relative:
+      form: A
+      anchor:
+        text: Tenant Code
+        dynamic: false
+      scope:
+        by: css
+        css: .ant-row
+      target:
+        type: selector
+        selector: input[type="text"]
+  - name: Click "input[type="text"]" trong "Tenant Name"
+    action: click
+    selectorFallback: >-
+      #tenantName || div:nth-of-type(2) > div > div:nth-of-type(2) > div > div:nth-of-type(1) > div > div:nth-of-type(2)
+      > form > div:nth-of-type(2) > div > div:nth-of-type(2) > div > div > input
+    relative:
+      form: A
+      anchor:
+        text: Tenant Name
+        dynamic: false
+      scope:
+        by: css
+        css: .ant-row
+      target:
+        type: selector
+        selector: input[type="text"]
+  - name: Fill "input[type="text"]" trong "Tenant Name"
+    action: fill
+    value: fpt
+    selectorFallback: >-
+      #tenantName || div:nth-of-type(2) > div > div:nth-of-type(2) > div > div:nth-of-type(1) > div > div:nth-of-type(2)
+      > form > div:nth-of-type(2) > div > div:nth-of-type(2) > div > div > input
+    relative:
+      form: A
+      anchor:
+        text: Tenant Name
+        dynamic: false
+      scope:
+        by: css
+        css: .ant-row
+      target:
+        type: selector
+        selector: input[type="text"]
+  - name: Click dialog "👥 Thêm Đối Tác Hệ Thống (Tenant) Mới"
+    action: click
+    selectorFallback: div:nth-of-type(2) > div > div:nth-of-type(2) > div
+    role:
+      type: dialog
+      name: 👥 Thêm Đối Tác Hệ Thống (Tenant) Mới
+  - name: Click "input[type="text"]" trong "Webhook URL"
+    action: click
+    selectorFallback: >-
+      #webhookUrl || div:nth-of-type(2) > div > div:nth-of-type(2) > div > div:nth-of-type(1) > div > div:nth-of-type(2)
+      > form > div:nth-of-type(3) > div > div:nth-of-type(2) > div > div > input
+    relative:
+      form: A
+      anchor:
+        text: Webhook URL
+        dynamic: false
+      scope:
+        by: css
+        css: .ant-row
+      target:
+        type: selector
+        selector: input[type="text"]
+  - name: Fill "input[type="text"]" trong "Webhook URL"
+    action: fill
+    value: http://ci-paymenthub-portal-web.frt.local/
+    selectorFallback: >-
+      #webhookUrl || div:nth-of-type(2) > div > div:nth-of-type(2) > div > div:nth-of-type(1) > div > div:nth-of-type(2)
+      > form > div:nth-of-type(3) > div > div:nth-of-type(2) > div > div > input
+    relative:
+      form: A
+      anchor:
+        text: Webhook URL
+        dynamic: false
+      scope:
+        by: css
+        css: .ant-row
+      target:
+        type: selector
+        selector: input[type="text"]
+  - name: Click button "Xác nhận tạo"
+    action: click
+    selectorFallback: >-
+      div:nth-of-type(2) > div > div:nth-of-type(2) > div > div:nth-of-type(1) > div > div:nth-of-type(3) >
+      button:nth-of-type(2)
+    role:
+      type: button
+      name: Xác nhận tạo
+  - name: Click "input[type="text"]" trong "Tenant Code"
+    action: click
+    selectorFallback: >-
+      #tenantCode || div:nth-of-type(2) > div > div:nth-of-type(2) > div > div:nth-of-type(1) > div > div:nth-of-type(2)
+      > form > div:nth-of-type(1) > div > div:nth-of-type(2) > div > div > input
+    relative:
+      form: A
+      anchor:
+        text: Tenant Code
+        dynamic: false
+      scope:
+        by: css
+        css: .ant-row
+      target:
+        type: selector
+        selector: input[type="text"]
+  - name: Fill "input[type="text"]" trong "Tenant Code"
+    action: fill
+    value: fptd
+    selectorFallback: >-
+      #tenantCode || div:nth-of-type(2) > div > div:nth-of-type(2) > div > div:nth-of-type(1) > div > div:nth-of-type(2)
+      > form > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div > input
+    relative:
+      form: A
+      anchor:
+        text: Tenant Code
+        dynamic: false
+      scope:
+        by: css
+        css: .ant-row
+      target:
+        type: selector
+        selector: input[type="text"]
+  - name: Click button "Xác nhận tạo"
+    action: click
+    selectorFallback: >-
+      div:nth-of-type(2) > div > div:nth-of-type(2) > div > div:nth-of-type(1) > div > div:nth-of-type(3) >
+      button:nth-of-type(2)
+    role:
+      type: button
+      name: Xác nhận tạo
+assertions: []
+recorded_against:
+  app: paymenthub
+  env: ci
+  url: http://ci-paymenthub-portal-web.frt.local
+  date: "2026-06-12"
