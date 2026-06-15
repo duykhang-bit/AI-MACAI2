@@ -1,0 +1,142 @@
+# Flow: them-moi-dia-chi-khach-hang
+# Author: recorder
+# Created: 2026-06-15
+# Run: frt-test play --app rsa-ecom them-moi-dia-chi-khach-hang.yaml
+
+name: them-moi-dia-chi-khach-hang
+description: "Recorded flow: them-moi-dia-chi-khach-hang"
+tags:
+  - recorded
+author: recorder
+created: "2026-06-15"
+config:
+  baseUrl: https://uat-rsa-ecom.frt.vn
+  timeout: 30000
+variables: {}
+steps:
+  - name: Navigate to https://uat-rsa-ecom.frt.vn
+    action: goto
+    value: https://uat-rsa-ecom.frt.vn
+    waitAfter: networkIdle
+  - name: "Click #mat-input-3"
+    action: click
+    selectorFallback: >-
+      #mat-input-3 || .kt-form > div:nth-of-type(3) > mat-form-field > div > div:nth-of-type(1) > div > input || div >
+      div > div > div > div > form > div:nth-of-type(3) > mat-form-field > div > div:nth-of-type(1) > div > input
+    selector: "#mat-input-3"
+  - name: "Fill #mat-input-3"
+    action: fill
+    value: tinvt4
+    selectorFallback: >-
+      #mat-input-3 || .kt-form > div:nth-of-type(3) > mat-form-field > div > div:nth-of-type(1) > div > input || div >
+      div > div > div > div > form > div:nth-of-type(3) > mat-form-field > div > div:nth-of-type(1) > div > input
+    selector: "#mat-input-3"
+  - name: Press Tab
+    action: keyboard
+    key: Tab
+  - name: "Fill #mat-input-4"
+    action: fill
+    value: "123"
+    selectorFallback: >-
+      #mat-input-4 || .kt-form > div:nth-of-type(4) > mat-form-field > div > div:nth-of-type(1) > div > input || div >
+      div > div > div > div > form > div:nth-of-type(4) > mat-form-field > div > div:nth-of-type(1) > div > input
+    selector: "#mat-input-4"
+    pressAfter: Enter
+  - name: Click "main > div > div:nth-of-type(2) > div:nth-of-type(1) > a > p" trong "Danh sách trả hàng"
+    action: click
+    selectorFallback: >-
+      .rounded > div:nth-of-type(2) > div:nth-of-type(1) > a > p || div:nth-of-type(1) > div > div > section > section >
+      main > div > div:nth-of-type(2) > div:nth-of-type(1) > a > p
+    relative:
+      form: A
+      anchor:
+        text: Danh sách trả hàng
+        dynamic: false
+      scope:
+        by: css
+        css: .ant-layout
+      target:
+        type: selector
+        selector: main > div > div:nth-of-type(2) > div:nth-of-type(1) > a > p
+    waitAfter: networkIdle
+  - name: Click placeholder "Số điện thoại"
+    action: click
+    selectorFallback: >-
+      [id^="focus__phone--number_session"] || .c-info-form > div:nth-of-type(1) > div > div > div > div > div > input ||
+      div:nth-of-type(1) > div > div > section > section > main > div > div > div:nth-of-type(2) > div > div >
+      div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(1) > form > div > div:nth-of-type(1) > div > div > div >
+      div > div > input
+    placeholder: Số điện thoại
+  - name: Fill placeholder "Số điện thoại"
+    action: fill
+    value: "0932916862"
+    selectorFallback: >-
+      [id^="focus__phone--number_session"] || .c-info-form > div:nth-of-type(1) > div > div > div > div > div > input ||
+      div:nth-of-type(1) > div > div > section > section > main > div > div > div:nth-of-type(2) > div > div >
+      div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(1) > form > div > div:nth-of-type(1) > div > div > div >
+      div > div > input
+    placeholder: Số điện thoại
+  - name: Click "tbody > tr > th" trong "STT"
+    action: click
+    selectorFallback: "[id^=\"table-main-products-session\"] > tr > th"
+    relative:
+      form: A
+      anchor:
+        text: STT
+        dynamic: false
+      scope:
+        by: css
+        css: .w-full
+      target:
+        type: selector
+        selector: tbody > tr > th
+  - name: Click ".action-add-address" trong "Địa chỉ nhận"
+    action: click
+    selectorFallback: .action-add-address
+    relative:
+      form: A
+      anchor:
+        text: Địa chỉ nhận
+        dynamic: false
+      scope:
+        by: css
+        css: .ant-spin-container
+      target:
+        type: selector
+        selector: .action-add-address
+  - name: Nhập địa chỉ tìm kiếm từng ký tự
+    action: fill
+    value: "128 le van luong"
+    selector: "#rc_select_1"
+    selectorFallback: >-
+      #rc_select_1 || .address-autocomplete > div > span:nth-of-type(1) > input
+    typeMode: true
+  - name: Chọn suggestion đầu tiên
+    action: click
+    selector: ".rc-virtual-list-holder-inner > div:nth-of-type(1)"
+    selectorFallback: ".ant-select-dropdown .ant-select-item-option:first-child || div.ant-select-item:first-child"
+    timeout: 20000
+  - name: Click button "Lưu"
+    action: click
+    selectorFallback: >-
+      .sc-kAyceB > div:nth-of-type(2) > div:nth-of-type(3) > button || div:nth-of-type(3) > div > div:nth-of-type(2) >
+      div > div:nth-of-type(2) > div:nth-of-type(3) > button
+    role:
+      type: button
+      name: Lưu
+  - name: Verify "168 Đường Lê Văn Lương, Phường Tân Hưng, Quận 7"
+    action: assert
+    assertType: visible
+    expected: 168 Đường Lê Văn Lương, Phường Tân Hưng, Quận 7
+    selectorFallback: >-
+      .address--detail || .address--container > div > div > div:nth-of-type(2) > div > div > label > span:nth-of-type(2)
+      > div:nth-of-type(1) || div:nth-of-type(1) > div > div > section > section > main > div > div > div:nth-of-type(2)
+      > div > div > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(4) > div:nth-of-type(2) > div > div > div
+      > div:nth-of-type(2) > div > div > label > span:nth-of-type(2) > div:nth-of-type(1)
+    selector: .address--detail
+assertions: []
+recorded_against:
+  app: rsa-ecom
+  env: uat
+  url: https://uat-rsa-ecom.frt.vn
+  date: "2026-06-15"
