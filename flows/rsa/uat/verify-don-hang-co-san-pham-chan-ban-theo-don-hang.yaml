@@ -1,0 +1,366 @@
+# Flow: verify-don-hang-co-san-pham-chan-ban-theo-don-hang
+# Author: recorder
+# Created: 2026-06-15
+# Run: frt-test play --app rsa verify-don-hang-co-san-pham-chan-ban-theo-don-hang.yaml
+
+name: verify-don-hang-co-san-pham-chan-ban-theo-don-hang
+description: "Recorded flow: verify-don-hang-co-san-pham-chan-ban-theo-don-hang"
+tags:
+  - recorded
+author: recorder
+created: "2026-06-15"
+config:
+  baseUrl: https://uat-rsa-web.frt.vn
+  timeout: 30000
+variables: {}
+steps:
+  - name: Navigate to https://uat-rsa-web.frt.vn
+    action: goto
+    value: https://uat-rsa-web.frt.vn
+    waitAfter: networkIdle
+  - name: "Click #mat-input-3"
+    action: click
+    selectorFallback: >-
+      #mat-input-3 || .kt-form > div:nth-of-type(3) > mat-form-field > div > div:nth-of-type(1) > div > input || div >
+      div > div > div > div > form > div:nth-of-type(3) > mat-form-field > div > div:nth-of-type(1) > div > input
+    selector: "#mat-input-3"
+  - name: "Fill #mat-input-3"
+    action: fill
+    value: lanttp
+    selectorFallback: >-
+      #mat-input-3 || .kt-form > div:nth-of-type(3) > mat-form-field > div > div:nth-of-type(1) > div > input || div >
+      div > div > div > div > form > div:nth-of-type(3) > mat-form-field > div > div:nth-of-type(1) > div > input
+    selector: "#mat-input-3"
+  - name: "Click #mat-input-4"
+    action: click
+    selectorFallback: >-
+      #mat-input-4 || .kt-form > div:nth-of-type(4) > mat-form-field > div > div:nth-of-type(1) > div > input || div >
+      div > div > div > div > form > div:nth-of-type(4) > mat-form-field > div > div:nth-of-type(1) > div > input
+    selector: "#mat-input-4"
+  - name: "Fill #mat-input-4"
+    action: fill
+    value: "123"
+    selectorFallback: >-
+      #mat-input-4 || .kt-form > div:nth-of-type(4) > mat-form-field > div > div:nth-of-type(1) > div > input || div >
+      div > div > div > div > form > div:nth-of-type(4) > mat-form-field > div > div:nth-of-type(1) > div > input
+    selector: "#mat-input-4"
+  - name: Click button "Đăng nhập"
+    action: click
+    selectorFallback: >-
+      #kt_login_signin_submit || .kt-login__actions > button || div > div > div > div > div > form > div:nth-of-type(7)
+      > button
+    role:
+      type: button
+      name: Đăng nhập
+    waitAfter: networkIdle
+  - name: Chọn "80006 - LC HCM 72 Tân Mỹ, P. Tân Mỹ" ở "Chọn Shop"
+    action: selectOption
+    trigger:
+      relative:
+        form: A
+        anchor:
+          text: Chọn Shop
+          dynamic: false
+        scope:
+          by: css
+          css: .ant-select-selector
+        target:
+          type: selector
+          selector: "[role=\"combobox\"]"
+      selectorFallback: >-
+        #shopCode || #chooseForm > div:nth-of-type(1) > div > div:nth-of-type(2) > div > div > div > div >
+        span:nth-of-type(1) > input || div:nth-of-type(2) > div > div:nth-of-type(2) > div > div:nth-of-type(2) >
+        div:nth-of-type(2) > form > div:nth-of-type(1) > div > div:nth-of-type(2) > div > div > div > div >
+        span:nth-of-type(1) > input
+    value: 80006 - LC HCM 72 Tân Mỹ, P. Tân Mỹ
+    search: true
+    searchText: "80006"
+  - name: Click button "Hoàn tất"
+    action: click
+    selectorFallback: >-
+      div:nth-of-type(2) > div > div:nth-of-type(2) > div > div:nth-of-type(2) > div:nth-of-type(3) >
+      button:nth-of-type(2)
+    role:
+      type: button
+      name: Hoàn tất
+    waitAfter: networkIdle
+  - name: Click button "Đóng"
+    action: click
+    selectorFallback: >-
+      #btn__close--modal || div:nth-of-type(3) > div > div:nth-of-type(2) > div > div:nth-of-type(2) >
+      div:nth-of-type(3) > button
+    role:
+      type: button
+      name: Đóng
+  - name: >-
+      Click .home-layout > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) >
+      div:nth-of-type(1) > a
+    action: click
+    selectorFallback: >-
+      .home-layout > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) >
+      div:nth-of-type(1) > a || div:nth-of-type(1) > div > div > section > section > main > div:nth-of-type(1) >
+      div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > a
+    selector: >-
+      .home-layout > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) >
+      div:nth-of-type(1) > a
+    waitAfter: networkIdle
+  - name: Click "[role="combobox"]" trong "Lựa chọn NV chỉ dành cho bản thử nghiệm"
+    action: click
+    selectorFallback: "#cmb-employee"
+    relative:
+      form: A
+      anchor:
+        text: Lựa chọn NV chỉ dành cho bản thử nghiệm
+        dynamic: false
+      scope:
+        by: css
+        css: .ant-select-selector
+      target:
+        type: selector
+        selector: "[role=\"combobox\"]"
+  - name: Scroll element .rc-virtual-list-holder
+    action: scroll
+    scrollTo:
+      x: 0
+      "y": 200
+    selector: .rc-virtual-list-holder
+  - name: Fill "[role="combobox"]" trong "Lựa chọn NV chỉ dành cho bản thử nghiệm"
+    action: fill
+    value: "43150"
+    selectorFallback: "#cmb-employee"
+    relative:
+      form: A
+      anchor:
+        text: Lựa chọn NV chỉ dành cho bản thử nghiệm
+        dynamic: false
+      scope:
+        by: css
+        css: .ant-select-selector
+      target:
+        type: selector
+        selector: "[role=\"combobox\"]"
+  - name: Click mục trong "Tôn Thị Nhựt Ý (43150)"
+    action: click
+    selectorFallback: >-
+      .rc-virtual-list-holder-inner > div || div:nth-of-type(4) > div > div > div > div:nth-of-type(2) > div > div > div
+      > div
+    relative:
+      form: B
+      anchor:
+        text: Tôn Thị Nhựt Ý (43150)
+        dynamic: false
+      ancestor:
+        xpath: xpath=ancestor::*[contains(concat(" ",normalize-space(@class)," ")," ant-select-item ")][1]
+  - name: Click "[role="combobox"]" trong "Nhập tên, barcode hoặc mã thuốc (F1)"
+    action: click
+    selectorFallback: .product-search-input > div > span:nth-of-type(1) > input
+    relative:
+      form: A
+      anchor:
+        text: Nhập tên, barcode hoặc mã thuốc (F1)
+        dynamic: false
+      scope:
+        by: css
+        css: .ant-select-selector
+      target:
+        type: selector
+        selector: "[role=\"combobox\"]"
+  - name: Fill "[role="combobox"]" trong "Nhập tên, barcode hoặc mã thuốc (F1)"
+    action: fill
+    value: "00029001"
+    selectorFallback: .product-search-input > div > span:nth-of-type(1) > input
+    relative:
+      form: A
+      anchor:
+        text: Nhập tên, barcode hoặc mã thuốc (F1)
+        dynamic: false
+      scope:
+        by: css
+        css: .ant-select-selector
+      target:
+        type: selector
+        selector: "[role=\"combobox\"]"
+    waitAfter: 2000
+  - name: Chọn sản phẩm 00029001 từ kết quả search
+    action: click
+    selector: ".search-input-dropdown .sc-jdAMXn:first-child .mb-0"
+    selectorFallback: >-
+      .search-input-dropdown > div > div:nth-of-type(3) > div:nth-of-type(1) > div > div > div:nth-of-type(1) .mb-0 ||
+      .search-input-dropdown .sc-jdAMXn .mb-0
+  - name: Chọn "Hộp" ở "Tồn:"
+    action: selectOption
+    trigger:
+      relative:
+        form: A
+        anchor:
+          text: "Tồn:"
+          dynamic: false
+        scope:
+          by: css
+          css: .sc-ivTmOn
+        target:
+          type: selector
+          selector: div:nth-of-type(1) > div:nth-of-type(4) > div > div > span:nth-of-type(2)
+      selectorFallback: >-
+        .sc-llJcti > div:nth-of-type(4) > div > div > span:nth-of-type(2) || div:nth-of-type(1) > div > div > section >
+        section > main > div > div > div:nth-of-type(2) > div > div > div:nth-of-type(2) > div:nth-of-type(1) > div >
+        div > div > div > div > div:nth-of-type(2) > table > tbody > tr:nth-of-type(2) > td > div:nth-of-type(1) >
+        div:nth-of-type(4) > div > div > span:nth-of-type(2)
+    value: Hộp
+    waitAfter: 3000
+  - name: Click tăng số lượng lần 1 (qty=2)
+    action: click
+    selectorFallback: >-
+      .item-quantity > span > button:nth-of-type(2) || div:nth-of-type(1) > div > div > section > section > main > div >
+      div > div:nth-of-type(2) > div > div > div:nth-of-type(2) > div:nth-of-type(1) > div > div > div > div > div >
+      div:nth-of-type(2) > table > tbody > tr:nth-of-type(2) > td > div:nth-of-type(1) > div:nth-of-type(5) > div > span
+      > button:nth-of-type(2)
+    relative:
+      form: A
+      anchor:
+        text: "Tồn:"
+        dynamic: false
+      scope:
+        by: css
+        css: .sc-iIPllB
+      target:
+        type: selector
+        selector: div > span > button:nth-of-type(2)
+  - name: Click tăng số lượng lần 2 (qty=3)
+    action: click
+    selectorFallback: >-
+      .item-quantity > span > button:nth-of-type(2) || div:nth-of-type(1) > div > div > section > section > main > div >
+      div > div:nth-of-type(2) > div > div > div:nth-of-type(2) > div:nth-of-type(1) > div > div > div > div > div >
+      div:nth-of-type(2) > table > tbody > tr:nth-of-type(2) > td > div:nth-of-type(1) > div:nth-of-type(5) > div > span
+      > button:nth-of-type(2)
+    relative:
+      form: A
+      anchor:
+        text: "Tồn:"
+        dynamic: false
+      scope:
+        by: css
+        css: .sc-iIPllB
+      target:
+        type: selector
+        selector: div > span > button:nth-of-type(2)
+  - name: Click tăng số lượng lần 3 (qty=4)
+    action: click
+    selectorFallback: >-
+      .item-quantity > span > button:nth-of-type(2) || div:nth-of-type(1) > div > div > section > section > main > div >
+      div > div:nth-of-type(2) > div > div > div:nth-of-type(2) > div:nth-of-type(1) > div > div > div > div > div >
+      div:nth-of-type(2) > table > tbody > tr:nth-of-type(2) > td > div:nth-of-type(1) > div:nth-of-type(5) > div > span
+      > button:nth-of-type(2)
+    relative:
+      form: A
+      anchor:
+        text: "Tồn:"
+        dynamic: false
+      scope:
+        by: css
+        css: .sc-iIPllB
+      target:
+        type: selector
+        selector: div > span > button:nth-of-type(2)
+  - name: Click tăng số lượng lần 4 (qty=5)
+    action: click
+    selectorFallback: >-
+      .item-quantity > span > button:nth-of-type(2) || div:nth-of-type(1) > div > div > section > section > main > div >
+      div > div:nth-of-type(2) > div > div > div:nth-of-type(2) > div:nth-of-type(1) > div > div > div > div > div >
+      div:nth-of-type(2) > table > tbody > tr:nth-of-type(2) > td > div:nth-of-type(1) > div:nth-of-type(5) > div > span
+      > button:nth-of-type(2)
+    relative:
+      form: A
+      anchor:
+        text: "Tồn:"
+        dynamic: false
+      scope:
+        by: css
+        css: .sc-iIPllB
+      target:
+        type: selector
+        selector: div > span > button:nth-of-type(2)
+  - name: Click tăng số lượng lần 5 (qty=6)
+    action: click
+    selectorFallback: >-
+      .item-quantity > span > button:nth-of-type(2) || div:nth-of-type(1) > div > div > section > section > main > div >
+      div > div:nth-of-type(2) > div > div > div:nth-of-type(2) > div:nth-of-type(1) > div > div > div > div > div >
+      div:nth-of-type(2) > table > tbody > tr:nth-of-type(2) > td > div:nth-of-type(1) > div:nth-of-type(5) > div > span
+      > button:nth-of-type(2)
+    relative:
+      form: A
+      anchor:
+        text: "Tồn:"
+        dynamic: false
+      scope:
+        by: css
+        css: .sc-iIPllB
+      target:
+        type: selector
+        selector: div > span > button:nth-of-type(2)
+  - name: Click placeholder "Số điện thoại (F2)"
+    action: click
+    selectorFallback: >-
+      [id^="focus__phone--number_session"] || .c-info-form > div:nth-of-type(1) > div > div > div > div > div > input ||
+      div:nth-of-type(1) > div > div > section > section > main > div > div > div:nth-of-type(2) > div > div >
+      div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > form > div > div:nth-of-type(1) > div > div > div >
+      div > div > input
+    placeholder: Số điện thoại (F2)
+  - name: Fill placeholder "Số điện thoại (F2)"
+    action: fill
+    value: "0983939492"
+    selectorFallback: >-
+      [id^="focus__phone--number_session"] || .c-info-form > div:nth-of-type(1) > div > div > div > div > div > input ||
+      div:nth-of-type(1) > div > div > section > section > main > div > div > div:nth-of-type(2) > div > div >
+      div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > form > div > div:nth-of-type(1) > div > div > div >
+      div > div > input
+    placeholder: Số điện thoại (F2)
+    pressAfter: Tab
+    waitAfter: networkIdle
+    delay: 1500
+  - name: Press Escape để đóng dropdown
+    action: keyboard
+    key: Escape
+    waitAfter: 1000
+  - name: Click vùng trống để dismiss overlay
+    action: click
+    selector: ".ant-layout-content"
+    selectorFallback: ".site-layout-background"
+    waitAfter: 1000
+  - name: Click button "Tạo đơn (F4)"
+    action: click
+    selector: ".p-continues-btn"
+    selectorFallback: >-
+      button.p-continues-btn || [id^="create-order_session"] || #btn-next > button
+    timeout: 30000
+    force: true
+    delay: 2000
+  - name: |-
+      Verify "Sản phẩm vượt quá số lượng cho phép bán:
+      00029001 "
+    action: assert
+    assertType: visible
+    expected: |-
+      Sản phẩm vượt quá số lượng cho phép bán:
+      00029001 
+    selectorFallback: .msg-alert > div > div || div:nth-of-type(2) > div > div > div > div > div
+    selector: .msg-alert > div > div
+    timeout: 5000
+  - name: Verify "Gửi yêu cầu bán vượt"
+    action: assert
+    assertType: text
+    expected: Gửi yêu cầu bán vượt
+    selectorFallback: >-
+      .mb-2 || #btn-next > button:nth-of-type(1) || div:nth-of-type(1) > div > div > section > section > main > div >
+      div > div:nth-of-type(2) > div > div > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(5) >
+      button:nth-of-type(1)
+    role:
+      type: button
+      name: Gửi yêu cầu bán vượt
+
+assertions: []
+recorded_against:
+  app: rsa
+  env: uat
+  url: https://uat-rsa-web.frt.vn
+  date: "2026-06-15"
