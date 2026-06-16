@@ -1,7 +1,0 @@
-screenshots/*
-!screenshots/.gitkeep
-reports/*
-!reports/.gitkeep
-.DS_Store
-*.log
-.env
