@@ -1,0 +1,3 @@
+[submodule "recorder-engine"]
+	path = recorder-engine
+	url = https://git2.fptshop.com.vn/ai-test/recorder-engine.git
