@@ -1,0 +1,431 @@
+# Flow: verify-Promotion-theo-don-hang
+# Author: khangld10
+# Created: 2026-06-16
+# Run: frt-test play --app promotion --env uat verify-Promotion-theo-don-hang.yaml
+# Converted from: PromotionDHUAT.java - testCreatePromotionFlowNhomCTKMDonhang()
+
+name: verify-Promotion-theo-don-hang
+description: "Tạo CTKM nhóm Đơn hàng - Tổng Tiền Đơn Hàng Theo Sản phẩm (UAT)"
+tags:
+  - promotion
+  - don-hang
+  - uat
+author: khangld10
+created: "2026-06-16"
+config:
+  baseUrl: https://uat-promotion.frt.vn
+  timeout: 30000
+variables:
+  username: "giant"
+  password: "********"
+  campaignId: "CD-1225-073"
+  productCode: "00001958"
+  nhomHang: "chống nắng toàn thân"
+  maPMH: "216216216"
+  giaTriDonHang: "300000"
+  soLuong: "1"
+
+steps:
+  # =========================
+  # TC01 - LOGIN
+  # =========================
+  - name: Navigate to Promotion UAT
+    action: goto
+    value: https://uat-promotion.frt.vn/manager-promotion-list
+    waitAfter: networkIdle
+
+  - name: "TC01 - Nhập username"
+    action: fill
+    selector: "[name='LoginInput.UserNameOrEmailAddress']"
+    selectorFallback: "input[name='LoginInput.UserNameOrEmailAddress']"
+    value: "giant"
+    delay: 500
+
+  - name: "TC01 - Nhập password"
+    action: fill
+    selector: "[name='LoginInput.Password']"
+    selectorFallback: "input[name='LoginInput.Password']"
+    value: "********"
+    delay: 500
+
+  - name: "TC01 - Click Đăng nhập"
+    action: click
+    selector: "#kt_login_signin_submit"
+    selectorFallback: "#kt_login_signin_submit || button[type='submit']"
+    waitAfter: networkIdle
+
+  - name: "TC01 - Verify login thành công"
+    action: assert
+    assertType: urlContains
+    expected: "manager"
+
+  # =========================
+  # TC02 - TẠO CTKM
+  # =========================
+  - name: "TC02 - Click button tạo CTKM"
+    action: click
+    selector: "div.actionHeader"
+    selectorFallback: "div[class*='actionHeader'] || button:has-text('Tạo')"
+    delay: 1000
+    waitAfter: 2000
+
+  - name: "TC02 - Nhập tên CTKM"
+    action: fill
+    selector: "#promotiongeneralinfor_name"
+    selectorFallback: "#promotiongeneralinfor_name || input[id='promotiongeneralinfor_name']"
+    value: "Nhóm hàng giảm giá_AT_{{timestamp}}"
+    delay: 500
+
+  # =========================
+  # TC03 - THỜI GIAN + PHƯƠNG THỨC
+  # =========================
+  - name: "TC03 - Click range picker (chọn thời gian)"
+    action: click
+    selector: "div.ant-picker-range"
+    selectorFallback: "div[class*='ant-picker-range']"
+    delay: 500
+
+  - name: "TC03 - Chọn ngày bắt đầu (hôm nay)"
+    action: click
+    selector: "td[title='{{today}}']"
+    selectorFallback: "td[title='{{today}}']"
+    delay: 500
+
+  - name: "TC03 - Chọn ngày kết thúc (hôm nay)"
+    action: click
+    selector: "td[title='{{today}}']"
+    selectorFallback: "td[title='{{today}}']"
+    delay: 500
+
+  - name: "TC03 - Click dropdown phương thức"
+    action: click
+    selector: "div.ant-select-selector"
+    selectorFallback: "div[class*='ant-select-selector']"
+    delay: 500
+
+  - name: "TC03 - Chọn phương thức: Zalo"
+    action: click
+    selector: "div:text('Zalo')"
+    selectorFallback: "//div[text()='Zalo']"
+    delay: 500
+
+  # =========================
+  # TC04 - THUỘC CHIẾN DỊCH
+  # =========================
+  - name: "TC04 - Nhập mã chiến dịch"
+    action: fill
+    selector: "#promotiongeneralinfor_campaignId"
+    selectorFallback: "#promotiongeneralinfor_campaignId"
+    value: "CD-1225-073"
+    delay: 500
+    waitAfter: 1500
+
+  - name: "TC04 - Chọn chiến dịch từ dropdown"
+    action: click
+    selector: "//div[contains(@class,'ant-select-item-option') and contains(.,'CD-1225-073')]"
+    selectorFallback: "div.ant-select-item-option:has-text('CD-1225-073')"
+    delay: 500
+
+  - name: "TC04 - Click Tiếp theo"
+    action: click
+    selector: "//span[contains(text(),'Tiếp theo')]"
+    selectorFallback: "button:has-text('Tiếp theo') || span:has-text('Tiếp theo')"
+    delay: 1000
+    waitAfter: 2000
+
+  # =========================
+  # TC05 - NHÓM CTKM: Đơn hàng
+  # =========================
+  - name: "TC05 - Click dropdown Nhóm CTKM"
+    action: fill
+    selector: "#promotionClassId"
+    selectorFallback: "#promotionClassId"
+    value: "Đơn hàng"
+    delay: 500
+    waitAfter: 1500
+
+  - name: "TC05 - Chọn Đơn hàng"
+    action: click
+    selector: "//div[contains(@class,'ant-select-item-option-content') and contains(.,'Đơn hàng')]"
+    selectorFallback: "div.ant-select-item-option-content:has-text('Đơn hàng')"
+    delay: 500
+
+  # =========================
+  # TC06 - LOẠI CTKM: Tổng Tiền Đơn Hàng Theo Sản phẩm
+  # =========================
+  - name: "TC06 - Click dropdown Loại CTKM"
+    action: click
+    selector: "#promotionTypeID"
+    selectorFallback: "#promotionTypeID"
+    delay: 500
+
+  - name: "TC06 - Nhập loại CTKM"
+    action: fill
+    selector: "#promotionTypeID"
+    selectorFallback: "#promotionTypeID"
+    value: "Tổng Tiền Đơn Hàng Theo Sản phẩm"
+    delay: 500
+    waitAfter: 1500
+
+  - name: "TC06 - Chọn loại CTKM"
+    action: click
+    selector: "//div[contains(@class,'ant-select-item-option-content') and contains(.,'Tổng Tiền Đơn Hàng Theo Sản phẩm')]"
+    selectorFallback: "div.ant-select-item-option-content:has-text('Tổng Tiền Đơn Hàng Theo Sản phẩm')"
+    delay: 500
+
+  # =========================
+  # TC07 - KHU VỰC HIỂN THỊ
+  # =========================
+  - name: "TC07 - Click dropdown Khu vực hiển thị"
+    action: click
+    selector: "//label[contains(text(),'Khu vực hiển thị khuyến mãi')]/ancestor::div[contains(@class,'ant-form-item')]//div[contains(@class,'ant-select-selector')]"
+    selectorFallback: "label:has-text('Khu vực hiển thị') >> .. >> div.ant-select-selector"
+    delay: 500
+
+  - name: "TC07 - Chọn: Khuyến mãi có liên quan đến giá trị bill"
+    action: click
+    selector: "//div[contains(@class,'ant-select-item-option-content') and contains(.,'Khuyến mãi có liên quan đến giá trị bill')]"
+    selectorFallback: "div.ant-select-item-option-content:has-text('Khuyến mãi có liên quan đến giá trị bill')"
+    delay: 500
+
+  # =========================
+  # TC08 - CHI PHÍ PHÒNG BAN + UPLOAD ẢNH
+  # =========================
+  - name: "TC08 - Upload ảnh"
+    action: upload
+    selector: "input[type='file']"
+    selectorFallback: "//input[@type='file']"
+    value: "src/test/resources/images/upload.png"
+    delay: 1000
+
+  - name: "TC08 - Click dropdown Chi phí phòng ban"
+    action: click
+    selector: "//label[contains(text(),'Chi phí phòng ban')]/ancestor::div[contains(@class,'ant-form-item')]//div[contains(@class,'ant-select-selector')]"
+    selectorFallback: "label:has-text('Chi phí phòng ban') >> .. >> div.ant-select-selector"
+    delay: 500
+
+  - name: "TC08 - Chọn: Phòng kiểm soát nghành hàng / KSNH"
+    action: click
+    selector: "//div[contains(@class,'ant-select-dropdown') and not(contains(@style,'display: none'))]//div[contains(@class,'ant-select-item-option-content') and normalize-space()='Phòng kiểm soát nghành hàng / KSNH']"
+    selectorFallback: "div.ant-select-item-option-content:has-text('Phòng kiểm soát nghành hàng / KSNH')"
+    delay: 500
+
+  - name: "TC08 - Click Tiếp theo (sang Step 3)"
+    action: click
+    selector: "//span[contains(text(),'Tiếp theo')]"
+    selectorFallback: "button:has-text('Tiếp theo') || span:has-text('Tiếp theo')"
+    delay: 1000
+    waitAfter: 2000
+
+  # =========================
+  # TC09 - ĐIỀU KIỆN ĐẦU VÀO: Tổng đơn hàng
+  # =========================
+  - name: "TC09 - Click dropdown Chọn điều kiện"
+    action: click
+    selector: "(//div[contains(@class,'ant-select-selector')]//span[contains(text(),'Chọn điều kiện') or contains(text(),'Chọn điểu kiện')])[1]/ancestor::div[contains(@class,'ant-select-selector')]"
+    selectorFallback: "span:has-text('Chọn điều kiện') >> .. >> div.ant-select-selector"
+    delay: 500
+
+  - name: "TC09 - Chọn: Tổng đơn hàng"
+    action: click
+    selector: "//div[contains(@class,'ant-select-dropdown') and not(contains(@style,'display: none'))]//div[contains(@class,'ant-select-item-option-content') and contains(.,'Tổng đơn hàng')]"
+    selectorFallback: "div.ant-select-item-option-content:has-text('Tổng đơn hàng')"
+    delay: 500
+
+  # =========================
+  # TC10 - PHÉP TOÁN: Nhỏ hơn hoặc bằng
+  # =========================
+  - name: "TC10 - Click dropdown Phép toán"
+    action: click
+    selector: "(//div[contains(@class,'ant-select-selector')]//span[contains(text(),'Chọn phép') or contains(text(),'phép toán')])[1]/ancestor::div[contains(@class,'ant-select-selector')]"
+    selectorFallback: "span:has-text('Chọn phép') >> .. >> div.ant-select-selector"
+    delay: 500
+
+  - name: "TC10 - Chọn: Nhỏ hơn hoặc bằng"
+    action: click
+    selector: "//div[contains(@class,'ant-select-dropdown') and not(contains(@style,'display: none'))]//div[contains(@class,'ant-select-item-option-content') and contains(.,'Nhỏ hơn hoặc bằng')]"
+    selectorFallback: "div.ant-select-item-option-content:has-text('Nhỏ hơn hoặc bằng')"
+    delay: 500
+
+  # =========================
+  # TC11 - GIÁ TRỊ: 300000
+  # =========================
+  - name: "TC11 - Nhập giá trị đơn hàng"
+    action: fill
+    selector: "//input[@placeholder='Giá trị' or @placeholder='Nhập giá trị' or @placeholder='Nhập số tiền']"
+    selectorFallback: "input[placeholder*='Giá trị'] || input[placeholder*='Nhập giá trị']"
+    value: "300000"
+    delay: 500
+
+  # =========================
+  # TC11b - THÊM ĐIỀU KIỆN: Mã Nhóm hàng
+  # =========================
+  - name: "TC11b - Click Thêm điều kiện vào"
+    action: click
+    selector: "//span[contains(text(),'Thêm điều kiện vào') or contains(text(),'Thêm điều kiện và')]"
+    selectorFallback: "span:has-text('Thêm điều kiện')"
+    delay: 1000
+    waitAfter: 1000
+
+  - name: "TC11b - Click dropdown điều kiện mới"
+    action: click
+    selector: "(//div[contains(@class,'ant-select-selector')]//span[contains(text(),'Chọn điều kiện') or contains(text(),'Chọn điểu kiện')])[last()]/ancestor::div[contains(@class,'ant-select-selector')]"
+    selectorFallback: "span:has-text('Chọn điều kiện'):last-of-type >> .. >> div.ant-select-selector"
+    delay: 500
+    waitAfter: 500
+
+  - name: "TC11b - Nhập Mã Nhóm và chọn"
+    action: fill
+    selector: ":focus"
+    value: "Mã Nhóm"
+    delay: 500
+    pressAfter: Enter
+    waitAfter: 1000
+
+  - name: "TC11b - Click dropdown Phép toán (dòng 2)"
+    action: click
+    selector: "#includeInput_0_groupCode_1_operatorId"
+    selectorFallback: "#includeInput_0_groupCode_1_operatorId"
+    delay: 500
+
+  - name: "TC11b - Nhập Chứa và chọn"
+    action: fill
+    selector: "#includeInput_0_groupCode_1_operatorId"
+    value: "Chứa"
+    delay: 500
+    pressAfter: Enter
+    waitAfter: 1000
+
+  - name: "TC11b - Click nút Sửa (Chọn nhóm hàng)"
+    action: click
+    selector: "//input[@placeholder='Chọn nhóm hàng']/following-sibling::span[contains(@class,'ant-input-group-addon')] | //input[@placeholder='Chọn nhóm hàng']/parent::*//span[contains(@class,'ant-input-group-addon')]"
+    selectorFallback: "input[placeholder='Chọn nhóm hàng'] + span.ant-input-group-addon"
+    delay: 1000
+    waitAfter: 1500
+
+  - name: "TC11b - Search nhóm hàng: chống nắng toàn thân"
+    action: fill
+    selector: "(//div[contains(@class,'ant-modal')]//input[contains(@placeholder,'Tìm') or contains(@placeholder,'tìm')])[1]"
+    selectorFallback: "div.ant-modal input[placeholder*='Tìm']"
+    value: "chống nắng toàn thân"
+    delay: 500
+    waitAfter: 1500
+
+  - name: "TC11b - Click dấu + thêm nhóm hàng"
+    action: click
+    selector: "//div[contains(@class,'ant-modal')]//tr[contains(.,'CHỐNG NẮNG TOÀN THÂN')]//span[contains(@class,'anticon-plus') or contains(@class,'anticon-plus-circle')]"
+    selectorFallback: "div.ant-modal tr:has-text('CHỐNG NẮNG TOÀN THÂN') span.anticon-plus"
+    delay: 500
+
+  - name: "TC11b - Click OK (popup nhóm hàng)"
+    action: click
+    selector: "//div[contains(@class,'ant-modal')]//button[.//span[text()='OK']]"
+    selectorFallback: "div.ant-modal button:has-text('OK')"
+    delay: 500
+    waitAfter: 500
+
+  # =========================
+  # TC12 - LOẠI ĐẦU RA: Phiếu Mua Hàng
+  # =========================
+  - name: "TC12 - Click dropdown Loại đầu ra"
+    action: click
+    selector: "(//div[contains(@class,'ant-select-selector')]//span[contains(text(),'Chọn loại') or contains(text(),'Chọn Loại')])[1]/ancestor::div[contains(@class,'ant-select-selector')]"
+    selectorFallback: "span:has-text('Chọn loại') >> .. >> div.ant-select-selector"
+    delay: 500
+
+  - name: "TC12 - Chọn: Phiếu Mua Hàng"
+    action: click
+    selector: "//div[contains(@class,'ant-select-dropdown') and not(contains(@style,'display: none'))]//div[contains(@class,'ant-select-item-option-content') and contains(.,'Phiếu Mua Hàng')]"
+    selectorFallback: "div.ant-select-item-option-content:has-text('Phiếu Mua Hàng')"
+    delay: 500
+
+  # =========================
+  # TC13 - PHÉP TOÁN ĐẦU RA: Bằng
+  # =========================
+  - name: "TC13 - Click dropdown Phép toán đầu ra"
+    action: click
+    selector: "(//div[contains(@class,'ant-select-selector')]//span[contains(text(),'Chọn phép') or contains(text(),'phép toán')])[1]/ancestor::div[contains(@class,'ant-select-selector')]"
+    selectorFallback: "span:has-text('Chọn phép') >> .. >> div.ant-select-selector"
+    delay: 500
+
+  - name: "TC13 - Chọn: Bằng"
+    action: click
+    selector: "//div[contains(@class,'ant-select-dropdown') and not(contains(@style,'display: none'))]//div[contains(@class,'ant-select-item-option-content') and normalize-space()='Bằng']"
+    selectorFallback: "div.ant-select-item-option-content:text-is('Bằng')"
+    delay: 500
+
+  # =========================
+  # TC14 - GIÁ TRỊ PMH: 216216216
+  # =========================
+  - name: "TC14 - Click nút Sửa (Chọn phiếu mua hàng)"
+    action: click
+    selector: "//input[@placeholder='Chọn phiếu mua hàng']/following-sibling::span[contains(@class,'ant-input-group-addon')] | //input[contains(@placeholder,'phiếu mua hàng')]/parent::*//span[contains(@class,'addon')]"
+    selectorFallback: "input[placeholder*='phiếu mua hàng'] + span.ant-input-group-addon"
+    delay: 1000
+    waitAfter: 2000
+
+  - name: "TC14 - Search mã PMH: 216216216"
+    action: fill
+    selector: "//div[contains(@class,'ant-modal')]//input[@placeholder='Tìm kiếm mã, tên' or contains(@placeholder,'Tìm')]"
+    selectorFallback: "div.ant-modal input[placeholder*='Tìm kiếm']"
+    value: "216216216"
+    delay: 500
+    waitAfter: 2000
+
+  - name: "TC14 - Click dấu + thêm PMH"
+    action: click
+    selector: "//div[contains(@class,'ant-modal')]//tr[contains(.,'216216216')]//span[contains(@class,'anticon-plus')] | //div[contains(@class,'ant-modal')]//tr[contains(.,'216216216')]//td[1]"
+    selectorFallback: "div.ant-modal tr:has-text('216216216') span.anticon-plus"
+    delay: 500
+    waitAfter: 1000
+
+  - name: "TC14 - Click OK (popup PMH)"
+    action: click
+    selector: "//div[contains(@class,'ant-modal')]//button[.//span[text()='OK']]"
+    selectorFallback: "div.ant-modal button:has-text('OK')"
+    delay: 500
+    waitAfter: 1000
+
+  # =========================
+  # TC15 - SỐ LƯỢNG: 1
+  # =========================
+  - name: "TC15 - Nhập số lượng"
+    action: fill
+    selector: "//input[@placeholder='Số lượng' or contains(@placeholder,'số lượng')]"
+    selectorFallback: "input[placeholder*='Số lượng'] || input[placeholder*='số lượng']"
+    value: "1"
+    delay: 500
+
+  # =========================
+  # XÁC NHẬN + ĐỒNG Ý
+  # =========================
+  - name: "Click Xác nhận"
+    action: click
+    selector: "//button[.//span[normalize-space()='Xác nhận']]"
+    selectorFallback: "button:has-text('Xác nhận')"
+    delay: 1000
+    waitAfter: 2000
+
+  - name: "Click Đồng ý (popup confirm)"
+    action: click
+    selector: "//div[contains(@class,'ant-modal-footer')]//button[.//span[normalize-space()='Đồng ý']]"
+    selectorFallback: "div.ant-modal-footer button:has-text('Đồng ý')"
+    delay: 1000
+    waitAfter: 2000
+
+  # =========================
+  # VERIFY - Tạo CTKM thành công
+  # =========================
+  - name: "Verify tạo CTKM Đơn Hàng thành công"
+    action: assert
+    assertType: visible
+    selector: "//div[contains(@class,'ant-message-success')] | //div[contains(@class,'ant-notification-notice')]"
+    selectorFallback: "div.ant-message-success || div.ant-notification-notice"
+    timeout: 10000
+
+assertions: []
+recorded_against:
+  app: promotion
+  env: uat
+  url: https://uat-promotion.frt.vn
+  date: "2026-06-16"
