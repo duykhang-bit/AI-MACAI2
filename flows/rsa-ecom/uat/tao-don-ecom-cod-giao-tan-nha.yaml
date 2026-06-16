@@ -1,0 +1,268 @@
+# Flow: tao-don-ecom-cod-giao-tan-nha
+# Author: recorder
+# Created: 2026-06-10
+# Run: frt-test play --app rsa-ecom tao-don-ecom-cod-giao-tan-nha.yaml
+
+name: tao-don-ecom-cod-giao-tan-nha
+description: "Recorded flow: tao-don-ecom-cod-giao-tan-nha"
+tags:
+  - recorded
+author: recorder
+created: "2026-06-10"
+config:
+  baseUrl: https://uat-rsa-ecom.frt.vn
+  timeout: 30000
+variables: {}
+steps:
+  - name: Navigate to https://uat-rsa-ecom.frt.vn
+    action: goto
+    value: https://uat-rsa-ecom.frt.vn
+    waitAfter: networkIdle
+  - name: "Click #mat-input-3"
+    action: click
+    selectorFallback: >-
+      #mat-input-3 || .kt-form > div:nth-of-type(3) > mat-form-field > div > div:nth-of-type(1) > div > input || div >
+      div > div > div > div > form > div:nth-of-type(3) > mat-form-field > div > div:nth-of-type(1) > div > input
+    selector: "#mat-input-3"
+  - name: "Fill #mat-input-3"
+    action: fill
+    value: tinvt4
+    selectorFallback: >-
+      #mat-input-3 || .kt-form > div:nth-of-type(3) > mat-form-field > div > div:nth-of-type(1) > div > input || div >
+      div > div > div > div > form > div:nth-of-type(3) > mat-form-field > div > div:nth-of-type(1) > div > input
+    selector: "#mat-input-3"
+  - name: Press Tab
+    action: keyboard
+    key: Tab
+  - name: "Fill #mat-input-4"
+    action: fill
+    value: "1"
+    selectorFallback: >-
+      #mat-input-4 || .kt-form > div:nth-of-type(4) > mat-form-field > div > div:nth-of-type(1) > div > input || div >
+      div > div > div > div > form > div:nth-of-type(4) > mat-form-field > div > div:nth-of-type(1) > div > input
+    selector: "#mat-input-4"
+  - name: Click button "Đăng nhập"
+    action: click
+    selectorFallback: >-
+      #kt_login_signin_submit || .kt-login__actions > button || div > div > div > div > div > form > div:nth-of-type(7)
+      > button
+    role:
+      type: button
+      name: Đăng nhập
+    waitAfter: networkIdle
+  - name: Click "main > div > div:nth-of-type(2) > div:nth-of-type(1) > a" trong "Danh sách trả hàng"
+    action: click
+    selectorFallback: >-
+      .rounded > div:nth-of-type(2) > div:nth-of-type(1) > a || div:nth-of-type(1) > div > div > section > section >
+      main > div > div:nth-of-type(2) > div:nth-of-type(1) > a
+    relative:
+      form: A
+      anchor:
+        text: Danh sách trả hàng
+        dynamic: false
+      scope:
+        by: css
+        css: .ant-layout
+      target:
+        type: selector
+        selector: main > div > div:nth-of-type(2) > div:nth-of-type(1) > a
+    waitAfter: networkIdle
+  - name: Click placeholder "Số điện thoại"
+    action: click
+    selectorFallback: >-
+      [id^="focus__phone--number_session"] || .c-info-form > div:nth-of-type(1) > div > div > div > div > div > input ||
+      div:nth-of-type(1) > div > div > section > section > main > div > div > div:nth-of-type(2) > div > div >
+      div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(1) > form > div > div:nth-of-type(1) > div > div > div >
+      div > div > input
+    placeholder: Số điện thoại
+  - name: Fill placeholder "Số điện thoại"
+    action: fill
+    value: "0908588095"
+    selectorFallback: >-
+      [id^="focus__phone--number_session"] || .c-info-form > div:nth-of-type(1) > div > div > div > div > div > input ||
+      div:nth-of-type(1) > div > div > section > section > main > div > div > div:nth-of-type(2) > div > div >
+      div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(1) > form > div > div:nth-of-type(1) > div > div > div >
+      div > div > input
+    placeholder: Số điện thoại
+  - name: Click "tbody > tr > th" trong "STT"
+    action: click
+    selectorFallback: "[id^=\"table-main-products-session\"] > tr > th"
+    relative:
+      form: A
+      anchor:
+        text: STT
+        dynamic: false
+      scope:
+        by: css
+        css: .w-full
+      target:
+        type: selector
+        selector: tbody > tr > th
+  - name: Click "[role="combobox"]" trong "Nhập tên, barcode hoặc mã thuốc (F1)"
+    action: click
+    selectorFallback: .product-search-input > div > span:nth-of-type(1) > input
+    relative:
+      form: A
+      anchor:
+        text: Nhập tên, barcode hoặc mã thuốc (F1)
+        dynamic: false
+      scope:
+        by: css
+        css: .ant-select-selector
+      target:
+        type: selector
+        selector: "[role=\"combobox\"]"
+  - name: Fill "[role="combobox"]" trong "Nhập tên, barcode hoặc mã thuốc (F1)"
+    action: fill
+    value: "n"
+    selectorFallback: .product-search-input > div > span:nth-of-type(1) > input
+    relative:
+      form: A
+      anchor:
+        text: Nhập tên, barcode hoặc mã thuốc (F1)
+        dynamic: false
+      scope:
+        by: css
+        css: .ant-select-selector
+      target:
+        type: selector
+        selector: "[role=\"combobox\"]"
+  - name: Fill .product-search-input > div > span > input
+    action: fill
+    value: nước
+    selectorFallback: >-
+      .product-search-input > div > span > input || div:nth-of-type(1) > div > div > section > section > main > div >
+      div > div:nth-of-type(2) > div > div > div:nth-of-type(1) > div:nth-of-type(1) > div > span > div > div > span >
+      input
+    selector: .product-search-input > div > span > input
+  - name: Scroll element .rc-virtual-list-holder
+    action: scroll
+    scrollTo:
+      x: 0
+      "y": 100
+    selector: .rc-virtual-list-holder
+  - name: Scroll element .rc-virtual-list-holder
+    action: scroll
+    scrollTo:
+      x: 0
+      "y": 300
+    selector: .rc-virtual-list-holder
+  - name: Click .rc-virtual-list-holder-inner > div:nth-of-type(3) > div > div:nth-of-type(3) > div:nth-of-type(2) > div > p
+    action: click
+    selectorFallback: >-
+      .rc-virtual-list-holder-inner > div:nth-of-type(3) > div > div:nth-of-type(3) > div:nth-of-type(2) > div > p ||
+      div:nth-of-type(5) > div > div > div > div:nth-of-type(3) > div:nth-of-type(1) > div > div > div:nth-of-type(3) >
+      div > div:nth-of-type(3) > div:nth-of-type(2) > div > p
+    selector: .rc-virtual-list-holder-inner > div:nth-of-type(3) > div > div:nth-of-type(3) > div:nth-of-type(2) > div > p
+  - name: Scroll element .sc-gsFSXq
+    action: scroll
+    scrollTo:
+      x: 0
+      "y": 300
+    selector: .sc-gsFSXq
+  - name: Scroll element .sc-gsFSXq
+    action: scroll
+    scrollTo:
+      x: 0
+      "y": 400
+    selector: .sc-gsFSXq
+  - name: Chọn "Call"
+    action: selectOption
+    trigger:
+      selector: ".shop-container > div:nth-of-type(1) > div:nth-of-type(2) > div > span:nth-of-type(1) > input"
+      selectorFallback: >-
+        .shop-container > div:nth-of-type(1) > div:nth-of-type(2) > div > span:nth-of-type(1) > input ||
+        div:nth-of-type(1) > div > div > section > section > main > div > div > div:nth-of-type(2) > div > div >
+        div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(5) > div > div:nth-of-type(1) > div:nth-of-type(2) >
+        div > span:nth-of-type(1) > input
+    value: Call
+  - name: Click button "Tìm shop"
+    action: click
+    selectorFallback: >-
+      [id^="confirm-order_session"] || .shop-container > div:nth-of-type(2) > button || div:nth-of-type(1) > div > div >
+      section > section > main > div > div > div:nth-of-type(2) > div > div > div:nth-of-type(2) > div:nth-of-type(2) >
+      div:nth-of-type(5) > div > div:nth-of-type(2) > button
+    role:
+      type: button
+      name: Tìm shop
+  - name: Click button "Tiếp tục"
+    action: click
+    selectorFallback: >-
+      [id^="create-order_session"] || #btn-confirm > button || div:nth-of-type(1) > div > div > section > section > main
+      > div > div > div:nth-of-type(2) > div > div > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(9) >
+      button
+    role:
+      type: button
+      name: Tiếp tục
+  - name: Click button "Xác nhận"
+    action: click
+    selectorFallback: >-
+      div:nth-of-type(8) > div > div:nth-of-type(2) > div > div:nth-of-type(2) > div:nth-of-type(2) >
+      button:nth-of-type(2)
+    role:
+      type: button
+      name: Xác nhận
+  - name: Chọn phương thức thanh toán COD
+    action: click
+    text: "COD - Thanh toán tiền mặt"
+    selectorFallback: >-
+      [id^="focus__payment--1-"] || div:nth-of-type(1) > div > div > section > section >
+      main > div > div > div:nth-of-type(2) > div > div > div:nth-of-type(2) > div:nth-of-type(1) > div >
+      div:nth-of-type(2) > div > div:nth-of-type(1)
+  - name: Verify "COD - Thanh toán tiền mặt"
+    action: assert
+    assertType: text
+    expected: COD - Thanh toán tiền mặt
+    selectorFallback: >-
+      [id^="focus__payment--1-"] > div:nth-of-type(1) > span || div:nth-of-type(1) > div > div > section > section >
+      main > div > div > div:nth-of-type(2) > div > div > div:nth-of-type(2) > div:nth-of-type(1) > div >
+      div:nth-of-type(2) > div > div:nth-of-type(1) > div:nth-of-type(1) > span
+    text: COD - Thanh toán tiền mặt
+  - name: Click button "Đẩy Đơn (F4)"
+    action: click
+    selectorFallback: >-
+      #btn-finish > button:nth-of-type(2) || div:nth-of-type(1) > div > div > section > section > main > div > div >
+      div:nth-of-type(2) > div > div > div:nth-of-type(2) > div:nth-of-type(2) > div > div:nth-of-type(11) >
+      button:nth-of-type(2)
+    role:
+      type: button
+      name: Đẩy Đơn (F4)
+    waitAfter: networkIdle
+  - name: Click "Mã ĐH:"
+    action: click
+    selectorFallback: >-
+      .f-14 || .text-center > h4 || div:nth-of-type(4) > div > div:nth-of-type(2) > div > div:nth-of-type(2) >
+      div:nth-of-type(1) > div > div > h4
+    text: "Mã ĐH:"
+    waitAfter: networkIdle
+  - name: Scroll element .site-layout > main > div:nth-of-type(2) > div:nth-of-type(2)
+    action: scroll
+    scrollTo:
+      x: 0
+      "y": 276
+    selector: .site-layout > main > div:nth-of-type(2) > div:nth-of-type(2)
+  - name: Verify "Giao tận nhà"
+    action: assert
+    assertType: text
+    expected: Giao tận nhà
+    selectorFallback: >-
+      .info-order_right > div > div:nth-of-type(2) > div:nth-of-type(2) > div > div > div:nth-of-type(13) >
+      span:nth-of-type(2) || div:nth-of-type(1) > div > div > section > section > main > div:nth-of-type(2) >
+      div:nth-of-type(2) > div > div > div:nth-of-type(2) > div:nth-of-type(2) > div > div > div:nth-of-type(13) >
+      span:nth-of-type(2)
+    text: Giao tận nhà
+  - name: Verify "Đặt hàng thành công"
+    action: assert
+    assertType: text
+    expected: Đặt hàng thành công
+    selectorFallback: >-
+      .status-delivery > div > div:nth-of-type(1) > div > div:nth-of-type(3) > div:nth-of-type(1) || div:nth-of-type(1)
+      > div > div > section > section > main > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div > div
+      > div:nth-of-type(1) > div > div:nth-of-type(3) > div:nth-of-type(1)
+    text: Đặt hàng thành công
+assertions: []
+recorded_against:
+  app: rsa-ecom
+  env: uat
+  url: https://uat-rsa-ecom.frt.vn
+  date: "2026-06-10"
