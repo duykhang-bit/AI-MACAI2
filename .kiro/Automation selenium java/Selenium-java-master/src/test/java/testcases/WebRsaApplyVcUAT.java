@@ -25,7 +25,7 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import listeners.TestListener;
 
 @Listeners(TestListener.class)
-public class WebRSAUAT extends BaseTest1 {
+public class WebRsaApplyVcUAT extends BaseTest1 {
 
     @Override
     protected String getBaseUrl() {
