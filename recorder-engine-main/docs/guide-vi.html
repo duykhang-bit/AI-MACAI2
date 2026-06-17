@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Test Recorder — Hướng dẫn sử dụng</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", sans-serif;
+            background: linear-gradient(135deg, #0f1419 0%, #1a1f2e 100%);
+            color: #e0e0e0;
+            line-height: 1.6;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .logo {
+            display: inline-flex;
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #10b981 0%, #06d6a0 50%, #00d4ff 100%);
+            border-radius: 20px;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+        }
+
+        h1 {
+            font-size: 3.5em;
+            font-weight: 700;
+            background: linear-gradient(135deg, #10b981 0%, #06d6a0 50%, #00d4ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.3em;
+            color: #b0b0b0;
+            margin-bottom: 10px;
+        }
+
+        .tagline {
+            font-size: 1.1em;
+            color: #06d6a0;
+            font-weight: 500;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(0, 212, 255, 0.1) 100%);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(16, 185, 129, 0.6);
+            box-shadow: 0 20px 40px rgba(16, 185, 129, 0.2);
+        }
+
+        .card-number {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 3.5em;
+            font-weight: 700;
+            color: rgba(16, 185, 129, 0.15);
+            line-height: 1;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-icon {
+            font-size: 2.5em;
+            margin-right: 15px;
+            min-width: 50px;
+        }
+
+        .card-title {
+            font-size: 1.5em;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .card-subtitle {
+            font-size: 0.9em;
+            color: #b0b0b0;
+        }
+
+        .card-content {
+            font-size: 0.95em;
+            color: #d0d0d0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat {
+            display: flex;
+            align-items: baseline;
+            margin: 15px 0;
+        }
+
+        .stat-value {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: #10b981;
+            margin-right: 10px;
+        }
+
+        .stat-label {
+            color: #b0b0b0;
+            font-size: 0.95em;
+        }
+
+        .feature-list {
+            list-style: none;
+            margin: 15px 0;
+        }
+
+        .feature-list li {
+            padding: 8px 0;
+            padding-left: 30px;
+            position: relative;
+        }
+
+        .feature-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #06d6a0;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .workflow-section {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 15px;
+            padding: 40px;
+            margin: 40px 0;
+        }
+
+        .workflow-title {
+            font-size: 2em;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+        }
+
+        .workflow-title span {
+            display: inline-flex;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #10b981 0%, #06d6a0 100%);
+            border-radius: 50%;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-weight: 700;
+            font-size: 1.2em;
+        }
+
+        .flow-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .flow-step {
+            background: rgba(20, 30, 50, 0.5);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .step-number {
+            display: inline-flex;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #10b981 0%, #06d6a0 100%);
+            border-radius: 50%;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #0f1419;
+        }
+
+        .step-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 1.05em;
+        }
+
+        .step-desc {
+            color: #b0b0b0;
+            font-size: 0.9em;
+        }
+
+        .command-box {
+            background: rgba(10, 15, 25, 0.8);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #00ff88;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+
+        .command-label {
+            color: #00d4ff;
+            font-size: 0.8em;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .prompt-box {
+            background: rgba(16, 185, 129, 0.08);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 8px;
+            padding: 15px 20px;
+            font-size: 0.95em;
+            color: #06d6a0;
+            margin: 12px 0;
+            font-style: italic;
+            position: relative;
+            padding-left: 35px;
+        }
+
+        .prompt-box:before {
+            content: "💬";
+            position: absolute;
+            left: 10px;
+            top: 14px;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .comparison-table th {
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .comparison-table td {
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            padding: 12px 15px;
+        }
+
+        .comparison-table tr:nth-child(even) {
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .highlight {
+            color: #10b981;
+            font-weight: 600;
+        }
+
+        .info-box {
+            background: rgba(0, 212, 255, 0.1);
+            border-left: 4px solid #00d4ff;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+
+        .warning-box {
+            background: rgba(255, 107, 53, 0.1);
+            border-left: 4px solid #ff6b35;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+
+        .success-box {
+            background: rgba(16, 185, 129, 0.1);
+            border-left: 4px solid #10b981;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+
+        .big-prompt {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(0, 212, 255, 0.15) 100%);
+            border: 2px solid rgba(16, 185, 129, 0.5);
+            border-radius: 12px;
+            padding: 25px;
+            margin: 25px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 1.05em;
+            color: #06d6a0;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .big-prompt:hover {
+            border-color: rgba(16, 185, 129, 0.8);
+            box-shadow: 0 5px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .architecture-diagram {
+            background: rgba(10, 15, 25, 0.8);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 10px;
+            padding: 30px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+            color: #d0d0d0;
+            margin: 20px 0;
+            text-align: center;
+            line-height: 1.8;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 0.8em;
+            color: #06d6a0;
+            margin: 3px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 60px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(0, 212, 255, 0.2);
+            color: #808080;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5em;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .flow-steps {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">🎬</div>
+            <h1>AI TEST RECORDER</h1>
+            <p class="subtitle">Record & Replay E2E Tests bằng AI Agent</p>
+            <p class="tagline">NÓI CHO AI → AI THAO TÁC → TEST TỰ CHẠY MỖI NGÀY</p>
+        </header>
+
+        <!-- Hero Cards -->
+        <div class="grid">
+            <!-- Card 1: What is it -->
+            <div class="card">
+                <div class="card-number">1</div>
+                <div class="card-header">
+                    <div class="card-icon">🚀</div>
+                    <div>
+                        <div class="card-title">Đây là gì?</div>
+                        <div class="card-subtitle">Tester không cần biết code</div>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <p>Bạn thao tác trên browser, hệ thống ghi lại thành YAML. Từ đó test tự chạy mỗi ngày — phát hiện bug trước production.</p>
+                    <div class="stat">
+                        <span class="stat-value">0</span>
+                        <span class="stat-label">dòng code cần viết</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value">10</span>
+                        <span class="stat-label">prompts điều khiển mọi thứ</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value">∞</span>
+                        <span class="stat-label">tests chạy song song</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2: How it works -->
+            <div class="card">
+                <div class="card-number">2</div>
+                <div class="card-header">
+                    <div class="card-icon">⚡</div>
+                    <div>
+                        <div class="card-title">Cách hoạt động</div>
+                        <div class="card-subtitle">AI Agent + Playwright</div>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <ul class="feature-list">
+                        <li><span class="highlight">Paste prompt</span> cho AI agent (Kiro / Cursor / Claude)</li>
+                        <li><span class="highlight">Agent tự thực hiện</span> — bạn chỉ cần nhìn</li>
+                        <li><span class="highlight">Record:</span> browser mở, bạn thao tác → YAML</li>
+                        <li><span class="highlight">Play:</span> chạy lại test bất kỳ lúc nào</li>
+                        <li><span class="highlight">Fix:</span> test fail? Nói agent, nó tự sửa</li>
+                        <li><span class="highlight">Regression:</span> chạy toàn bộ mỗi ngày</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Card 3: Architecture -->
+            <div class="card">
+                <div class="card-number">3</div>
+                <div class="card-header">
+                    <div class="card-icon">🏗️</div>
+                    <div>
+                        <div class="card-title">Kiến trúc</div>
+                        <div class="card-subtitle">1 Engine + N Chains</div>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <div class="architecture-diagram">
+                        <span style="color: #10b981;">recorder-engine</span> ← Code chung (cài 1 lần)<br>
+                        ─────────────────────────<br>
+                        <span style="color: #00d4ff;">frt-test-lab</span> ← YAML tests cho chuỗi LAB<br>
+                        <span style="color: #00d4ff;">frt-test-ict</span> ← YAML tests cho chuỗi ICT<br>
+                        <span style="color: #00d4ff;">frt-test-vac</span> ← YAML tests cho Vaccine<br>
+                        <span style="color: #00d4ff;">frt-test-...</span> ← Thêm chuỗi = 1 prompt
+                    </div>
+                    <p style="font-size: 0.9em; color: #b0b0b0;">Engine = tool chạy test. Chain = data riêng mỗi chuỗi.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- QUICK START — All in One -->
+        <div class="workflow-section" style="border-color: rgba(16, 185, 129, 0.5); background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(0, 212, 255, 0.08) 100%);">
+            <div class="workflow-title">
+                <span>⚡</span>
+                SETUP + ONBOARD = 1 PHÁT LÀ XONG
+            </div>
+            <div class="card-content">
+                <p style="margin-bottom: 20px; font-size: 1.1em;">Chỉ cần <strong>2 prompts</strong> để từ máy trống → có test chạy được:</p>
+
+                <p style="font-weight: 600; margin-top: 25px; font-size: 1.1em;">📦 Bước 1: Setup engine (1 lần duy nhất)</p>
+                <p style="color: #b0b0b0; margin-bottom: 10px;">Paste prompt này vào AI agent (Kiro / Cursor / Claude Code):</p>
+                <div class="big-prompt">
+                    Setup engine recorder cho tôi. Workspace folder: ~/work
+                </div>
+                <p style="color: #b0b0b0; font-size: 0.9em;">Agent tự clone repo, install, link global command, <strong>và cài playbook vào steering của workspace</strong>. Xong trong ~2 phút.</p>
+
+                <p style="font-weight: 600; margin-top: 20px; color: #fff;">Hoặc clone thủ công (dùng HTTPS):</p>
+                <div class="command-box">
+                    <div class="command-label"># Clone qua HTTPS (KHÔNG dùng SSH) — nhập user/password hoặc Personal Access Token khi được hỏi</div>
+                    git clone https://git2.fptshop.com.vn/ai-test/recorder-engine.git ~/work/recorder-engine<br>
+                    cd ~/work/recorder-engine<br>
+                    npm install<br>
+                    npx playwright install chromium<br>
+                    npm link
+                </div>
+                <div class="info-box">
+                    <strong>🔑 Vì sao HTTPS?</strong> Không cần cấu hình SSH key. Đăng nhập bằng tài khoản GitLab; nếu bật 2FA thì tạo <strong>Personal Access Token</strong> (GitLab → Settings → Access Tokens, scope <code>read_repository</code>) và dùng token đó thay password.
+                </div>
+
+                <p style="font-weight: 600; margin-top: 25px; color: #fff;">📚 Đưa playbook vào agent (steering) — để mở workspace là có sẵn "đồ chơi"</p>
+                <p style="color: #b0b0b0; margin-bottom: 10px;">Vấn đề: khi bạn đứng ở workspace (vd chain repo đã onboard), agent KHÔNG tự biết hướng dẫn nằm trong recorder-engine. Cách xử lý — copy file playbook chuẩn của engine vào steering của workspace, agent sẽ tự đọc mỗi lần mở:</p>
+                <div class="big-prompt" style="text-align: left;">
+                    Cài playbook frt-test vào steering của workspace này
+                </div>
+                <p style="color: #b0b0b0; font-size: 0.9em;">Agent copy <code>recorder-engine/docs/agent-context/frt-test.md</code> → steering của workspace:</p>
+                <div class="command-box" style="font-size: 0.85em;">
+                    <div class="command-label"># Tuỳ agent bạn dùng (agent tự chọn đúng chỗ)</div>
+                    .kiro/steering/frt-test.md   <span style="color: #b0b0b0;"># Kiro (auto-load)</span><br>
+                    AGENTS.md                    <span style="color: #b0b0b0;"># Chuẩn chung (Codex…)</span><br>
+                    CLAUDE.md                    <span style="color: #b0b0b0;"># Claude Code</span><br>
+                    .cursor/rules/frt-test.mdc   <span style="color: #b0b0b0;"># Cursor</span>
+                </div>
+                <div class="success-box">
+                    <strong>✅ Setup engine (Bước 1) đã tự làm bước này.</strong> Prompt trên chỉ dùng để <strong>retrofit</strong> cho workspace/chuỗi đã onboard từ trước mà chưa có steering. Sau đó mở lại workspace → agent tự biết dùng <code>frt-test</code> mà không cần bạn lăn tăn.
+                </div>
+
+                <p style="font-weight: 600; margin-top: 35px; font-size: 1.1em;">🏪 Bước 2: Onboard chuỗi (mỗi chuỗi 1 lần)</p>
+                <p style="color: #b0b0b0; margin-bottom: 10px;">Paste prompt, thay tên chuỗi + URL apps theo từng env (ci / uat / prod):</p>
+                <div class="big-prompt" style="text-align: left;">
+                    Onboard chuỗi LAB cho recorder, envs: ci, uat, prod<br>
+                    Apps + URL theo env:<br>
+                    - rsa-lab: ci=https://ci-lab-rsa.frt.vn, uat=https://uat-lab-rsa.frt.vn<br>
+                    - ecom-lab: ci=https://ci-lab-ecom.frt.vn<br>
+                    - portal-lab: ci=https://ci-lab-portal.frt.vn
+                </div>
+                <p style="color: #b0b0b0; font-size: 0.9em;">Agent tạo chain repo (schema v2 multi-env), config apps theo env, push lên GitLab. Xong trong ~1 phút.</p>
+                <p style="color: #b0b0b0; font-size: 0.9em; margin-top: 8px;">💡 Chỉ cần điền URL env nào bạn có (vd chỉ <strong>ci</strong>). Env còn thiếu URL bổ sung sau bằng prompt "Thêm URL env uat cho app rsa-lab..." hoặc <code>frt-test add-env</code>.</p>
+
+                <div class="success-box" style="margin-top: 30px;">
+                    <strong>✅ Done!</strong> Từ đây bạn đã có thể record/play/regression theo từng env. Không cần config thêm gì.
+                </div>
+            </div>
+        </div>
+
+        <!-- Prerequisites -->
+        <div class="workflow-section">
+            <div class="workflow-title">
+                <span>📋</span>
+                YÊU CẦU TRƯỚC KHI BẮT ĐẦU
+            </div>
+            <div class="card-content">
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Yêu cầu</th>
+                            <th>Kiểm tra</th>
+                            <th>Cài nếu thiếu</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="highlight">Node.js ≥ 18</span></td>
+                            <td><code style="background: rgba(0,0,0,0.3); padding: 2px 5px; border-radius: 3px;">node -v</code></td>
+                            <td><code style="background: rgba(0,0,0,0.3); padding: 2px 5px; border-radius: 3px;">nvm install 18</code> hoặc <a href="https://nodejs.org" style="color: #00d4ff;">nodejs.org</a></td>
+                        </tr>
+                        <tr>
+                            <td><span class="highlight">Git</span></td>
+                            <td><code style="background: rgba(0,0,0,0.3); padding: 2px 5px; border-radius: 3px;">git --version</code></td>
+                            <td>Có sẵn trên macOS/Linux. Windows: cài Git for Windows (engine chạy native, KHÔNG cần WSL/Git Bash)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="highlight">AI Agent</span></td>
+                            <td>Kiro / Cursor / Claude Code / Codex</td>
+                            <td>Cài 1 trong 4 — recommend Kiro</td>
+                        </tr>
+                        <tr>
+                            <td><span class="highlight">GitLab access</span></td>
+                            <td><code style="background: rgba(0,0,0,0.3); padding: 2px 5px; border-radius: 3px;">git ls-remote https://git2.fptshop.com.vn/ai-test/recorder-engine.git</code></td>
+                            <td>Liên hệ admin cấp quyền</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Daily Workflow -->
+        <div class="workflow-section">
+            <div class="workflow-title">
+                <span>🔄</span>
+                QUY TRÌNH HÀNG NGÀY
+            </div>
+            <div class="flow-steps">
+                <div class="flow-step">
+                    <div class="step-number">1</div>
+                    <div class="step-title">Record test mới</div>
+                    <div class="step-desc">Browser mở → bạn thao tác → YAML tự tạo</div>
+                </div>
+                <div class="flow-step">
+                    <div class="step-number">2</div>
+                    <div class="step-title">Play lại verify</div>
+                    <div class="step-desc">Test chạy lại y hệt thao tác bạn đã làm</div>
+                </div>
+                <div class="flow-step">
+                    <div class="step-number">3</div>
+                    <div class="step-title">Commit & push</div>
+                    <div class="step-desc">Lưu test lên repo — team dùng chung</div>
+                </div>
+                <div class="flow-step">
+                    <div class="step-number">4</div>
+                    <div class="step-title">Regression mỗi ngày</div>
+                    <div class="step-desc">Toàn bộ tests chạy headless — phát hiện bug sớm</div>
+                </div>
+                <div class="flow-step">
+                    <div class="step-number">5</div>
+                    <div class="step-title">Test fail?</div>
+                    <div class="step-desc">Nói agent "fix giúp tôi" — nó tự sửa YAML</div>
+                </div>
+                <div class="flow-step">
+                    <div class="step-number">6</div>
+                    <div class="step-title">Lặp lại</div>
+                    <div class="step-desc">Thêm tests mới, coverage tăng dần mỗi ngày</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ALL 10 PROMPTS -->
+        <div class="workflow-section">
+            <div class="workflow-title">
+                <span>💬</span>
+                10 PROMPTS — COPY & PASTE
+            </div>
+            <div class="card-content">
+                <p style="margin-bottom: 25px;">Đây là tất cả những gì bạn cần nhớ. Copy paste vào AI agent là xong:</p>
+
+                <p style="font-weight: 600; margin-top: 20px; color: #fff;">1. Setup engine (1 lần duy nhất)</p>
+                <div class="prompt-box">Setup engine recorder cho tôi. Workspace folder: ~/work</div>
+
+                <p style="font-weight: 600; margin-top: 20px; color: #fff;">2. Onboard chuỗi mới</p>
+                <div class="prompt-box">Onboard chuỗi {TÊN} cho recorder, envs ci/uat/prod, apps: {app1}: {ci-url}, {app2}: {ci-url}</div>
+
+                <p style="font-weight: 600; margin-top: 20px; color: #fff;">3. Thêm app vào chuỗi đã có</p>
+                <div class="prompt-box">Thêm app {TÊN_APP} cho chuỗi {CHAIN}, URL: {URL}</div>
+
+                <p style="font-weight: 600; margin-top: 20px; color: #fff;">4. Record test mới ⭐</p>
+                <div class="prompt-box">Record test mới cho chuỗi {CHAIN}, app {APP}, env {ci/uat/prod}, tên: "{Mô tả test}"</div>
+
+                <p style="font-weight: 600; margin-top: 20px; color: #fff;">5. Play 1 test</p>
+                <div class="prompt-box">Play test "{tên-test}" của chuỗi {CHAIN}, app {APP}, env {ci/uat/prod}</div>
+
+                <p style="font-weight: 600; margin-top: 20px; color: #fff;">6. Fix test fail ⭐</p>
+                <div class="prompt-box">Test "{tên-test}" của {CHAIN} chạy fail. Fix giúp tôi.</div>
+
+                <p style="font-weight: 600; margin-top: 20px; color: #fff;">7. Regression toàn chuỗi</p>
+                <div class="prompt-box">Chạy regression toàn chuỗi {CHAIN}, env {ci/uat/prod}</div>
+
+                <p style="font-weight: 600; margin-top: 20px; color: #fff;">8. Commit & push</p>
+                <div class="prompt-box">Commit và push test "{tên-test}" lên repo {CHAIN}</div>
+
+                <p style="font-weight: 600; margin-top: 20px; color: #fff;">9. Update engine</p>
+                <div class="prompt-box">Update engine recorder lên version mới nhất</div>
+
+                <p style="font-weight: 600; margin-top: 20px; color: #fff;">10. Liệt kê & xóa tests</p>
+                <div class="prompt-box">Liệt kê tất cả tests của chuỗi {CHAIN}</div>
+
+                <div class="info-box" style="margin-top: 30px;">
+                    <strong>💡 Tip:</strong> Thay <code>{CHAIN}</code> = tên chuỗi (lab, ict, vac, pharmacy...), <code>{APP}</code> = tên app trong config, <code>{tên-test}</code> = tên file YAML (không cần .yaml). AI agent hiểu ngữ cảnh!
+                </div>
+            </div>
+        </div>
+
+        <!-- Environments -->
+        <div class="workflow-section">
+            <div class="workflow-title">
+                <span>🌍</span>
+                MÔI TRƯỜNG (CI / UAT / PROD)
+            </div>
+            <div class="card-content">
+                <p style="margin-bottom: 20px;">Mỗi chuỗi quản lý nhiều <strong>môi trường</strong> — cùng một app nhưng URL khác nhau theo env. Test được tổ chức riêng theo từng env.</p>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Env</th>
+                            <th>Mục đích</th>
+                            <th>Ví dụ URL</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><span class="highlight">ci</span></td><td>Môi trường tích hợp — test sớm</td><td>https://ci-lab-rsa.frt.vn</td></tr>
+                        <tr><td><span class="highlight">uat</span></td><td>Nghiệm thu trước release</td><td>https://uat-lab-rsa.frt.vn</td></tr>
+                        <tr><td><span class="highlight">prod</span></td><td>Production — smoke test thận trọng</td><td>https://lab-rsa.frt.vn</td></tr>
+                    </tbody>
+                </table>
+
+                <div class="info-box">
+                    <strong>📂 Test lưu theo env:</strong> <code>flows/{app}/{env}/{tên-test}.yaml</code>.
+                    Flow dùng chung (login, setup) đặt trong <code>flows/{app}/_shared/</code> — mọi env <code>use:</code> lại được.
+                </div>
+
+                <p style="margin-top: 20px; font-weight: 600; color: #fff;">Khi record/play phải chỉ rõ env:</p>
+                <div class="prompt-box">Record test mới cho chuỗi LAB, app rsa-lab, env ci, tên: "Tạo đơn hàng"</div>
+                <div class="prompt-box">Play test "tao-don-hang" của chuỗi LAB, app rsa-lab, env ci</div>
+
+                <p style="margin-top: 20px; font-weight: 600; color: #fff;">Clone test từ env này sang env khác (sau khi verify CI ok → đẩy lên UAT):</p>
+                <div class="prompt-box">Clone test "tao-don-hang" từ CI sang UAT cho app rsa-lab, chuỗi LAB</div>
+
+                <div class="warning-box" style="margin-top: 20px;">
+                    <strong>⚠️ Lưu ý:</strong> Chuỗi onboard mới mặc định multi-env (ci/uat/prod) → <strong>bắt buộc có <code>--env</code></strong>.
+                    Chuỗi cũ (schema v1, 1 URL/app) vẫn chạy không cần env. Migrate bằng: <code>frt-test migrate-config --write</code>.
+                </div>
+            </div>
+        </div>
+
+        <!-- Record Flow Detail -->
+        <div class="workflow-section">
+            <div class="workflow-title">
+                <span>🎬</span>
+                RECORD TEST — CHI TIẾT
+            </div>
+            <div class="card-content">
+                <p style="margin-bottom: 20px;">Khi bạn paste prompt record, đây là những gì xảy ra:</p>
+
+                <div class="flow-steps" style="grid-template-columns: 1fr;">
+                    <div class="flow-step" style="text-align: left;">
+                        <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                            <div class="step-number" style="margin-right: 15px; margin-bottom: 0;">1</div>
+                            <div class="step-title" style="margin-bottom: 0;">Browser Chromium mở lên</div>
+                        </div>
+                        <div class="step-desc">App URL tự động load. Bạn thấy browser hiện ra.</div>
+                    </div>
+                    <div class="flow-step" style="text-align: left;">
+                        <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                            <div class="step-number" style="margin-right: 15px; margin-bottom: 0;">2</div>
+                            <div class="step-title" style="margin-bottom: 0;">Bạn thao tác bình thường</div>
+                        </div>
+                        <div class="step-desc">Click, nhập liệu, chọn dropdown, navigate... Hệ thống ghi lại mọi thứ.</div>
+                    </div>
+                    <div class="flow-step" style="text-align: left;">
+                        <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                            <div class="step-number" style="margin-right: 15px; margin-bottom: 0;">3</div>
+                            <div class="step-title" style="margin-bottom: 0;">Thêm assertion (kiểm tra kết quả)</div>
+                        </div>
+                        <div class="step-desc"><strong>Ctrl+Shift+A</strong> → click element → nhập giá trị mong đợi. Đây là cách verify kết quả.</div>
+                    </div>
+                    <div class="flow-step" style="text-align: left;">
+                        <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                            <div class="step-number" style="margin-right: 15px; margin-bottom: 0;">4</div>
+                            <div class="step-title" style="margin-bottom: 0;">Ctrl+C để dừng</div>
+                        </div>
+                        <div class="step-desc">File YAML tự động lưu vào <code>flows/{app}/{env}/{tên-test}.yaml</code> (vd <code>flows/rsa-lab/ci/tao-don-hang.yaml</code>)</div>
+                    </div>
+                </div>
+
+                <div class="warning-box" style="margin-top: 20px;">
+                    <strong>⚠️ Mẹo record tốt:</strong><br>
+                    • Thao tác <strong>chậm, rõ ràng</strong> — đợi page load xong rồi mới click<br>
+                    • Sau khi chọn dropdown → <strong>đợi 1-2 giây</strong> trước khi click tiếp<br>
+                    • <strong>Hover để hiện nút:</strong> nếu nút chỉ hiện khi rê chuột vào (icon/row) → cứ hover rồi click, recorder tự ghi bước hover<br>
+                    • <strong>Popup chắn đường:</strong> popup/quảng cáo bất ngờ sẽ được tự đóng khi play — không cần click tắt thủ công lúc record<br>
+                    • Đặt tên test có ý nghĩa: "tao-don-hang-dv-xn-mau" thay vì "test1"
+                </div>
+                <div class="warning-box" style="margin-top: 12px;">
+                    <strong>💡 Assert giá trị động (tiền, tồn kho, %, ngày):</strong><br>
+                    Khi dùng Ctrl+Shift+A để verify một giá trị hay đổi (vd "1,234,000đ", "Tồn 21", "12.5%") →
+                    recorder tự chuyển sang kiểm tra <strong>element có hiện không</strong> thay vì so khớp con số.
+                    Nhờ vậy test không fail khi data đổi giữa các lần chạy.
+                </div>
+            </div>
+        </div>
+
+        <!-- Play & Regression -->
+        <div class="workflow-section">
+            <div class="workflow-title">
+                <span>▶️</span>
+                PLAY TEST & REGRESSION
+            </div>
+            <div class="card-content">
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Tình huống</th>
+                            <th>Prompt</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Play 1 test cụ thể</td>
+                            <td><code style="color: #06d6a0;">Play test "tao-don-hang" của chuỗi LAB, app rsa-lab, env ci</code></td>
+                        </tr>
+                        <tr>
+                            <td>Play tất cả tests 1 app/env</td>
+                            <td><code style="color: #06d6a0;">Chạy tất cả test của app rsa-lab, chuỗi LAB, env ci</code></td>
+                        </tr>
+                        <tr>
+                            <td>Regression toàn chuỗi (headless)</td>
+                            <td><code style="color: #06d6a0;">Chạy regression toàn chuỗi LAB, env ci</code></td>
+                        </tr>
+                        <tr>
+                            <td>Play với HTML report</td>
+                            <td><code style="color: #06d6a0;">Play toàn chuỗi LAB env ci, xuất HTML report</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="info-box">
+                    <strong>📊 Kết quả:</strong><br>
+                    • Pass → ✅ xanh, next<br>
+                    • Fail → ❌ đỏ + screenshot tự lưu <code>screenshots/</code> + chỉ rõ step nào fail<br>
+                    • HTML report → <code>reports/</code> folder
+                </div>
+            </div>
+        </div>
+
+        <!-- Fix Failing -->
+        <div class="workflow-section">
+            <div class="workflow-title">
+                <span>🔧</span>
+                TEST FAIL? AI TỰ SỬA
+            </div>
+            <div class="card-content">
+                <p style="margin-bottom: 20px;">Khi test fail (selector lỗi, DOM thay đổi, timing...), chỉ cần 1 prompt:</p>
+
+                <div class="big-prompt">
+                    Test "tao-don-hang" của LAB chạy fail. Fix giúp tôi.
+                </div>
+
+                <p style="margin-top: 20px;">Agent sẽ tự:</p>
+                <ul class="feature-list">
+                    <li>Chạy lại test, đọc error message</li>
+                    <li>Xem screenshot fail</li>
+                    <li>Phân tích nguyên nhân (selector cũ? timing? URL đổi? thiếu bước hover? popup chắn?)</li>
+                    <li>Sửa file YAML trực tiếp (phần thao tác)</li>
+                    <li>Chạy lại verify các step thao tác chạy hết</li>
+                    <li>Báo bạn kết quả + hỏi commit không</li>
+                </ul>
+
+                <div class="warning-box">
+                    <strong>⛔ Nguyên tắc khi fix: KHÔNG sửa assertion để ép test pass.</strong><br>
+                    Agent chỉ fix để flow <strong>chạy được đến cuối</strong> (selector, timing, hover, popup, navigation).
+                    Nếu một <strong>assertion fail</strong> → đó thường là <strong>BUG sản phẩm</strong> mà test bắt được.
+                    Agent sẽ <strong>giữ nguyên assertion + báo bug</strong>, KHÔNG đổi giá trị mong đợi cho khớp để "xanh giả".
+                    <br><br>
+                    <em>Ngoại lệ:</em> nếu assertion so khớp <strong>dữ liệu động</strong> (tiền/tồn kho/%/ngày — thay đổi mỗi lần chạy, không phải bug) thì mới đổi sang kiểm tra <code>visible</code> hoặc tham số hóa <code>{{var}}</code>.
+                </div>
+
+                <div class="success-box">
+                    <strong>Bạn không cần đọc code YAML.</strong> Agent hiểu context và tự fix lỗi thao tác. Nếu là bug thật, nó báo bạn thay vì giấu đi.
+                </div>
+            </div>
+        </div>
+
+        <!-- Supported Agents -->
+        <div class="grid" style="margin-top: 40px;">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">🤖</div>
+                    <div>
+                        <div class="card-title">AI Agents hỗ trợ</div>
+                        <div class="card-subtitle">Dùng agent nào cũng được</div>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <ul class="feature-list">
+                        <li><span class="highlight">Kiro</span> — recommend, hiểu context tốt nhất</li>
+                        <li><span class="highlight">Cursor</span> — phổ biến, dễ dùng</li>
+                        <li><span class="highlight">Claude Code</span> — CLI power users</li>
+                        <li><span class="highlight">Codex (OpenAI)</span> — alternative</li>
+                    </ul>
+                    <p style="margin-top: 15px; color: #b0b0b0; font-size: 0.9em;">Prompts hoạt động y hệt trên mọi agent. Miễn agent có quyền chạy shell commands.</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">📁</div>
+                    <div>
+                        <div class="card-title">Cấu trúc chain repo</div>
+                        <div class="card-subtitle">Tự tạo khi onboard</div>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <div class="command-box" style="font-size: 0.85em;">
+                        <div class="command-label">frt-test-lab/</div>
+                        ├── config/<br>
+                        │   └── environments.yaml  <span style="color: #b0b0b0;"># apps + URL theo env (ci/uat/prod)</span><br>
+                        ├── flows/<br>
+                        │   ├── rsa-lab/<br>
+                        │   │   ├── _shared/       <span style="color: #b0b0b0;"># Login, setup chung (mọi env)</span><br>
+                        │   │   ├── ci/            <span style="color: #b0b0b0;"># Tests cho env CI</span><br>
+                        │   │   │   ├── tao-don-hang.yaml<br>
+                        │   │   │   └── kiem-tra-kq.yaml<br>
+                        │   │   ├── uat/           <span style="color: #b0b0b0;"># Tests cho env UAT</span><br>
+                        │   │   └── prod/          <span style="color: #b0b0b0;"># Tests cho env PROD</span><br>
+                        │   └── ecom-lab/<br>
+                        │       └── ...<br>
+                        ├── reports/               <span style="color: #b0b0b0;"># HTML reports</span><br>
+                        ├── screenshots/           <span style="color: #b0b0b0;"># Fail screenshots</span><br>
+                        └── README.md
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Troubleshooting -->
+        <div class="workflow-section">
+            <div class="workflow-title">
+                <span>🛠️</span>
+                XỬ LÝ LỖI THƯỜNG GẶP
+            </div>
+            <div class="card-content">
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Lỗi</th>
+                            <th>Nguyên nhân</th>
+                            <th>Fix</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>frt-test: command not found</code></td>
+                            <td>Chưa link global</td>
+                            <td><code>cd ~/work/recorder-engine && npm link</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>Cannot find module 'tsx'</code></td>
+                            <td>Chưa install dependencies</td>
+                            <td><code>cd ~/work/recorder-engine && npm install</code></td>
+                        </tr>
+                        <tr>
+                            <td>Browser không mở khi record</td>
+                            <td>Playwright chưa cài Chromium</td>
+                            <td><code>npx playwright install chromium</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>Permission denied</code> khi npm link</td>
+                            <td>npm global dir cần quyền</td>
+                            <td><code>sudo npm link</code> hoặc fix npm prefix</td>
+                        </tr>
+                        <tr>
+                            <td><code>git push rejected</code></td>
+                            <td>Repo GitLab chưa empty</td>
+                            <td>Xóa README mặc định trên GitLab</td>
+                        </tr>
+                        <tr>
+                            <td>Test timeout</td>
+                            <td>Page load chậm</td>
+                            <td>Thêm <code>timeout: 60000</code> trong YAML</td>
+                        </tr>
+                        <tr>
+                            <td>Selector not found</td>
+                            <td>DOM đã thay đổi</td>
+                            <td>Dùng prompt "fix giúp tôi" → agent tự sửa</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Pro Tips -->
+        <div class="workflow-section">
+            <div class="workflow-title">
+                <span>💡</span>
+                MẸO HAY
+            </div>
+            <div class="card-content">
+                <ul class="feature-list">
+                    <li><span class="highlight">Shared flows:</span> Login, chọn cửa hàng... đặt trong <code>_shared/</code> — các test khác <code>use:</code> lại, DRY</li>
+                    <li><span class="highlight">Tags:</span> Gắn tag cho test (smoke, regression, critical) → chạy theo nhóm</li>
+                    <li><span class="highlight">Headless:</span> Regression chạy headless (không mở browser) — nhanh hơn, CI/CD friendly</li>
+                    <li><span class="highlight">HTML report:</span> Chia sẻ kết quả đẹp cho PM/lead xem</li>
+                    <li><span class="highlight">Thêm app:</span> Chuỗi có app mới? 1 prompt "Thêm app..." là xong</li>
+                    <li><span class="highlight">Update engine:</span> Team maintain engine → bạn chỉ <code>git pull</code> là có version mới</li>
+                    <li><span class="highlight">Assert mode:</span> Ctrl+Shift+A khi recording = thêm verification point — quan trọng để phát hiện bug!</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Quick Reference -->
+        <div class="workflow-section" style="border-color: rgba(16, 185, 129, 0.5);">
+            <div class="workflow-title">
+                <span>📋</span>
+                CHEAT SHEET
+            </div>
+            <div class="card-content">
+                <div class="command-box">
+                    <div class="command-label"># CLI Commands (dùng trực tiếp nếu không muốn qua AI agent)</div>
+                    <span style="color: #b0b0b0;"># Chuỗi multi-env (schema v2) cần --env. Chuỗi cũ (v1) bỏ qua được.</span><br>
+                    frt-test record --app rsa-lab --env ci -n "Tên test"   <span style="color: #b0b0b0;"># Record</span><br>
+                    frt-test play --app rsa-lab --env ci tên-test.yaml     <span style="color: #b0b0b0;"># Play 1 file</span><br>
+                    frt-test play --app rsa-lab --env ci --all              <span style="color: #b0b0b0;"># Play all 1 app/env</span><br>
+                    frt-test play --app rsa-lab --env ci --all --headless --html-report  <span style="color: #b0b0b0;"># Regression</span><br>
+                    frt-test list --app rsa-lab --env ci                   <span style="color: #b0b0b0;"># List tests 1 app/env</span><br>
+                    frt-test envs                                           <span style="color: #b0b0b0;"># Xem envs + URL status</span><br>
+                    frt-test add-env --app rsa-lab --env uat --url https://...  <span style="color: #b0b0b0;"># Set URL cho env</span><br>
+                    frt-test clone-flow tên-test.yaml --app rsa-lab --from ci --to uat  <span style="color: #b0b0b0;"># Clone test giữa env</span><br>
+                    frt-test migrate-config --write                        <span style="color: #b0b0b0;"># Migrate v1 → v2 multi-env</span><br>
+                    frt-test scaffold-chain --name lab --apps "..." --envs ci,uat,prod  <span style="color: #b0b0b0;"># Tạo chain mới</span><br>
+                    frt-test add-app --name app-x --urls "ci:https://..."  <span style="color: #b0b0b0;"># Thêm app</span><br>
+                    frt-test convert input.spec.ts                         <span style="color: #b0b0b0;"># Convert Playwright → YAML</span><br>
+                    frt-test --version                                     <span style="color: #b0b0b0;"># Check version</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <p style="font-size: 1.1em; color: #10b981;">@ai-test/recorder-engine v1.0 — Record & Replay E2E Tests bằng AI Agent</p>
+            <p style="margin-top: 15px; font-size: 0.9em;">
+                🏢 FPT Retail · AI Test Team · 2025–2026<br>
+                Tester không cần biết code. Paste prompt. Done.
+            </p>
+        </footer>
+    </div>
+</body>
+</html>

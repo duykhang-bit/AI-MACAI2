@@ -1,0 +1,993 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Test Recorder — Tách Engine khỏi Chain Repos</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #fbfbfd;
+    --fg: #1d1d1f;
+    --muted: #6e6e73;
+    --line: #d2d2d7;
+    --card: #ffffff;
+    --accent: #0066cc;
+    --code-bg: #f5f5f7;
+    --code-fg: #1d1d1f;
+    --warn-bg: #fff4e5;
+    --warn-fg: #663c00;
+    --ok-bg: #e8f5e9;
+    --ok-fg: #1b5e20;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1d1d1f;
+      --fg: #f5f5f7;
+      --muted: #8e8e93;
+      --line: #38383a;
+      --card: #2c2c2e;
+      --accent: #2997ff;
+      --code-bg: #2c2c2e;
+      --code-fg: #f5f5f7;
+      --warn-bg: #3b2f1c;
+      --warn-fg: #ffd60a;
+      --ok-bg: #1b3a1d;
+      --ok-fg: #34c759;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    line-height: 1.6;
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 64px 32px 120px;
+  }
+  header {
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 32px;
+    margin-bottom: 48px;
+  }
+  h1 {
+    font-size: 40px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    margin: 0 0 12px;
+    line-height: 1.15;
+  }
+  .meta {
+    color: var(--muted);
+    font-size: 14px;
+    margin: 0;
+  }
+  .meta strong { color: var(--fg); font-weight: 500; }
+  h2 {
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 56px 0 16px;
+    line-height: 1.25;
+  }
+  h3 {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 32px 0 8px;
+  }
+  h4 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 24px 0 8px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-size: 13px;
+  }
+  p { margin: 12px 0; }
+  ul, ol { margin: 12px 0; padding-left: 22px; }
+  li { margin: 4px 0; }
+  code {
+    font-family: "SF Mono", ui-monospace, Menlo, Monaco, "Cascadia Code", "Roboto Mono", monospace;
+    font-size: 13.5px;
+    background: var(--code-bg);
+    color: var(--code-fg);
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+  pre {
+    background: var(--code-bg);
+    color: var(--code-fg);
+    padding: 16px 20px;
+    border-radius: 10px;
+    overflow-x: auto;
+    font-family: "SF Mono", ui-monospace, Menlo, Monaco, monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    border: 1px solid var(--line);
+  }
+  pre code { background: transparent; padding: 0; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 14px;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  th {
+    font-weight: 600;
+    color: var(--muted);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 24px 28px;
+    margin: 16px 0;
+  }
+  .pill {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: 999px;
+    background: var(--accent);
+    color: white;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+  .pill.warn { background: #f59e0b; color: #1d1d1f; }
+  .pill.ok   { background: #16a34a; color: white; }
+  .pill.todo { background: var(--muted); color: white; }
+  .callout {
+    border-left: 3px solid var(--accent);
+    padding: 12px 18px;
+    margin: 20px 0;
+    background: var(--code-bg);
+    border-radius: 0 8px 8px 0;
+  }
+  .callout.warn { border-color: #f59e0b; background: var(--warn-bg); color: var(--warn-fg); }
+  .callout.ok { border-color: #16a34a; background: var(--ok-bg); color: var(--ok-fg); }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 700px) { .grid-2 { grid-template-columns: 1fr; } }
+  .toc {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 18px 24px;
+    margin: 24px 0;
+  }
+  .toc ol { margin: 6px 0; }
+  .toc a { color: var(--accent); text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+  hr { border: 0; border-top: 1px solid var(--line); margin: 48px 0; }
+  .arrow { color: var(--muted); margin: 0 6px; }
+  .small { font-size: 13px; color: var(--muted); }
+  .check { color: #16a34a; font-weight: 700; }
+  .cross { color: #dc2626; font-weight: 700; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>AI Test Recorder<br>Tách Engine khỏi Chain Repos</h1>
+  <p class="meta">
+    <strong>Project:</strong> ai-test (group GitLab nội bộ)
+    &nbsp;·&nbsp;
+    <strong>Status:</strong> Plan — chưa implement
+    &nbsp;·&nbsp;
+    <strong>Created:</strong> 2026-06-03
+    &nbsp;·&nbsp;
+    <strong>Owner:</strong> thinhph
+  </p>
+</header>
+
+<div class="toc">
+  <strong>Mục lục</strong>
+  <ol>
+    <li><a href="#context">Context &amp; Vấn đề</a></li>
+    <li><a href="#goals">Mục tiêu</a></li>
+    <li><a href="#decisions">Decisions đã chốt</a></li>
+    <li><a href="#architecture">Architecture mới</a></li>
+    <li><a href="#tester-workflow">Workflow của tester (qua AI agent)</a></li>
+    <li><a href="#docs-cookbook">Documentation: Agent prompt cookbook</a></li>
+    <li><a href="#engine-changes">Thay đổi cần làm trong Engine</a></li>
+    <li><a href="#chain-template">Chain template structure</a></li>
+    <li><a href="#scaffold">Scaffold command (onboarding tự động)</a></li>
+    <li><a href="#phases">Phases triển khai</a></li>
+    <li><a href="#verification">Verification &amp; exit criteria</a></li>
+    <li><a href="#risks">Risks &amp; mitigations</a></li>
+    <li><a href="#open">Open questions / out of scope</a></li>
+  </ol>
+</div>
+
+<h2 id="context">1. Context &amp; Vấn đề</h2>
+
+<h4>Hiện trạng</h4>
+<p>
+Template <code>frt-test-recorder-template</code> hiện tại được onboard cho mỗi chuỗi bằng lệnh
+<code>cp -r frt-test-recorder-template frt-test-recorder-{chain}</code>.
+Tức là <strong>mỗi chuỗi có 1 bản sao đầy đủ của engine code</strong> (<code>src/cli.ts</code>, <code>src/runner.ts</code>, <code>src/recorder.ts</code>, …).
+</p>
+
+<h4>Pain point</h4>
+<ul>
+  <li>Khi engine có bug fix / feature mới (vd: thêm action type, fix selector resolver, support browser khác) → phải đi update <strong>N repo riêng biệt</strong>.</li>
+  <li>Drift, version mismatch giữa các chuỗi.</li>
+  <li>Không có single source of truth cho engine logic.</li>
+</ul>
+
+<h4>Lợi thế hiện có</h4>
+<p>
+Engine code đã được viết theo pattern <strong>"thin CLI"</strong> — tất cả paths đều resolve qua <code>process.cwd()</code>:
+</p>
+<ul>
+  <li><code>cli.ts</code>: <code>path.join(process.cwd(), 'flows')</code>, <code>path.join(process.cwd(), 'reports')</code></li>
+  <li><code>config.ts</code>: <code>path.join(process.cwd(), 'config/environments.yaml')</code></li>
+  <li><code>runner.ts</code>, <code>recorder.ts</code>: cùng pattern</li>
+</ul>
+<div class="callout ok">
+<strong>Hệ quả:</strong> engine không phụ thuộc vào việc nó <em>nằm ở đâu</em>, chỉ cần được chạy từ folder của chuỗi (chứa <code>flows/</code>, <code>config/</code>, <code>screenshots/</code>, <code>reports/</code>). Không cần refactor logic — chỉ cần tách packaging.
+</div>
+
+<h2 id="goals">2. Mục tiêu</h2>
+<ol>
+  <li><strong>R1</strong> — Engine code maintain ở 1 nơi duy nhất (<code>ai-test/recorder-engine</code>).</li>
+  <li><strong>R2</strong> — Chain repos chỉ chứa data (<code>config/</code>, <code>flows/</code>), KHÔNG có engine code, KHÔNG có <code>node_modules/</code>.</li>
+  <li><strong>R3</strong> — Tester workflow đơn giản: clone engine + chain → <code>npm link</code> → chạy <code>frt-test</code>.</li>
+  <li><strong>R4</strong> — Onboarding chuỗi mới hoàn toàn <strong>tự động</strong> qua command (Node.js, cross-platform).</li>
+  <li><strong>R5</strong> — Update engine = <code>git pull</code>. Không cần npm publish, không cần version pin.</li>
+  <li><strong>R6</strong> — Backward compat: command surface giữ nguyên (<code>record</code>, <code>play</code>, <code>list</code>, <code>convert</code> với same flags).</li>
+  <li><strong>R7</strong> — Cross-platform: macOS / Linux primary. Windows qua Git Bash hoặc WSL.</li>
+</ol>
+
+<h2 id="decisions">3. Decisions đã chốt</h2>
+
+<table>
+<thead>
+<tr><th>ID</th><th>Decision</th><th>Rationale</th></tr>
+</thead>
+<tbody>
+<tr>
+  <td>D1</td>
+  <td>Distribution = <strong>git clone + <code>npm link</code></strong> (KHÔNG dùng npm package + version pin)</td>
+  <td>Đơn giản hơn cho team nội bộ, không cần npm registry, debug-friendly (tester có local source code).</td>
+</tr>
+<tr>
+  <td>D2</td>
+  <td>Engine ships <strong>raw TS + tsx</strong> (không build <code>dist/</code>)</td>
+  <td>Tester có local source. Update = git pull. Không cần build pipeline. Dev experience giữ nguyên.</td>
+</tr>
+<tr>
+  <td>D3</td>
+  <td>Onboarding script là <strong>CLI subcommand</strong> trong engine: <code>frt-test scaffold-chain</code></td>
+  <td>Cross-platform free (Node.js), reuse commander infrastructure, không cần shell variant cho Windows.</td>
+</tr>
+<tr>
+  <td>D4</td>
+  <td>LAB chain — <strong>làm mới từ đầu</strong>, không có migration</td>
+  <td>Repo cũ <code>frt-test-recorder-lab</code> chưa có flows. User confirmed.</td>
+</tr>
+<tr>
+  <td>D5</td>
+  <td>Versioning: <strong>chain repos không pin engine version</strong></td>
+  <td>Tester <code>git pull</code> engine để update. Engine in version banner mỗi lần chạy + warn nếu commit cũ &gt; 14 ngày.</td>
+</tr>
+<tr>
+  <td>D6</td>
+  <td>CI/CD regression: <strong>defer Phase 2</strong></td>
+  <td>Phase 1 manual test trước. CI thêm sau khi pattern stabilize.</td>
+</tr>
+<tr>
+  <td>D7</td>
+  <td>Chain template lives <strong>inside engine repo</strong> (<code>chain-template/</code> subfolder)</td>
+  <td>Collocated với scaffold command + version cùng engine. Khi engine bump pattern → chain-template bump theo.</td>
+</tr>
+<tr>
+  <td>D8</td>
+  <td>Documentation chính = <strong>prompt cookbook cho AI agent</strong> (không phải technical CLI manual)</td>
+  <td>Tester là user cuối, không phải dev. Họ paste prompt vào AI agent (Kiro / Cursor / Claude / Codex), agent gọi shell + git + npm + frt-test. Match AI-native SDLC pattern. Tester không cần học CLI flags.</td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="architecture">4. Architecture mới</h2>
+
+<h4>GitLab structure (sau khi IT tạo xong)</h4>
+
+<pre><code>git2.fptshop.com.vn/ai-test/
+├── recorder-engine/          ← 1 repo CODE (engine + scaffold)
+├── frt-test-bo/              ← 8 repos DATA (chỉ YAML tests + config)
+├── frt-test-data/
+├── frt-test-ds/
+├── frt-test-ict/
+├── frt-test-lab/
+├── frt-test-pharmacy/
+├── frt-test-platform/
+└── frt-test-vac/</code></pre>
+
+<h4>Engine repo structure</h4>
+
+<pre><code>ai-test/recorder-engine/
+├── src/                      ← Engine code (giữ nguyên từ template hiện tại)
+│   ├── cli.ts                ← thêm subcommand `scaffold-chain`
+│   ├── runner.ts
+│   ├── recorder.ts
+│   ├── reporter.ts
+│   ├── converter.ts
+│   ├── config.ts
+│   ├── types.ts
+│   └── scaffold.ts           ← MỚI: logic generate chain repo skeleton
+├── chain-template/           ← MỚI: template cho chain repos
+│   ├── README.md.tpl
+│   ├── config/environments.yaml.tpl
+│   ├── flows/_shared/login-placeholder.yaml
+│   ├── .gitignore
+│   ├── screenshots/.gitkeep
+│   └── reports/.gitkeep
+├── bin/
+│   └── frt-test              ← MỚI: shell wrapper (npm link binary)
+├── docs/
+│   ├── AGENT_PROMPTS.md      ← MỚI: index + 5 prompt phổ biến
+│   ├── prompts/              ← MỚI: 10 prompt files cho từng task
+│   │   ├── 01-setup-engine.md
+│   │   ├── 02-onboard-new-chain.md
+│   │   ├── 03-add-app-to-chain.md
+│   │   ├── 04-record-test.md
+│   │   ├── 05-play-test.md
+│   │   ├── 06-fix-failing-test.md
+│   │   ├── 07-daily-regression.md
+│   │   ├── 08-commit-and-push.md
+│   │   ├── 09-update-engine.md
+│   │   └── 10-list-and-cleanup-tests.md
+│   ├── examples/             ← Reference YAML examples (move từ examples/ict)
+│   └── engine-development.md ← MỚI: dành cho core team maintain engine
+├── package.json              ← UPDATED: name, bin entry, scripts
+├── tsconfig.json
+└── README.md                 ← UPDATED: quick start prompts (top 5)</code></pre>
+
+<h4>Chain repo structure (sau scaffold)</h4>
+
+<pre><code>ai-test/frt-test-{chain}/     ← VD: frt-test-lab
+├── README.md                 ← Auto-generated, có quick start
+├── config/
+│   └── environments.yaml     ← Apps + URLs của chuỗi
+├── flows/
+│   ├── _shared/              ← Shared flows toàn chuỗi (vd: login chung)
+│   ├── {app1}/               ← VD: rsa-lab/
+│   │   └── _shared/
+│   ├── {app2}/               ← VD: ecom-lab/
+│   │   └── _shared/
+│   └── {app3}/               ← VD: portal-lab/
+│       └── _shared/
+├── screenshots/
+│   └── .gitkeep              ← (content gitignored)
+├── reports/
+│   └── .gitkeep              ← (content gitignored)
+└── .gitignore                ← screenshots/*, reports/*, !.gitkeep</code></pre>
+
+<div class="callout">
+<strong>Quan trọng:</strong> Chain repo KHÔNG có <code>package.json</code>, KHÔNG có <code>node_modules/</code>, KHÔNG có <code>src/</code>.
+Chỉ là 1 git repo chứa data thuần. Tester không bao giờ phải <code>npm install</code> trong chain repo.
+</div>
+
+<h2 id="tester-workflow">5. Workflow của tester (qua AI agent)</h2>
+
+<div class="callout">
+<strong>Nguyên tắc:</strong> Tester KHÔNG gõ shell commands trực tiếp. Tester paste <strong>prompt tiếng Việt</strong> vào AI agent (Kiro / Cursor / Claude / Codex), agent tự gọi tools (shell, file edit, git) để execute.
+</div>
+
+<p>
+Tất cả prompts được document trong engine repo tại <code>docs/AGENT_PROMPTS.md</code> và <code>docs/prompts/</code>. Tester chỉ cần copy prompt phù hợp với task, điền variables, paste vào agent chat.
+</p>
+
+<h4>Setup 1 lần (mỗi máy tester)</h4>
+
+<div class="callout">
+<strong>Prompt cho agent:</strong>
+<pre><code>Setup engine recorder cho tôi.
+Username GitLab của tôi: {your-gitlab-username}
+Workspace folder: ~/work</code></pre>
+</div>
+
+<p>Agent sẽ tự thực hiện:</p>
+<ol>
+  <li>Verify Node.js &gt;= 18, Git, npm có sẵn (báo nếu thiếu)</li>
+  <li><code>git clone git@git2.fptshop.com.vn:ai-test/recorder-engine.git ~/work/recorder-engine</code></li>
+  <li><code>cd ~/work/recorder-engine &amp;&amp; npm install</code></li>
+  <li><code>npx playwright install chromium</code></li>
+  <li><code>npm link</code></li>
+  <li>Verify <code>frt-test --version</code> in version banner</li>
+  <li>Báo done + lệnh tiếp theo</li>
+</ol>
+
+<h4>Daily work — Record test mới</h4>
+
+<div class="callout">
+<strong>Prompt:</strong>
+<pre><code>Record test mới cho chuỗi LAB, app rsa-lab, tên: "Tạo đơn hàng dịch vụ XYZ"</code></pre>
+</div>
+
+<p>Agent sẽ:</p>
+<ol>
+  <li>Verify cwd hoặc <code>cd ~/work/frt-test-lab</code> (clone về nếu chưa có)</li>
+  <li>Verify <code>rsa-lab</code> có trong <code>config/environments.yaml</code></li>
+  <li>Chạy <code>frt-test record --app rsa-lab -n "Tạo đơn hàng dịch vụ XYZ"</code></li>
+  <li>Hướng dẫn tester thao tác (chậm rõ ràng, đợi 1-2s sau dropdown, Ctrl+Shift+A để add assertion)</li>
+  <li>Sau Ctrl+C, verify file YAML tạo thành công</li>
+  <li>Hỏi tester có muốn <em>play</em> để verify không</li>
+</ol>
+
+<h4>Daily work — Play test</h4>
+
+<div class="callout">
+<strong>Prompt:</strong>
+<pre><code>Play test "tao-don-hang-xyz" của chuỗi LAB</code></pre>
+</div>
+
+<h4>Regression toàn chuỗi</h4>
+
+<div class="callout">
+<strong>Prompt:</strong>
+<pre><code>Chạy regression toàn chuỗi LAB (headless)</code></pre>
+</div>
+
+<p>Agent sẽ <code>git pull</code> chain repo trước khi chạy, output kết quả pass/fail từng test, save HTML report.</p>
+
+<h4>Fix test fail</h4>
+
+<div class="callout">
+<strong>Prompt:</strong>
+<pre><code>Test "tao-don-hang-xyz" của LAB chạy fail. Fix giúp tôi.</code></pre>
+</div>
+
+<p>Agent đọc YAML file + screenshot fail + match với existing skill <code>fix-e2e-yaml-flow</code> → patch selector / wait / timing → re-run cho đến pass.</p>
+
+<h4>Commit + push test mới</h4>
+
+<div class="callout">
+<strong>Prompt:</strong>
+<pre><code>Commit và push test "tao-don-hang-xyz" lên repo LAB</code></pre>
+</div>
+
+<h4>Update engine</h4>
+
+<div class="callout">
+<strong>Prompt:</strong>
+<pre><code>Update engine recorder lên version mới nhất</code></pre>
+</div>
+
+<p>Agent: <code>cd ~/work/recorder-engine &amp;&amp; git pull &amp;&amp; npm install</code> (npm link symlink tự động pickup code mới).</p>
+
+<h4>Onboard chuỗi mới (admin task)</h4>
+
+<div class="callout">
+<strong>Prompt:</strong>
+<pre><code>Onboard chuỗi VAC cho recorder, 3 apps:
+- rsa-vac: https://ci-vac-rsa.frt.vn
+- ecom-vac: https://ci-vac-ecom.frt.vn
+- portal-vac: https://ci-vac-portal.frt.vn</code></pre>
+</div>
+
+<p>Agent gọi <code>frt-test scaffold-chain --name vac --apps "rsa-vac=...,ecom-vac=...,portal-vac=..." --remote git@.../ai-test/frt-test-vac.git --push</code>.</p>
+
+<h4>Thêm app vào chuỗi đã có</h4>
+
+<div class="callout">
+<strong>Prompt:</strong>
+<pre><code>Thêm app admin-lab cho chuỗi LAB, URL: https://admin-ci-lab.frt.vn</code></pre>
+</div>
+
+<h2 id="docs-cookbook">6. Documentation: Agent prompt cookbook</h2>
+
+<p>
+Engine repo chứa documentation theo format <strong>prompt-first</strong>: mỗi file describe 1 task, gồm trigger prompt + agent instructions + verify steps. Tester reference khi cần làm task gì → copy prompt → paste vào AI agent.
+</p>
+
+<h4>10 prompt files trong <code>docs/prompts/</code></h4>
+
+<table>
+<thead>
+<tr><th>#</th><th>File</th><th>Đối tượng</th><th>Mô tả</th></tr>
+</thead>
+<tbody>
+<tr><td>01</td><td><code>setup-engine.md</code></td><td>Tester (lần đầu)</td><td>Clone engine + npm install + npm link</td></tr>
+<tr><td>02</td><td><code>onboard-new-chain.md</code></td><td>Admin / SE</td><td>Tạo chain repo mới qua scaffold</td></tr>
+<tr><td>03</td><td><code>add-app-to-chain.md</code></td><td>Admin / SE</td><td>Thêm app vào chuỗi đã có</td></tr>
+<tr><td>04</td><td><code>record-test.md</code></td><td>Tester</td><td>Record test mới</td></tr>
+<tr><td>05</td><td><code>play-test.md</code></td><td>Tester</td><td>Run 1 test / all / by tag</td></tr>
+<tr><td>06</td><td><code>fix-failing-test.md</code></td><td>Tester</td><td>Debug + fix test fail (link skill <code>fix-e2e-yaml-flow</code>)</td></tr>
+<tr><td>07</td><td><code>daily-regression.md</code></td><td>Tester</td><td>Chạy regression đầu ngày (headless)</td></tr>
+<tr><td>08</td><td><code>commit-and-push.md</code></td><td>Tester</td><td>Commit YAML mới + push lên chain repo</td></tr>
+<tr><td>09</td><td><code>update-engine.md</code></td><td>Tester</td><td>git pull engine version mới</td></tr>
+<tr><td>10</td><td><code>list-and-cleanup-tests.md</code></td><td>Tester</td><td>List tests, xóa test cũ / refactor</td></tr>
+</tbody>
+</table>
+
+<h4>Format chuẩn cho mỗi prompt file</h4>
+
+<pre><code># {Task name} — Agent Instructions
+
+&gt; **User prompt:** "{trigger phrase với placeholders}"
+&gt; Agent tự làm hết.
+
+## Trigger prompt
+
+```
+{Example concrete prompt với data thực}
+```
+
+## Prerequisites
+
+- Engine đã setup (xem prompt 01-setup-engine)
+- Chuỗi đã onboard (xem prompt 02 nếu chưa)
+- {các điều kiện khác}
+
+## Agent workflow
+
+### Step 1: {tên action}
+```bash
+{shell command cụ thể}
+```
+
+### Step 2: ...
+
+## Success criteria
+
+- {File X tồn tại}
+- {Command Y exit 0}
+- {Output match pattern Z}
+
+## Common errors &amp; fix
+
+| Error | Cause | Fix |
+|-------|-------|-----|
+| {pattern 1} | {root cause} | {fix instruction} |
+</code></pre>
+
+<h4>README.md (engine repo) — top 5 quick start prompts</h4>
+
+<p>README ngắn gọn (≤ 100 dòng) liệt kê 5 prompt phổ biến nhất, link tới <code>docs/prompts/</code> cho chi tiết:</p>
+
+<table>
+<thead><tr><th>#</th><th>Task</th><th>Trigger phrase</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Record test mới</td><td>"Record test mới cho {chain}, app {app}, tên: {name}"</td></tr>
+<tr><td>2</td><td>Play 1 test</td><td>"Play test {name} của chuỗi {chain}"</td></tr>
+<tr><td>3</td><td>Regression</td><td>"Chạy regression toàn chuỗi {chain}"</td></tr>
+<tr><td>4</td><td>Fix test fail</td><td>"Test {name} của {chain} fail, fix giúp tôi"</td></tr>
+<tr><td>5</td><td>Commit + push</td><td>"Commit và push test {name} lên repo {chain}"</td></tr>
+</tbody>
+</table>
+
+<h4>Prerequisites cho tester</h4>
+<ul>
+  <li>Máy có cài AI agent (Kiro CLI / Cursor / Claude Code / Codex / etc.)</li>
+  <li>Agent có quyền chạy shell commands + edit file (mặc định cho hầu hết agent)</li>
+  <li>SSH key đã add lên GitLab (để clone qua <code>git@</code>)</li>
+  <li>Engine setup 1 lần qua prompt #01 (mỗi máy)</li>
+</ul>
+
+<div class="callout">
+<strong>Lưu ý design:</strong> Prompts phải <strong>agent-agnostic</strong> — KHÔNG reference Kiro-specific tools (<code>subagent</code>, MCP servers). Mọi agent có shell + file access đều execute được. Nếu muốn integrate sâu với Kiro (skills, steering), tạo file riêng trong <code>.kiro/skills/</code> link tới <code>docs/prompts/</code>.
+</div>
+
+<h2 id="engine-changes">7. Thay đổi cần làm trong Engine</h2>
+
+<h4>6.1 — <code>package.json</code></h4>
+<pre><code>{
+  "name": "@ai-test/recorder-engine",          // ← đổi tên
+  "version": "1.0.0",
+  "bin": {                                      // ← MỚI
+    "frt-test": "./bin/frt-test"
+  },
+  "scripts": {
+    "scaffold-chain": "npx tsx src/cli.ts scaffold-chain",
+    // các scripts cũ giữ nguyên (record, play, list, convert)
+  },
+  // dependencies giữ nguyên
+}</code></pre>
+
+<h4>6.2 — <code>bin/frt-test</code> (MỚI)</h4>
+<pre><code>#!/usr/bin/env bash
+# Shell wrapper để npm link expose command `frt-test` toàn cục.
+# Resolve symlink để tìm engine root (BSD-compatible cho macOS).
+
+SOURCE="${BASH_SOURCE[0]}"
+while [ -h "$SOURCE" ]; do
+  DIR="$( cd -P "$( dirname "$SOURCE" )" &amp;&amp; pwd )"
+  SOURCE="$(readlink "$SOURCE")"
+  [[ $SOURCE != /* ]] &amp;&amp; SOURCE="$DIR/$SOURCE"
+done
+ENGINE_DIR="$( cd -P "$( dirname "$SOURCE" )/.." &amp;&amp; pwd )"
+
+exec node --import tsx "$ENGINE_DIR/src/cli.ts" "$@"</code></pre>
+
+<p class="small">Cần <code>chmod +x bin/frt-test</code>. Windows users dùng Git Bash để chạy script này, hoặc npm tự generate <code>frt-test.cmd</code> shim trong <code>%APPDATA%\npm</code>.</p>
+
+<h4>6.3 — Thêm CLI subcommand <code>scaffold-chain</code></h4>
+<p>Chi tiết ở <a href="#scaffold">section 8</a>. Logic mới trong <code>src/scaffold.ts</code>, wire vào <code>src/cli.ts</code>.</p>
+
+<h4>6.4 — Engine version banner + staleness warning</h4>
+<p>Khi <code>frt-test</code> chạy bất kỳ command nào, in 1 dòng:</p>
+<pre><code>@ai-test/recorder-engine v1.0.0 — commit a3b9c2f (2026-06-03, 2 days old)</code></pre>
+<p>Nếu commit local cũ &gt; 14 ngày so với HEAD remote (cached, check 1 lần/ngày):</p>
+<pre><code>⚠️  Engine local commit cũ 18 ngày. Chạy: cd ~/work/recorder-engine && git pull</code></pre>
+
+<h4>6.5 — Folder cần xóa khỏi engine repo</h4>
+<ul>
+  <li><code>flows/</code> — không cần ở engine repo (chuyển vào <code>chain-template/</code>)</li>
+  <li><code>config/</code> — không cần (chuyển vào <code>chain-template/</code>)</li>
+  <li><code>examples/ict/</code> — chuyển vào <code>docs/examples/</code> làm reference</li>
+  <li><code>screenshots/</code>, <code>reports/</code> — không cần</li>
+  <li><code>node_modules/</code>, <code>package-lock.json</code> — gitignored, sẽ regenerate</li>
+</ul>
+
+<h2 id="chain-template">8. Chain template structure</h2>
+
+<p>Engine repo chứa <code>chain-template/</code> = blueprint để generate chain repo mới.</p>
+
+<h4><code>chain-template/README.md.tpl</code></h4>
+<pre><code># Test E2E — Chuỗi {{CHAIN_NAME}}
+
+YAML test cases cho chuỗi **{{CHAIN_NAME}}**, chạy bằng engine `@ai-test/recorder-engine`.
+
+## Setup engine 1 lần
+
+```bash
+git clone git@git2.fptshop.com.vn:ai-test/recorder-engine.git ~/work/recorder-engine
+cd ~/work/recorder-engine
+npm install &amp;&amp; npx playwright install chromium &amp;&amp; npm link
+```
+
+## Apps trong chuỗi
+
+{{APPS_TABLE}}
+
+## Quick start
+
+```bash
+cd ~/work/frt-test-{{CHAIN_LOWER}}
+frt-test record --app {{DEFAULT_APP}} -n "Tên test"
+frt-test play --all
+```
+
+Xem `frt-test --help` cho đầy đủ commands.</code></pre>
+
+<h4><code>chain-template/config/environments.yaml.tpl</code></h4>
+<pre><code># Cấu hình apps cho chuỗi {{CHAIN_NAME}}
+# Sửa file này để thêm/đổi URL.
+
+apps:
+{{APPS_YAML}}
+
+default_app: {{DEFAULT_APP}}
+
+settings:
+  timeout: 30000
+  headless: false
+  screenshotOnFail: true</code></pre>
+
+<h4><code>chain-template/.gitignore</code></h4>
+<pre><code>screenshots/*
+!screenshots/.gitkeep
+reports/*
+!reports/.gitkeep
+.DS_Store
+*.log</code></pre>
+
+<h4><code>chain-template/flows/_shared/login-placeholder.yaml</code></h4>
+<p>Copy từ template hiện tại (đã có sẵn — placeholder cho login flow).</p>
+
+<h2 id="scaffold">9. Scaffold command (onboarding tự động)</h2>
+
+<h4>Usage</h4>
+<pre><code>frt-test scaffold-chain \
+  --name lab \
+  --display "LAB (Xét nghiệm)" \
+  --apps "rsa-lab=https://ci-lab-rsa.frt.vn,ecom-lab=https://ci-lab-ecom.frt.vn,portal-lab=https://ci-lab-portal.frt.vn" \
+  --output ~/work/frt-test-lab \
+  --remote git@git2.fptshop.com.vn:ai-test/frt-test-lab.git \
+  --push</code></pre>
+
+<h4>Flow của command</h4>
+<ol>
+  <li>Validate args (chain name kebab-case, apps format <code>name=url</code>, output dir không tồn tại hoặc empty).</li>
+  <li><code>mkdir -p ~/work/frt-test-lab</code>.</li>
+  <li>Copy <code>chain-template/*</code> sang output dir.</li>
+  <li>Render templates (<code>.tpl</code> → file thật) bằng simple <code>{{VAR}}</code> substitution:
+    <ul>
+      <li><code>{{CHAIN_NAME}}</code> → "LAB (Xét nghiệm)"</li>
+      <li><code>{{CHAIN_LOWER}}</code> → "lab"</li>
+      <li><code>{{APPS_YAML}}</code> → multi-line YAML block của apps</li>
+      <li><code>{{APPS_TABLE}}</code> → markdown table cho README</li>
+      <li><code>{{DEFAULT_APP}}</code> → app đầu tiên</li>
+    </ul>
+  </li>
+  <li><code>mkdir -p flows/&lt;app&gt;/_shared</code> cho mỗi app.</li>
+  <li><code>git init</code> + <code>git add . && git commit -m "init: scaffold {chain} chain"</code>.</li>
+  <li>Nếu có <code>--remote</code>: <code>git remote add origin &lt;url&gt;</code>.</li>
+  <li>Nếu có <code>--push</code>: <code>git push -u origin main</code>.</li>
+  <li>In summary: path, apps đã setup, lệnh tiếp theo cho tester.</li>
+</ol>
+
+<h4>Tham khảo: thêm app vào chuỗi đã có</h4>
+<pre><code>cd ~/work/frt-test-lab
+frt-test add-app --name admin-lab --url https://admin-ci-lab.frt.vn
+# → Thêm entry vào config/environments.yaml
+# → Tạo flows/admin-lab/_shared/
+# → Echo lệnh git tiếp theo</code></pre>
+
+<h4>Source code mới: <code>src/scaffold.ts</code></h4>
+<p>Functions cần có:</p>
+<ul>
+  <li><code>scaffoldChain(opts: ScaffoldOpts): Promise&lt;void&gt;</code></li>
+  <li><code>addAppToChain(opts: AddAppOpts): Promise&lt;void&gt;</code></li>
+  <li><code>renderTemplate(content: string, vars: Record&lt;string,string&gt;): string</code> — simple <code>{{VAR}}</code> replacement, no template engine dep.</li>
+  <li><code>copyTemplateDir(src: string, dst: string, vars): Promise&lt;void&gt;</code></li>
+  <li><code>execGit(cwd: string, args: string[]): Promise&lt;string&gt;</code> — wrapper <code>child_process.execFile</code>.</li>
+</ul>
+<p>Wire vào <code>src/cli.ts</code> như <code>program.command('scaffold-chain')</code> với commander, theo pattern của <code>record</code>/<code>play</code>.</p>
+
+<h2 id="phases">10. Phases triển khai</h2>
+
+<table>
+<thead>
+<tr><th>Phase</th><th>Deliverable</th><th>Exit gate</th></tr>
+</thead>
+<tbody>
+<tr>
+  <td><strong>1</strong></td>
+  <td>
+    Engine repo refactor:
+    <ul>
+      <li>Copy <code>frt-test-recorder-template/{src,tsconfig.json,package.json}</code> sang folder mới <code>recorder-engine/</code></li>
+      <li>Update <code>package.json</code> (name, bin entry)</li>
+      <li>Tạo <code>bin/frt-test</code> shell wrapper</li>
+      <li>Xóa <code>flows/</code>, <code>config/</code>, <code>examples/ict</code>, <code>screenshots/</code>, <code>reports/</code> khỏi root engine</li>
+      <li>Move <code>examples/ict</code> → <code>docs/examples/</code></li>
+      <li>Add version banner + staleness warning trong <code>cli.ts</code></li>
+      <li>Viết README mới với top 5 quick start prompts</li>
+    </ul>
+  </td>
+  <td>
+    <ul>
+      <li><code>npm install &amp;&amp; npm link</code> thành công</li>
+      <li><code>frt-test --version</code> in version + commit hash</li>
+      <li><code>frt-test --help</code> liệt kê đủ commands cũ</li>
+      <li>Engine repo &lt;= 50 LOC config files (không có flows/config thừa)</li>
+      <li>README có 5 prompt examples + link tới <code>docs/prompts/</code></li>
+    </ul>
+  </td>
+</tr>
+<tr>
+  <td><strong>2</strong></td>
+  <td>
+    Chain template + scaffold command + prompt cookbook:
+    <ul>
+      <li>Tạo <code>chain-template/</code> folder với <code>.tpl</code> files</li>
+      <li>Implement <code>src/scaffold.ts</code> + wire vào <code>cli.ts</code></li>
+      <li>Implement <code>add-app</code> subcommand</li>
+      <li>Unit test scaffold logic (template rendering, file copy)</li>
+      <li>Viết 10 prompt files trong <code>docs/prompts/01..10-*.md</code> (theo format chuẩn)</li>
+      <li>Viết <code>docs/AGENT_PROMPTS.md</code> (index + 5 phổ biến)</li>
+      <li>Viết <code>docs/engine-development.md</code> (cho core team maintain engine)</li>
+    </ul>
+  </td>
+  <td>
+    <ul>
+      <li><code>frt-test scaffold-chain --name test-dummy --apps "a=https://x.com" --output /tmp/dummy</code> tạo skeleton hợp lệ</li>
+      <li><code>cd /tmp/dummy &amp;&amp; frt-test list</code> chạy không lỗi (empty list OK)</li>
+      <li>Tests pass</li>
+      <li>10 prompt files exist, mỗi file có đủ: trigger / prerequisites / agent workflow / success criteria / common errors</li>
+    </ul>
+  </td>
+</tr>
+<tr>
+  <td><strong>3</strong></td>
+  <td>
+    Push engine repo lên <code>ai-test/recorder-engine</code>:
+    <ul>
+      <li>Initial commit + tag v1.0.0</li>
+      <li>Push README + tester-onboarding.md + engine-development.md</li>
+    </ul>
+  </td>
+  <td>
+    <ul>
+      <li>Repo accessible at <code>git2.fptshop.com.vn/ai-test/recorder-engine</code></li>
+      <li>Clone fresh + setup theo README → <code>frt-test --version</code> chạy</li>
+    </ul>
+  </td>
+</tr>
+<tr>
+  <td><strong>4</strong></td>
+  <td>
+    Onboard chuỗi đầu (LAB) end-to-end qua prompts:
+    <ul>
+      <li>Tester (KHÔNG phải author) làm theo prompt #01 setup engine</li>
+      <li>Author (admin) chạy prompt #02 onboard LAB → tạo <code>ai-test/frt-test-lab</code></li>
+      <li>Tester clone chain repo, làm theo prompt #04 record 1 test mẫu (login flow)</li>
+      <li>Tester làm theo prompt #05 play test, prompt #08 commit + push</li>
+    </ul>
+  </td>
+  <td>
+    <ul>
+      <li>Repo <code>ai-test/frt-test-lab</code> có structure đầy đủ</li>
+      <li>Có ít nhất 1 YAML flow chạy pass</li>
+      <li><strong>Tester độc lập (KHÔNG phải author)</strong> setup + record + play + commit chỉ qua prompt, KHÔNG gõ shell command trực tiếp, &lt; 20 phút</li>
+      <li>Nếu tester gặp error nào → bổ sung "Common errors &amp; fix" vào prompt file tương ứng</li>
+    </ul>
+  </td>
+</tr>
+<tr>
+  <td><strong>5</strong></td>
+  <td>
+    Onboard 7 chuỗi còn lại (BO, DATA, DS, ICT, PHARMACY, PLATFORM, VAC):
+    <ul>
+      <li>1 lệnh scaffold per chuỗi</li>
+      <li>Initial commit + push</li>
+      <li>Notify owner mỗi chuỗi</li>
+    </ul>
+  </td>
+  <td>
+    <ul>
+      <li>8 chain repos visible trong <code>ai-test/</code> group</li>
+      <li>Mỗi repo có README + config skeleton</li>
+      <li>Owner mỗi chuỗi xác nhận đã clone được</li>
+    </ul>
+  </td>
+</tr>
+<tr>
+  <td><strong>6</strong></td>
+  <td>
+    Workspace cleanup ở repo này (<code>ai-native-client</code>):
+    <ul>
+      <li>Update <code>README.md</code> chính (Flow 7 chỉ tới <code>ai-test/recorder-engine</code> thay vì template)</li>
+      <li>Mark <code>frt-test-recorder-template/</code> deprecated (rename thành <code>frt-test-recorder-template.deprecated/</code> hoặc xóa)</li>
+    </ul>
+  </td>
+  <td>
+    <ul>
+      <li>README chính không reference template path cũ</li>
+      <li>Folder template cũ đã được xử lý (rename hoặc xóa)</li>
+    </ul>
+  </td>
+</tr>
+<tr>
+  <td>7 (deferred)</td>
+  <td>
+    CI regression integration:
+    <ul>
+      <li>GitLab CI template trong engine repo (<code>ci/regression.yml</code>)</li>
+      <li>Chain repo include 5-line <code>.gitlab-ci.yml</code></li>
+      <li>Cron schedule mỗi sáng 7h chạy <code>frt-test play --all --headless</code></li>
+    </ul>
+  </td>
+  <td>—</td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="verification">11. Verification &amp; exit criteria</h2>
+
+<h4>Manual smoke test cuối Phase 4 — qua AI agent</h4>
+
+<p>Một tester (KHÔNG phải author) dùng AI agent (Kiro / Cursor / Claude / Codex) để execute toàn bộ flow:</p>
+
+<ol>
+  <li>Mở agent, paste prompt #01 (<em>"Setup engine recorder cho tôi. Username GitLab: ..."</em>) → agent clone + install + npm link → verify <code>frt-test --version</code> OK.</li>
+  <li>Paste prompt #02 (admin paste, <em>"Onboard chuỗi LAB ... apps: ..."</em>) → agent gọi scaffold + push lên ai-test/frt-test-lab.</li>
+  <li>Paste prompt #04 (<em>"Record test mới cho LAB, app rsa-lab, tên: Login test"</em>) → agent mở browser → tester thao tác → file YAML tạo thành công.</li>
+  <li>Paste prompt #05 (<em>"Play test login-test của LAB"</em>) → test chạy pass.</li>
+  <li>Paste prompt #08 (<em>"Commit và push test login-test lên repo LAB"</em>) → flows/ commit + push thành công.</li>
+  <li>Test fail intentional: tester sửa selector sai trong YAML → paste prompt #06 (<em>"Test login-test fail, fix giúp tôi"</em>) → agent diagnose + fix → re-run pass.</li>
+</ol>
+
+<div class="callout warn">
+<strong>Tiêu chí pass:</strong> Tester KHÔNG được gõ shell command trực tiếp trong toàn bộ smoke test. Mọi action đi qua prompt. Nếu agent stuck → root cause là prompt file thiếu thông tin → bổ sung vào prompt file đó.
+</div>
+
+<h4>Definition of Done (toàn project)</h4>
+<ul>
+  <li><span class="check">✓</span> 9 repos visible trong <code>ai-test/</code> group, đúng structure.</li>
+  <li><span class="check">✓</span> Engine code chỉ tồn tại ở <code>ai-test/recorder-engine</code> (không có <code>src/</code> trong chain repos).</li>
+  <li><span class="check">✓</span> 10 prompt files trong <code>docs/prompts/</code> + README quick start.</li>
+  <li><span class="check">✓</span> Tester KHÔNG cần gõ shell command — mọi task qua prompt cho AI agent.</li>
+  <li><span class="check">✓</span> Tester độc lập setup + record + play + commit qua prompt &lt; 20 phút.</li>
+  <li><span class="check">✓</span> Update engine = paste prompt #09, agent tự <code>git pull</code>.</li>
+  <li><span class="check">✓</span> Onboard chuỗi mới = paste prompt #02 với 3 dòng app info.</li>
+  <li><span class="check">✓</span> Folder <code>frt-test-recorder-template/</code> ở repo workspace đã được xử lý.</li>
+</ul>
+
+<h2 id="risks">12. Risks &amp; mitigations</h2>
+
+<table>
+<thead>
+<tr><th>Risk</th><th>Severity</th><th>Mitigation</th></tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>npm link</code> issues trên Windows (PATH, permissions)</td>
+  <td>Medium</td>
+  <td>Document Git Bash + WSL fallback. Test trên Windows machine trước Phase 4.</td>
+</tr>
+<tr>
+  <td>Tester forget <code>git pull</code> engine → dùng version cũ → behavior khác bạn QC</td>
+  <td>Medium</td>
+  <td>Engine in version banner mỗi run + warn nếu commit cũ &gt; 14 ngày (D5).</td>
+</tr>
+<tr>
+  <td>Multiple engine versions cần thiết cùng lúc (vd: chuỗi A cần engine v1, chuỗi B cần v2)</td>
+  <td>Low (chưa xảy ra)</td>
+  <td>Single global symlink — limitation chấp nhận. Nếu xảy ra: tester clone 2 folder engine khác nhau, dùng path tuyệt đối thay vì <code>npm link</code>.</td>
+</tr>
+<tr>
+  <td>Engine breaking change (vd: đổi YAML schema)</td>
+  <td>High</td>
+  <td>Engine bump major version + maintain backward-compat parser cho 1 major version. CHANGELOG.md bắt buộc.</td>
+</tr>
+<tr>
+  <td>Scaffold command ghi đè files có sẵn</td>
+  <td>Medium</td>
+  <td>Validate output dir empty trước scaffold. <code>add-app</code> command refuse nếu app đã exist.</td>
+</tr>
+<tr>
+  <td>Tester không có access push lên ai-test group</td>
+  <td>Low</td>
+  <td>Coordinate với IT để add tester vào group permissions trước Phase 4.</td>
+</tr>
+<tr>
+  <td>Prompt file thiếu detail → agent execute sai / stuck</td>
+  <td>High</td>
+  <td>Smoke test Phase 4 bằng tester KHÔNG phải author + agent KHÔNG phải agent của author. Mỗi failure → bổ sung "Common errors &amp; fix" vào prompt file. Iterate đến khi 1 tester làm trôi chảy.</td>
+</tr>
+<tr>
+  <td>AI agent khác nhau (Kiro/Cursor/Claude) execute prompt khác nhau</td>
+  <td>Medium</td>
+  <td>Prompt agent-agnostic — chỉ assume shell + file edit access. Test với ít nhất 2 agent khác nhau ở Phase 4 (vd: Kiro + Cursor).</td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="open">13. Open questions / out of scope</h2>
+
+<ul>
+  <li><strong>Q-B (chain-template repo riêng?)</strong> — User đã chốt: chain-template là subfolder trong engine repo, KHÔNG tách repo (D7).</li>
+  <li><strong>Authentication tự động trong test flows</strong> — Hiện tại <code>flows/_shared/login-placeholder.yaml</code> để tester tự config credentials. Có thể support <code>.env</code> per chain repo (gitignored). <strong>Out of scope Phase 1</strong> — đã có cơ chế <code>--var</code> override, đủ tạm thời.</li>
+  <li><strong>Engine release process / CHANGELOG</strong> — Sẽ refine ở Phase 6 sau khi onboard xong 8 chuỗi.</li>
+  <li><strong>Test cross-chain</strong> — Vd: 1 flow chạy trên cả VAC + LAB? <strong>Out of scope</strong> — mỗi chuỗi 1 repo riêng biệt.</li>
+  <li><strong>Centralized reporting / dashboard</strong> — Aggregate test results từ 8 chains vào 1 dashboard. <strong>Out of scope</strong> — defer Phase 7+.</li>
+</ul>
+
+<hr>
+
+<h2>Approval</h2>
+<p>
+Plan này cần user (<strong>thinhph</strong>) review &amp; approve trước khi implement Phase 1.
+Sau khi approve, AI sẽ chạy autonomous theo phases — không hỏi confirm giữa chừng (trừ khi security scan phát hiện secrets, hoặc scope change ngoài plan).
+</p>
+
+<p class="small">
+Plan version: 1.0 · Last updated: 2026-06-03 · Plan path: <code>docs/plans/ai-test-recorder-restructure.html</code>
+</p>
+
+</div>
+</body>
+</html>

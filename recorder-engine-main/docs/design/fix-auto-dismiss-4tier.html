@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SDD — Fix Auto-Dismiss 4-Tier Model</title>
+<style>
+  :root {
+    --bg: #f5f5f7;
+    --surface: #ffffff;
+    --text: #1d1d1f;
+    --text-secondary: #6e6e73;
+    --accent: #0071e3;
+    --border: #d2d2d7;
+    --code-bg: #f0f0f5;
+    --success: #28a745;
+    --warn: #f0ad4e;
+    --danger: #dc3545;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #000000;
+      --surface: #1c1c1e;
+      --text: #f5f5f7;
+      --text-secondary: #98989d;
+      --accent: #2997ff;
+      --border: #38383a;
+      --code-bg: #2c2c2e;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; padding: 48px 24px; }
+  .container { max-width: 900px; margin: 0 auto; }
+  h1 { font-size: 2rem; font-weight: 700; letter-spacing: -0.03em; margin-bottom: 6px; }
+  .subtitle { color: var(--text-secondary); font-size: 1rem; margin-bottom: 48px; }
+  h2 { font-size: 1.25rem; font-weight: 600; margin: 40px 0 16px; letter-spacing: -0.01em; }
+  h3 { font-size: 1rem; font-weight: 600; margin: 24px 0 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.75rem; }
+  p { margin-bottom: 12px; color: var(--text); }
+  .card { background: var(--surface); border-radius: var(--radius); padding: 28px; margin-bottom: 24px; border: 1px solid var(--border); }
+  .tag { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; margin-right: 6px; }
+  .tag-p1 { background: #fff0f0; color: var(--danger); }
+  .tag-p2 { background: #fff8e6; color: #b36a00; }
+  .tag-fixed { background: #e8f5e9; color: #2e7d32; }
+  .tag-ok { background: #e8f5e9; color: #2e7d32; }
+  @media (prefers-color-scheme: dark) {
+    .tag-p1 { background: #3d1a1a; color: #ff6b6b; }
+    .tag-p2 { background: #3d2e00; color: #ffb84d; }
+    .tag-fixed { background: #1a3d1a; color: #66bb6a; }
+    .tag-ok { background: #1a3d1a; color: #66bb6a; }
+  }
+  code { font-family: "SF Mono", "Fira Code", monospace; font-size: 0.85em; background: var(--code-bg); padding: 2px 6px; border-radius: 4px; }
+  pre { background: var(--code-bg); border-radius: var(--radius-sm); padding: 20px; overflow-x: auto; margin: 12px 0; }
+  pre code { background: none; padding: 0; font-size: 0.82rem; }
+  ul, ol { padding-left: 20px; margin-bottom: 12px; }
+  li { margin-bottom: 6px; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; }
+  th { background: var(--code-bg); padding: 10px 14px; text-align: left; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-secondary); }
+  td { padding: 10px 14px; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+  .verdict { font-size: 1.5rem; font-weight: 700; color: var(--success); }
+  .divider { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
+  .badge { display: inline-flex; align-items: center; gap: 6px; background: var(--code-bg); border-radius: 20px; padding: 4px 12px; font-size: 0.8rem; font-weight: 500; margin: 4px 2px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <h1>Fix Auto-Dismiss — 4-Tier Model</h1>
+  <p class="subtitle">Software Design Document · Stage 3 of 3 · 2026-06-05</p>
+
+  <!-- CONTEXT -->
+  <h2>Context</h2>
+  <div class="card">
+    <h3>Problem</h3>
+    <p>The original <code>autoPopupDismiss: true</code> used a single aggressive selector list that included <code>.ant-modal-wrap</code> and <code>.ant-modal-mask</code>. This caused the runner to auto-close legitimate functional modals (forms, confirm dialogs with data) mid-flow, breaking test reliability.</p>
+    <h3>Root Cause</h3>
+    <p>No distinction between <em>junk popups</em> (notifications, cookie banners, ad overlays) and <em>functional modals</em> (forms, tables, combobox dropdowns). A single boolean config blurred this distinction.</p>
+    <h3>Solution</h3>
+    <p>Introduce a 4-tier popup mode replacing the boolean: <code>'off'</code>, <code>'junk-only'</code> (default), <code>'aggressive'</code>, plus boolean backward-compat aliases (<code>true</code> → aggressive, <code>false</code> → off). The default changes from <em>aggressive</em> to <em>junk-only</em>, protecting all modals unless explicitly opted in.</p>
+  </div>
+
+  <!-- DESIGN DECISIONS -->
+  <h2>Design Decisions</h2>
+  <div class="card">
+    <h3>4-Tier Mode Mapping</h3>
+    <table>
+      <tr><th>Config value</th><th>Resolved mode</th><th>Behavior</th></tr>
+      <tr><td><code>undefined</code></td><td>junk-only</td><td>Dismiss notifications/banners only; never touch modals</td></tr>
+      <tr><td><code>false</code></td><td>off</td><td>No auto-dismiss at all</td></tr>
+      <tr><td><code>true</code></td><td>aggressive</td><td>Backward-compat: dismiss modals + junk (original behavior)</td></tr>
+      <tr><td><code>'junk-only'</code></td><td>junk-only</td><td>Explicit form of default</td></tr>
+      <tr><td><code>'off'</code></td><td>off</td><td>Explicit form of false</td></tr>
+      <tr><td><code>'aggressive'</code></td><td>aggressive</td><td>Explicit opt-in for aggressive</td></tr>
+    </table>
+
+    <h3>Browser / Node Context Boundary</h3>
+    <p>All constants live in <code>src/popup-dismiss.ts</code> (Node-side canonical). Browser-side logic receives values via <code>addInitScript</code> args — never imports Node modules. The <code>IS_FUNCTIONAL_MODAL_INLINE</code> string is a serialized function passed to the browser context.</p>
+    <p><strong>FUNCTIONAL_MODAL_SELECTOR</strong> is the single source of truth for the form-detection CSS selector. Both the Node-side <code>isLikelyFunctionalModal</code> and the browser-side <code>IS_FUNCTIONAL_MODAL_INLINE</code> must embed this exact string — enforced by unit tests (Group 6).</p>
+
+    <h3>Reactive Dismiss (tryReactiveDismiss)</h3>
+    <p>Called before every force-retry in click/fill handlers. Uses <code>page.evaluate</code> to inspect overlays at the viewport center. Returns one of: <code>none</code> | <code>closed</code> | <code>protected</code> | <code>functional</code> | <code>unknown</code>. Protected and functional modals throw descriptive errors; unknown falls through to force-retry (preserving combobox behavior).</p>
+
+    <h3>Backward Compatibility</h3>
+    <p>Existing flows with <code>autoPopupDismiss: true</code> continue to work unchanged (mapped to <code>'aggressive'</code>). The default for flows with no setting changes from <em>aggressive</em> to <em>junk-only</em> — a safer default that is unlikely to break correctly-written flows.</p>
+  </div>
+
+  <!-- FILE CHANGES -->
+  <h2>File Changes</h2>
+  <div class="card">
+    <table>
+      <tr><th>File</th><th>Deliverable</th><th>Change</th></tr>
+      <tr><td><code>src/popup-dismiss.ts</code></td><td>D1, D5, D6</td><td>New file: JUNK_SELECTORS, AGGRESSIVE_SELECTORS, FUNCTIONAL_MODAL_SELECTOR, resolvePopupMode, isLikelyFunctionalModal, IS_FUNCTIONAL_MODAL_INLINE</td></tr>
+      <tr><td><code>src/types.ts</code></td><td>D6</td><td>Extended <code>autoPopupDismiss</code> type to <code>boolean | 'junk-only' | 'off' | 'aggressive'</code></td></tr>
+      <tr><td><code>src/runner.ts</code></td><td>D2, D3, D4</td><td>Added addInitScript with mode-based selectorList; tryReactiveDismiss method; wired into click/fill handlers before force-retry; D2 aggressive-only protection block</td></tr>
+      <tr><td><code>src/popup-dismiss.test.ts</code></td><td>D7</td><td>New file: 23 unit tests across 6 groups</td></tr>
+    </table>
+  </div>
+
+  <!-- VERIFICATION -->
+  <h2>Verification</h2>
+  <div class="card">
+    <h3>Unit Tests</h3>
+    <table>
+      <tr><th>Suite</th><th>Tests</th><th>Status</th></tr>
+      <tr><td>resolvePopupMode</td><td>6</td><td><span class="tag tag-ok">PASS</span></td></tr>
+      <tr><td>JUNK_SELECTORS</td><td>5</td><td><span class="tag tag-ok">PASS</span></td></tr>
+      <tr><td>AGGRESSIVE_SELECTORS</td><td>2</td><td><span class="tag tag-ok">PASS</span></td></tr>
+      <tr><td>isLikelyFunctionalModal</td><td>5</td><td><span class="tag tag-ok">PASS</span></td></tr>
+      <tr><td>IS_FUNCTIONAL_MODAL_INLINE consistency</td><td>2</td><td><span class="tag tag-ok">PASS</span></td></tr>
+      <tr><td>FUNCTIONAL_MODAL_SELECTOR</td><td>3</td><td><span class="tag tag-ok">PASS</span></td></tr>
+      <tr><td><strong>Total</strong></td><td><strong>23</strong></td><td><span class="tag tag-ok">23/23 PASS</span></td></tr>
+    </table>
+
+    <h3>Existing Tests</h3>
+    <p><code>src/scaffold.test.ts</code>: 10/10 pass. No regression.</p>
+
+    <h3>TypeScript</h3>
+    <p><code>npx tsc --noEmit</code> → exit 0, no errors.</p>
+
+    <h3>D8 Logic-Trace (E2E unverified — sandbox only)</h3>
+    <table>
+      <tr><th>Check</th><th>Result</th></tr>
+      <tr><td>JUNK_SELECTORS does NOT contain .ant-modal</td><td>✅ Confirmed — ant-modal only in AGGRESSIVE_SELECTORS</td></tr>
+      <tr><td>addInitScript receives mode arg (not hardcoded)</td><td>✅ Confirmed — <code>{ mode: popupMode, junkSel: JUNK_SELECTORS, aggrSel: AGGRESSIVE_SELECTORS }</code></td></tr>
+      <tr><td>tryReactiveDismiss throws on functional modal</td><td>✅ Confirmed — "Modal lạ có form" error at line 690</td></tr>
+      <tr><td>selectorList uses junkSel for non-aggressive mode</td><td>✅ Confirmed — <code>selectorList = mode === 'aggressive' ? aggrSel : junkSel</code></td></tr>
+      <tr><td>popupMode in scope at D2 block</td><td>✅ Confirmed — declared at line 836, D2 block at line 905, same function scope</td></tr>
+      <tr><td>beforeunload disconnects observer</td><td>✅ Confirmed — line 894</td></tr>
+      <tr><td>document.body null guard</td><td>✅ Confirmed — lines 886–890 handle null body with DOMContentLoaded fallback</td></tr>
+    </table>
+  </div>
+
+  <!-- SENIOR REVIEW -->
+  <h2>Senior Review Findings</h2>
+  <div class="card">
+    <h3>Issues Found &amp; Fixed</h3>
+    <table>
+      <tr><th>ID</th><th>Severity</th><th>Issue</th><th>Fix</th></tr>
+      <tr>
+        <td>R1</td>
+        <td><span class="tag tag-p1">P1</span> <span class="tag tag-fixed">FIXED</span></td>
+        <td><code>tryReactiveDismiss</code> hardcoded <code>'input,select,textarea,[role="combobox"],table,.ant-form'</code> inline at line 680, duplicating the canonical selector in <code>popup-dismiss.ts</code>. A change to one wouldn't propagate to the other.</td>
+        <td>Exported <code>FUNCTIONAL_MODAL_SELECTOR</code> constant from <code>popup-dismiss.ts</code>; both <code>isLikelyFunctionalModal</code> and <code>runner.ts</code> now reference it. IS_FUNCTIONAL_MODAL_INLINE still embeds the literal (required for browser serialization) but Group 6 test verifies consistency.</td>
+      </tr>
+      <tr>
+        <td>R2</td>
+        <td><span class="tag tag-p2">P2</span></td>
+        <td><code>(step as any).selector</code> at line 906 — FlowStep cast to any to access <code>selector</code> field. This field is not in the type definition.</td>
+        <td>Acknowledged — out of scope for this fix (requires FlowStep type audit). Documented as tech debt. The cast is isolated and non-critical (best-effort D2 protection).</td>
+      </tr>
+    </table>
+
+    <h3>Scope Checklist</h3>
+    <table>
+      <tr><th>Deliverable</th><th>Status</th></tr>
+      <tr><td>D1: JUNK_SELECTORS, AGGRESSIVE_SELECTORS, popup-dismiss.ts</td><td>✅</td></tr>
+      <tr><td>D2: aggressive-only protection, no-op for junk-only</td><td>✅</td></tr>
+      <tr><td>D3: mode passed as arg, 3 modes handled</td><td>✅</td></tr>
+      <tr><td>D4: tryReactiveDismiss before force-retry, force-retry preserved</td><td>✅</td></tr>
+      <tr><td>D5: isLikelyFunctionalModal canonical + IS_FUNCTIONAL_MODAL_INLINE</td><td>✅</td></tr>
+      <tr><td>D6: config type extended, resolvePopupMode</td><td>✅</td></tr>
+      <tr><td>D7: 23 unit tests, 6 groups</td><td>✅</td></tr>
+      <tr><td>D8: logic-trace verified</td><td>✅ (E2E unverified — sandbox)</td></tr>
+    </table>
+
+    <h3>Verdict</h3>
+    <p class="verdict">✅ APPROVED</p>
+    <p>0 P0 findings. 1 P1 fixed (FUNCTIONAL_MODAL_SELECTOR DRY). 1 P2 documented as tech debt (step.selector typing). All tests pass. tsc clean.</p>
+  </div>
+
+  <!-- SECURITY -->
+  <h2>Security Scan</h2>
+  <div class="card">
+    <p><strong>Files scanned:</strong> <code>src/popup-dismiss.ts</code>, <code>src/popup-dismiss.test.ts</code>, changed sections of <code>src/runner.ts</code></p>
+    <p><strong>Findings:</strong> No API keys, credentials, tokens, PII, or internal infrastructure identifiers. Error messages contain Vietnamese UI strings only (no customer data). CSS selectors are public Ant Design class names.</p>
+    <p><strong>Verdict:</strong> <span class="tag tag-ok">CLEAN</span></p>
+  </div>
+
+</div>
+</body>
+</html>

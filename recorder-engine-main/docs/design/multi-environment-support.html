@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SDD — Multi-Environment Support</title>
+<style>
+:root { color-scheme: light dark; --bg:#fbfbfd; --fg:#1d1d1f; --muted:#6e6e73; --line:#d2d2d7; --card:#fff; --code-bg:#f5f5f7; }
+@media(prefers-color-scheme:dark){:root{--bg:#1d1d1f;--fg:#f5f5f7;--muted:#8e8e93;--line:#38383a;--card:#2c2c2e;--code-bg:#2c2c2e;}}
+*{box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif;background:var(--bg);color:var(--fg);line-height:1.6;margin:0;padding:0}
+.wrap{max-width:900px;margin:0 auto;padding:48px 24px 100px}h1{font-size:32px;font-weight:600;margin:0 0 8px}
+h2{font-size:22px;font-weight:600;margin:40px 0 12px;border-bottom:1px solid var(--line);padding-bottom:8px}
+h3{font-size:17px;font-weight:600;margin:24px 0 8px}p,li{margin-bottom:8px}
+code{font-family:ui-monospace,SFMono-Regular,monospace;background:var(--code-bg);padding:2px 5px;border-radius:4px;font-size:0.88em}
+pre{background:var(--code-bg);padding:14px;border-radius:10px;overflow-x:auto;font-size:13px;line-height:1.5;border:1px solid var(--line)}
+pre code{background:none;padding:0}table{width:100%;border-collapse:collapse;font-size:14px;margin:12px 0}
+th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--line)}th{font-weight:600;color:var(--muted);font-size:12px;text-transform:uppercase}
+.meta{color:var(--muted);font-size:13px}
+</style>
+</head>
+<body><div class="wrap">
+
+<h1>Multi-Environment Support — SDD</h1>
+<p class="meta">Project: @ai-test/recorder-engine v1.0.0 · Created: 2026-06-04 · Status: Implemented</p>
+
+<h2>Context</h2>
+<p>Engine had single URL per app. Testers needed multi-env (CI/UAT/PROD) support with separate test files per environment, mandatory --env flag, and migration tooling for 8 existing chains.</p>
+
+<h2>Requirements (from plan)</h2>
+<ul>
+<li>Schema v2: <code>apps.{app}.urls.{env}</code> with null support for "not yet set"</li>
+<li><code>--env</code> always required (no default). <code>FRT_TEST_ENV</code> env var override for CI/CD.</li>
+<li>Each env = separate YAML file at <code>flows/{app}/{env}/name.yaml</code></li>
+<li>Backward-compat: v0/v1 schemas still readable</li>
+<li>4 new commands: migrate-config, add-env, envs, clone-flow</li>
+<li>Pharmacy pilot migration</li>
+</ul>
+
+<h2>Design Decisions</h2>
+
+<h3>Config Schema Detection</h3>
+<p>Auto-detect by presence of <code>apps.X.urls</code> map OR explicit <code>schema_version: 2</code>. No migration required for old chains — they keep working with v1 schema.</p>
+
+<h3>Resolve Algorithm</h3>
+<pre><code>resolveBaseUrl(app?, env?, configPath?)
+  → v2: lookup apps[app].urls[env] → return URL or throw
+  → v1: return apps[app].baseUrl (env must be undefined or "default")
+  → v0: legacy environments key converted to apps</code></pre>
+
+<h3>Folder Layout</h3>
+<pre><code>flows/{app}/{env}/*.yaml    — env-specific tests
+flows/{app}/_shared/*.yaml  — shared across envs (login flows)
+flows/_shared/*.yaml        — shared across all apps</code></pre>
+
+<h3>Migration Strategy</h3>
+<p>Opt-in via <code>frt-test migrate-config</code>. Uses git mv for history preservation. Creates backup. Does NOT modify YAML content — URLs stay hardcoded per user decision.</p>
+
+<h3>clone-flow: No URL Replacement</h3>
+<p>When cloning test from CI to UAT, URLs in steps are kept as-is. Only <code>recorded_against</code> metadata is updated. User must verify/fix manually. This prevents false assumption "CI test works on UAT".</p>
+
+<h2>File Changes</h2>
+<table>
+<tr><th>File</th><th>Change</th></tr>
+<tr><td><code>src/types.ts</code></td><td>+EnvironmentMeta, +FlowFile.recorded_against, +RunResult.env</td></tr>
+<tr><td><code>src/config.ts</code></td><td>Rewrite: v0/v1/v2 detection, resolveBaseUrl(app,env), resolveEnv(), listEnvironments()</td></tr>
+<tr><td><code>src/cli.ts</code></td><td>-E/--env flag, computeFlowsDir(), 4 new command registrations</td></tr>
+<tr><td><code>src/runner.ts</code></td><td>meta.env, vars injection (baseUrl/env/app), updated signatures</td></tr>
+<tr><td><code>src/reporter.ts</code></td><td>Console + HTML env display</td></tr>
+<tr><td><code>src/recorder.ts</code></td><td>Accept env, add recorded_against metadata</td></tr>
+<tr><td><code>src/scaffold.ts</code></td><td>Full rewrite: v2 schema, --envs, multi-URL, per-env folders</td></tr>
+<tr><td><code>src/migrate.ts</code></td><td>NEW: v1→v2 config conversion + git mv</td></tr>
+<tr><td><code>src/add-env.ts</code></td><td>NEW: set URL for null env</td></tr>
+<tr><td><code>src/envs.ts</code></td><td>NEW: list environments table</td></tr>
+<tr><td><code>src/clone-flow.ts</code></td><td>NEW: copy YAML between env folders</td></tr>
+</table>
+
+<h2>Verification</h2>
+<ul>
+<li>TypeScript: <code>npx tsc --noEmit</code> — 0 errors</li>
+<li>Tests: 46 pass, 0 fail (config:21, scaffold:10, migrate:8, clone-flow:7)</li>
+<li>Pilot: Pharmacy migrated successfully, all 5 verification cases pass</li>
+</ul>
+
+<h2>Autonomous Decisions</h2>
+<ul>
+<li>Used <code>yaml.dump()</code> with <code>quotingType: '"'</code> for consistent output in migrate/add-env</li>
+<li>Scaffold always renders v2 schema (no legacy scaffold mode)</li>
+<li>migrate-config creates folders for rsa-ecom/web-eho even though they have no YAML files (consistent structure)</li>
+<li>envs command truncates long URLs to hostname for table readability</li>
+</ul>
+
+</div></body></html>

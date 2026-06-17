@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plan — Fix Auto-Dismiss Logic (4-Tier Popup Handling)</title>
+<style>
+:root {
+  --bg: #fafafa; --fg: #1d1d1f; --muted: #6e6e73; --accent: #0071e3;
+  --border: #e5e5e7; --card: #fff; --code-bg: #f5f5f7; --tag-bg: #e8f4fd;
+  --red: #ff3b30; --orange: #ff9500; --green: #34c759; --yellow: #ffcc00;
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#1d1d1f;--fg:#f5f5f7;--muted:#a1a1a6;--border:#38383a;
+  --card:#2c2c2e;--code-bg:#38383a;--tag-bg:#1c3a4f;
+  --red:#ff453a;--orange:#ff9f0a;--green:#30d158;--yellow:#ffd60a;
+}}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif;
+  background:var(--bg);color:var(--fg);line-height:1.6;padding:3rem 1.5rem;max-width:860px;margin:0 auto}
+h1{font-size:1.8rem;font-weight:700;letter-spacing:-0.02em;margin-bottom:.25rem}
+h2{font-size:1.3rem;font-weight:600;margin-top:2.5rem;margin-bottom:.75rem;letter-spacing:-0.01em}
+h3{font-size:1.05rem;font-weight:600;margin-top:1.5rem;margin-bottom:.5rem}
+p,li{font-size:.95rem;color:var(--fg)}
+.meta{color:var(--muted);font-size:.85rem;margin-bottom:2rem}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.25rem 1.5rem;margin:.75rem 0}
+code{font-family:"SF Mono",Menlo,monospace;font-size:.85rem;background:var(--code-bg);padding:.15rem .4rem;border-radius:4px}
+pre{background:var(--code-bg);border-radius:8px;padding:1rem 1.25rem;overflow-x:auto;margin:.75rem 0;font-size:.82rem;line-height:1.5}
+pre code{background:none;padding:0}
+ul,ol{padding-left:1.5rem;margin:.5rem 0}
+li{margin:.3rem 0}
+.tag{display:inline-block;font-size:.75rem;font-weight:500;padding:.2rem .6rem;border-radius:6px;background:var(--tag-bg);color:var(--accent);margin-right:.4rem}
+.tier{border-left:3px solid var(--accent);padding-left:1rem;margin:1rem 0}
+.tier-num{font-weight:700;color:var(--accent);font-size:.85rem;text-transform:uppercase;letter-spacing:.04em}
+table{width:100%;border-collapse:collapse;margin:.75rem 0;font-size:.88rem}
+th,td{text-align:left;padding:.5rem .75rem;border-bottom:1px solid var(--border)}
+th{font-weight:600;color:var(--muted);font-size:.8rem;text-transform:uppercase;letter-spacing:.03em}
+.status-block{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:.4rem}
+.s-red{background:var(--red)}.s-green{background:var(--green)}.s-orange{background:var(--orange)}
+</style>
+</head>
+<body>
+
+<h1>Fix Auto-Dismiss Logic — 4-Tier Popup Handling</h1>
+<p class="meta">
+  <span class="tag">recorder-engine</span>
+  <span class="tag">runner.ts</span>
+  <span class="tag">P1 — test reliability</span>
+  <br>Created: 2026-06-05 &nbsp;|&nbsp; Status: PLAN — chờ approve
+</p>
+
+<h2>1. Bối cảnh & Vấn đề</h2>
+
+<div class="card">
+<h3>Triệu chứng</h3>
+<p>Test <code>tao-phieu-nk.yaml</code> (web-eho/ci) fail flaky ở bước chọn kho. Modal "Thêm sản phẩm" bị runner tự đóng giữa flow → play khác record.</p>
+
+<h3>Root Cause (đã chứng minh)</h3>
+<ol>
+<li><strong>Engine bug</strong>: <code>autoPopupDismiss</code> (runner.ts:718) dùng MutationObserver đóng bừa mọi <code>.ant-modal-wrap</code> — không phân biệt modal chức năng vs popup rác.</li>
+<li><strong>FE bug</strong> (riêng biệt): API trả 10 kho nhưng UI không render — test bắt đúng bug, giữ nguyên assertion.</li>
+</ol>
+
+<h3>Tác hại của lỗi engine</h3>
+<ul>
+<li>Play lệch thực tế (modal bị đóng, recorder thì không)</li>
+<li>Flaky do throttle 300ms race condition</li>
+<li>False-pass nguy hiểm (element assert biến mất theo modal → "pass nhầm")</li>
+<li>Ảnh hưởng <strong>mọi flow</strong> dùng modal</li>
+</ul>
+</div>
+
+<h2>2. Code hiện tại (cần refactor)</h2>
+
+<div class="card">
+<pre><code>// runner.ts:718-774 — Vấn đề chính
+const POPUP_SELECTORS = '.ant-modal-mask,.ant-modal-wrap,.modal-backdrop,...';
+//       ↑ gộp chung modal chức năng với toast rác
+
+const __frtPopupObserver = new MutationObserver(() =&gt; {
+  // Chạy liên tục, throttle 300ms
+  // trySafeClose() click .ant-modal-close vô điều kiện
+});
+</code></pre>
+
+<p><strong>Sai lầm thiết kế:</strong></p>
+<ol>
+<li><code>POPUP_SELECTORS</code> gộp <code>.ant-modal-wrap/.ant-modal-mask</code> (modal chức năng) với <code>.ant-notification-notice</code> (rác)</li>
+<li><code>trySafeClose</code> click <code>[class*="close"]</code> vô điều kiện trên mọi popup matched</li>
+<li>MutationObserver chạy liên tục → race với step execution → non-deterministic</li>
+</ol>
+</div>
+
+<h2>3. Thiết kế mới — 4 Tầng</h2>
+
+<p><strong>Nguyên tắc:</strong> "Đóng chủ động mọi thứ" → "Chỉ đóng cái thực sự là rác hoặc thực sự đang chặn step".</p>
+
+<div class="tier">
+<p class="tier-num">Tầng 1 — Denylist popup rác (proactive close)</p>
+<p>Đóng chủ động <strong>CHỈ</strong> các chữ ký rác đã biết. Bỏ hẳn <code>.ant-modal-wrap/.ant-modal-mask</code>.</p>
+<pre><code>const JUNK_SELECTORS = [
+  '.ant-notification-notice',
+  '.ant-message-notice',
+  '.onesignal-slidedown-container',
+  '[class*="onesignal"]',
+  '[class*="cookie-"]',
+  '[class*="ad-overlay"]',
+  '[id*="ad-"]',
+];</code></pre>
+<p>→ Modal Ant chung (<code>.ant-modal</code>) <strong>không bao giờ</strong> bị đóng chủ động.</p>
+</div>
+
+<div class="tier">
+<p class="tier-num">Tầng 2 — Protect modal chức năng (CHỈ cho aggressive mode — safety net)</p>
+<p><strong>Lưu ý kiến trúc:</strong> Ở mode mặc định <code>junk-only</code>, <code>.ant-modal</code> đã nằm ngoài danh sách proactive (Tầng 1) → modal chức năng <em>không bao giờ</em> bị đụng. Vì vậy Tầng 2 KHÔNG cần thiết cho đường default. Nó chỉ là <strong>safety net cho mode <code>aggressive</code></strong> (ai cố tình bật lại hành vi cũ).</p>
+<p>Khi aggressive: runner đánh dấu <strong>protected</strong> modal mà flow chủ động mở:</p>
+<ul>
+<li>Step có <code>waitFor</code> khớp <code>.ant-modal*</code> / <code>.ant-modal-content</code></li>
+<li>Step có locator resolve bên trong <code>.ant-modal</code></li>
+</ul>
+<p>Modal protected → aggressive observer bỏ qua cho đến khi modal bị remove khỏi DOM (tự cleanup) hoặc flow kết thúc.</p>
+<pre><code>// CHỈ khi mode === 'aggressive', trước khi execute step:
+if (stepTargetsModal(step)) {
+  await page.evaluate(/* gắn data-frt-protected lên modal wrap */);
+}
+// ⚠️ Best-effort: marking Node-side là async, có thể đua với observer.
+//    Đây là lý do default dùng junk-only (loại race hoàn toàn), KHÔNG dựa vào Tầng 2.</code></pre>
+</div>
+
+<div class="tier">
+<p class="tier-num">Tầng 3 — Đóng phản ứng (reactive, bỏ observer liên tục cho modal)</p>
+<p>Với overlay không thuộc denylist: <strong>không đóng sẵn</strong>. Chỉ xử lý khi step bị chặn — chèn nhánh reactive <strong>TRƯỚC</strong> force-retry hiện có (runner.ts:297 cho click, :334 cho fill):</p>
+<ul>
+<li>Step click/fill fail vì intercept/overlay → tìm đúng overlay đang phủ lên target (topmost-at-point)</li>
+<li>Overlay là protected → throw lỗi rõ "protected modal đang chặn step"</li>
+<li>Overlay thuộc junk → đóng chỉ overlay đó → retry step</li>
+<li>Không xác định được → <strong>fall through</strong> xuống force-retry cũ (giữ nguyên xử lý combobox <code>opacity:0</code>)</li>
+</ul>
+<p><strong>Quan trọng:</strong> reactive dismiss là nhánh <em>bổ sung trước</em> force-retry, KHÔNG thay thế. Cả hai handler click (:297) + fill (:334) dùng chung 1 helper (DRY) — không copy-paste. Combobox vẫn được force-click như cũ.</p>
+<p><strong>Lợi ích:</strong> modal chức năng không chặn step nào → không bao giờ bị đụng. Không còn observer đua với step (race 300ms biến mất cho modal).</p>
+</div>
+
+<div class="tier">
+<p class="tier-num">Tầng 4 — Heuristic nội dung (chốt chặn cho overlay lạ)</p>
+<p>Nếu overlay lạ (không protected, không denylist) chặn step:</p>
+<table>
+<tr><th>Có gì bên trong?</th><th>Phán định</th><th>Hành động</th></tr>
+<tr><td><code>input, select, textarea, [role=combobox], table, .ant-form</code></td><td>Modal chức năng</td><td><span class="s-red status-block"></span>KHÔNG đóng → fail rõ ràng</td></tr>
+<tr><td>Chỉ có nút close + ảnh/text quảng cáo, không có ô nhập</td><td>Rác</td><td><span class="s-green status-block"></span>Đóng</td></tr>
+</table>
+<pre><code>function isLikelyFunctionalModal(el: Element): boolean {
+  return !!el.querySelector('input,select,textarea,[role=combobox],table,.ant-form');
+}</code></pre>
+</div>
+
+<h2>3.5. Execution Context — Browser vs Node (BẮT BUỘC đọc trước khi code)</h2>
+
+<div class="card">
+<p>Logic dismiss chạy ở <strong>hai context tách biệt</strong>. Đây là ràng buộc kiến trúc quyết định cách viết code:</p>
+<table>
+<tr><th>Tầng</th><th>Chạy ở đâu</th><th>Cơ chế</th></tr>
+<tr><td>Tầng 1 (junk observer)</td><td><strong>Browser</strong></td><td><code>page.addInitScript</code> — function bị serialize, KHÔNG truy cập biến Node</td></tr>
+<tr><td>Tầng 2 (protected mark)</td><td>Node → Browser</td><td><code>page.evaluate</code> gắn attribute (chỉ aggressive)</td></tr>
+<tr><td>Tầng 3 (reactive)</td><td><strong>Node</strong></td><td>Trong catch của intercept handler, gọi <code>page.evaluate</code> để dò overlay</td></tr>
+<tr><td>Tầng 4 (heuristic)</td><td><strong>Cả hai</strong></td><td>Dùng trong observer (browser) VÀ reactive (Node-side evaluate)</td></tr>
+</table>
+
+<p><strong>Hệ quả 1 — Config mode không đọc được trong init-script:</strong> phải truyền qua tham số.</p>
+<pre><code>// ĐÚNG — truyền mode vào addInitScript
+await page.addInitScript((mode) =&gt; {
+  if (mode === 'off') return;
+  const JUNK = mode === 'aggressive' ? AGGRESSIVE_SELECTORS : JUNK_SELECTORS;
+  // ...
+}, resolvedMode);   // resolvedMode tính ở Node
+
+// SAI — closure không thấy biến config
+await page.addInitScript(() =&gt; { if (config.mode === ...) }); // ❌ ReferenceError</code></pre>
+
+<p><strong>Hệ quả 2 — Heuristic Tầng 4 KHÔNG extract thành module Node import được.</strong> Browser-context không <code>import</code> được. Giải pháp: định nghĩa <code>isLikelyFunctionalModal</code> dưới dạng <strong>function được inline trong cả init-script lẫn page.evaluate</strong> (cùng 1 source, lặp lại có kiểm soát). Có thể giữ 1 bản canonical trong <code>src/popup-dismiss.ts</code> để Node-side import + test, và 1 bản inline trong init-script (vì init-script không import được). Test cover bản canonical; bản inline phải khớp logic.</p>
+</div>
+
+<h2>4. Config mở rộng (backward-compatible)</h2>
+
+<div class="card">
+<pre><code>// flow YAML hoặc config
+autoPopupDismiss: "junk-only"   # MẶC ĐỊNH MỚI
+# "off"         : tắt hẳn (= false hiện tại)
+# "aggressive"  : hành vi cũ (đóng mọi ant-modal)
+</code></pre>
+<p>Đổi default từ <code>true</code> (aggressive) → <code>"junk-only"</code>. Flow nào cần hành vi cũ: ghi <code>autoPopupDismiss: aggressive</code>.</p>
+</div>
+
+<h2>5. Deliverables</h2>
+
+<table>
+<tr><th>#</th><th>Deliverable</th><th>File</th><th>Mô tả</th></tr>
+<tr><td>D1</td><td>Refactor POPUP_SELECTORS → JUNK_SELECTORS</td><td>src/popup-dismiss.ts</td><td>Bỏ <code>.ant-modal-*</code>, giữ toast/notification/ads. Giữ AGGRESSIVE_SELECTORS cho mode cũ</td></tr>
+<tr><td>D2</td><td>Protected modal tracking (CHỈ aggressive)</td><td>src/runner.ts</td><td>Safety net cho aggressive mode — best-effort. KHÔNG nằm trên đường default</td></tr>
+<tr><td>D3</td><td>Thay observer: junk-only / aggressive / off</td><td>src/runner.ts</td><td>Truyền <code>mode</code> vào addInitScript; junk-only chỉ match JUNK_SELECTORS</td></tr>
+<tr><td>D4</td><td>Reactive dismiss helper (trước force-retry)</td><td>src/runner.ts</td><td>1 helper dùng chung cho click(:297)+fill(:334); chèn TRƯỚC force-retry, fall through nếu ko xác định</td></tr>
+<tr><td>D5</td><td>Heuristic <code>isLikelyFunctionalModal</code></td><td>src/popup-dismiss.ts (canonical) + inline init-script</td><td>Bản canonical để Node import+test; bản inline trong init-script (ko import được)</td></tr>
+<tr><td>D6</td><td>Config 3 giá trị + map backward-compat</td><td>src/types.ts, src/runner.ts</td><td><code>junk-only</code>|<code>off</code>|<code>aggressive</code>; <code>true→aggressive</code>, <code>false→off</code>, undefined→junk-only</td></tr>
+<tr><td>D7</td><td>Unit tests</td><td>src/popup-dismiss.test.ts</td><td>Config parse; heuristic; JUNK ko chứa ant-modal; reactive đóng rác / fail cho form</td></tr>
+<tr><td>D8</td><td>Integration verify</td><td>—</td><td><code>tao-phieu-nk.yaml</code>: modal giữ mở; <strong>điểm fail dịch sang assert kho (bug FE)</strong></td></tr>
+</table>
+
+<h2>6. Tiêu chí nghiệm thu</h2>
+
+<div class="card">
+<ol>
+<li><code>tao-phieu-nk.yaml</code> chạy với mặc định mới (<strong>không cần</strong> <code>autoPopupDismiss: false</code>) → modal "Thêm sản phẩm" giữ mở suốt bước chọn kho. <strong>⚠️ Test tổng thể VẪN fail</strong> — nhưng điểm fail <strong>dịch sang assert danh sách kho (bug FE)</strong>, KHÔNG còn fail ở bước modal biến mất. Đây là tín hiệu fix engine thành công. <em>KHÔNG được sửa/nới assertion để ép pass</em> (rule #3 frt-test).</li>
+<li>Toast/notification/OneSignal vẫn tự biến mất, không chắn step.</li>
+<li>Không còn false-pass. <strong>Deterministic cho modal chức năng</strong> (không bị đóng giữa flow); dismiss rác vẫn async best-effort nhưng không còn đua với step.</li>
+<li>Có test engine: modal chức năng (có form) không bị đóng; toast bị đóng; overlay lạ có form chặn step → fail rõ ràng (không nuốt).</li>
+<li><code>autoPopupDismiss: aggressive</code> vẫn hoạt động giống hành vi cũ (backward compat); <code>true</code> map sang <code>aggressive</code>, <code>false</code> map sang <code>off</code>.</li>
+</ol>
+</div>
+
+<h2>7. Rủi ro & Mitigation</h2>
+
+<table>
+<tr><th>Rủi ro</th><th>Impact</th><th>Mitigation</th></tr>
+<tr><td>Flow cũ dựa vào auto-dismiss đóng modal → fail</td><td>Medium</td><td>Giữ <code>aggressive</code> mode; migration guide; CI chạy cả 2 mode</td></tr>
+<tr><td>Heuristic miss popup rác mới (selector lạ)</td><td>Low</td><td>Tầng 3 reactive vẫn xử lý khi step bị chặn; dễ thêm vào denylist</td></tr>
+<tr><td>Protected modal detection miss (step không match selector)</td><td>Low</td><td>Tầng 4 heuristic là fallback; modal có form → ko bị đóng dù ko protected</td></tr>
+</table>
+
+<h2>8. Thứ tự thực hiện</h2>
+
+<ol>
+<li><strong>D6</strong> — Config type + parse + map backward-compat (nhỏ, unblock D1–D5)</li>
+<li><strong>D1 + D3</strong> — Extract <code>src/popup-dismiss.ts</code>: JUNK_SELECTORS + AGGRESSIVE_SELECTORS; thay observer, truyền <code>mode</code> vào addInitScript</li>
+<li><strong>D2</strong> — Protected tracking (CHỈ aggressive mode — safety net, không block default)</li>
+<li><strong>D4 + D5</strong> — Reactive dismiss helper (trước force-retry, dùng chung click+fill) + heuristic (canonical + inline)</li>
+<li><strong>D7</strong> — Unit tests cho từng tầng (test bản canonical của heuristic)</li>
+<li><strong>D8</strong> — Integration verify: modal giữ mở, fail dịch sang assert kho</li>
+</ol>
+
+<p style="color:var(--muted);font-size:.85rem;margin-top:1rem"><strong>Code health:</strong> runner.ts đã 960 LOC (&gt;500 guideline). Extract phần popup sang <code>src/popup-dismiss.ts</code> là bắt buộc, không phải tuỳ chọn — nhưng lưu ý ràng buộc browser/Node (mục 3.5): bản canonical cho Node import+test, bản inline cho init-script.</p>
+
+</body>
+</html>

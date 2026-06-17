@@ -1,0 +1,167 @@
+# Flow: FPTShop Sale 3
+# Author: HienNTN
+# Created: 2026-05-29
+# Run: frt-test play fptshop-sale-3.yaml
+# Fixed: networkIdle hang, login flow, fragile selectors
+
+name: FPTShop Sale 3
+description: "Luồng bán hàng FPTShop - tạo đơn + thanh toán tiền mặt"
+tags:
+  - recorded
+  - smoke
+  - sale
+author: HienNTN
+created: "2026-05-29"
+config:
+  baseUrl: https://ci.ict.frt.vn
+  timeout: 30000
+variables:
+  username: "hienntn"
+  password: "f"
+  ma_nv: "104880"
+  search_sp: "cáp"
+  sdt_khach: "0971214034"
+
+steps:
+  # ===== LOGIN =====
+  - name: Navigate to RSA Ecom
+    action: goto
+    value: https://ci.ict.frt.vn
+    waitAfter: domContentLoaded
+
+  - name: Đợi SSO redirect
+    action: wait
+    value: "**/Account/Login**"
+    timeout: 30000
+
+  - name: Nhập tài khoản
+    action: fill
+    selector: "#mat-input-3"
+    value: "{{username}}"
+
+  - name: Nhập mật khẩu
+    action: fill
+    selector: "#mat-input-4"
+    value: "{{password}}"
+
+  - name: Bấm Đăng nhập
+    action: click
+    role: { type: button, name: "Đăng nhập" }
+    delay: 8000
+
+  # ===== CHỌN CỬA HÀNG =====
+  - name: Click "Hoàn tất" (popup chọn địa chỉ đăng nhập)
+    action: click
+    selector: "button:has-text('Hoàn tất')"
+    force: true
+    timeout: 30000
+    delay: 3000
+
+  # ===== MỞ BÁN HÀNG =====
+  - name: Click vào Bán hàng
+    action: click
+    role: { type: link, name: "Bán hàng (n)" }
+    timeout: 15000
+    delay: 3000
+
+  # ===== CHỌN NHÂN VIÊN =====
+  - name: Click ô chọn nhân viên
+    action: click
+    selector: "#cmb-employee"
+    delay: 1000
+
+  - name: Nhập mã nhân viên
+    action: fill
+    selector: "#cmb-employee"
+    value: "{{ma_nv}}"
+    delay: 2000
+
+  - name: Chọn nhân viên từ dropdown
+    action: click
+    selector: ".ant-select-item-option"
+    delay: 1000
+
+  - name: Xác nhận chọn nhân viên
+    action: click
+    role: { type: button, name: "Xác nhận (Enter)" }
+    delay: 2000
+
+  # ===== SEARCH & THÊM SP =====
+  - name: Search sản phẩm
+    action: fill
+    selector: "input[id^='search-product-input']"
+    value: "{{search_sp}}"
+    delay: 3000
+
+  - name: Chọn SP từ kết quả search (dropdown)
+    action: click
+    selector: ".ant-select-item-option"
+    timeout: 10000
+    delay: 2000
+
+  # Click "Thêm vào giỏ hàng" (trong kết quả search hoặc modal)
+  - name: Click Thêm vào giỏ hàng
+    action: click
+    role: { type: button, name: "Thêm vào giỏ hàng" }
+    optional: true
+    timeout: 5000
+    delay: 2000
+
+  # Đóng modal gợi ý mua kèm nếu còn hiện
+  - name: Đóng modal gợi ý mua kèm (nút X)
+    action: click
+    selector: ".ant-modal-close"
+    force: true
+    optional: true
+    timeout: 5000
+    delay: 2000
+
+  # ===== NHẬP SĐT =====
+  - name: Nhập SĐT khách hàng
+    action: fill
+    selector: "input[id^='focus__phone--number']"
+    value: "{{sdt_khach}}"
+    force: true
+    timeout: 15000
+    delay: 1000
+
+  - name: Click ra ngoài (unfocus SĐT để validate)
+    action: click
+    selector: "#fullName"
+    delay: 3000
+
+  # ===== TẠO ĐƠN =====
+  - name: Đợi nút Tạo đơn enabled (sau khi SĐT validate)
+    action: wait
+    selector: "button[id^='create-order']:not([disabled])"
+    timeout: 20000
+
+  - name: Click Tạo đơn (F4)
+    action: click
+    selector: "button[id^='create-order']"
+    force: true
+    timeout: 15000
+    delay: 8000
+
+  # ===== THANH TOÁN =====
+  - name: Click vào section Tiền mặt (expand)
+    action: click
+    text: "Tiền mặt"
+    force: true
+    timeout: 15000
+    delay: 2000
+
+  - name: Click nút "Thanh toán (Shift+Enter)"
+    action: click
+    selector: "button:has-text('Thanh toán')"
+    force: true
+    timeout: 10000
+    delay: 5000
+
+  # ===== HOÀN TẤT =====
+  - name: Hoàn tất đơn bằng F4
+    action: keyboard
+    key: F4
+    delay: 5000
+
+assertions: []

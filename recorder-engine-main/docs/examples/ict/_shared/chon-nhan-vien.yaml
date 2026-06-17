@@ -1,0 +1,35 @@
+# Shared Flow: Chọn nhân viên bán hàng
+# Popup chọn nhân viên xuất hiện khi vào màn Bán hàng
+# Import: use: _shared/chon-nhan-vien.yaml
+
+name: Chọn nhân viên bán hàng
+description: Popup chọn nhân viên — nhập mã NV, chọn từ dropdown, xác nhận
+tags: [shared, employee]
+author: HienNTN
+created: "2025-05-29"
+
+variables:
+  ma_nv: "104880"
+
+steps:
+  - name: Click vào ô chọn nhân viên
+    action: click
+    selector: "#cmb-employee"
+    delay: 500
+
+  - name: Nhập mã nhân viên
+    action: fill
+    selector: "#cmb-employee"
+    value: "{{ma_nv}}"
+    delay: 2000
+
+  - name: Chọn nhân viên từ dropdown
+    action: click
+    selector: ".ant-select-item-option"
+    delay: 500
+
+  - name: Xác nhận chọn nhân viên
+    action: click
+    role: { type: button, name: "Xác nhận (Enter)" }
+    waitAfter: networkIdle
+    delay: 2000

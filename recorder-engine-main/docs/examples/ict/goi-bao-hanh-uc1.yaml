@@ -1,0 +1,123 @@
+# Flow: Gói Bảo Hành UC1 — Mua 1 SP Non-Serial + 1 Gói BH
+# Epic: FI-29912
+# Channel: RSA Ecom (ci.ict.frt.vn)
+# Run: frt-test play goi-bao-hanh-uc1.yaml
+
+name: "UC1: Mua 1 SP Non-Serial + 1 Gói BH"
+description: |
+  Flow tạo đơn hàng với 1 sản phẩm không quản lý seri (Nồi lẩu điện)
+  kèm 1 gói bảo hành 1 đổi 1. Thanh toán tiền mặt.
+tags: [smoke, order, goi-bao-hanh, non-serial]
+author: HienNTN
+created: "2025-05-29"
+
+config:
+  baseUrl: https://ci.ict.frt.vn
+  timeout: 30000
+
+variables:
+  ma_sp: "00902034"
+  sdt_khach: "0971214034"
+  ma_nhan_vien: "104880"
+
+steps:
+  # ===== SETUP: Login + Cửa hàng =====
+  - use: _shared/login.yaml
+    name: Login RSA Ecom
+
+  - use: _shared/hoan-tat-cua-hang.yaml
+    name: Hoàn tất cửa hàng + dismiss popup
+
+  # ===== BÁN HÀNG =====
+  - name: Mở màn Bán hàng
+    action: click
+    role: { type: link, name: "Bán hàng (n)" }
+    delay: 3000
+
+  - use: _shared/chon-nhan-vien.yaml
+    name: Chọn nhân viên bán hàng
+    with:
+      ma_nv: "{{ma_nhan_vien}}"
+
+  # ===== SEARCH & THÊM SP =====
+  - name: Search sản phẩm
+    action: fill
+    selector: "input[id^='search-product-input']"
+    value: "{{ma_sp}}"
+    delay: 3000
+
+  - name: Chọn SP từ kết quả search
+    action: click
+    selector: ".ant-select-item-option"
+    delay: 2000
+
+  # ===== THÊM GÓI BẢO HÀNH =====
+  - name: Click "Thêm vào giỏ hàng"
+    action: click
+    role: { type: button, name: "Thêm vào giỏ hàng" }
+    delay: 2000
+
+  - name: Chọn gói BH "Dịch vụ bảo hành 1 đổi 1 Nồi cơm điện"
+    action: click
+    text: "Dịch vụ bảo hành 1 đổi 1 Nồi cơm điện"
+    delay: 1000
+
+  - name: Click nút "+" thêm gói BH
+    action: click
+    selector: ".w-6 > .anticon > svg > path"
+    delay: 2000
+
+  # ===== CHỌN SP BẢO HÀNH =====
+  - name: Click "Chọn thêm sản phẩm bảo hành"
+    action: click
+    text: "Chọn thêm sản phẩm bảo hành"
+    delay: 2000
+
+  - name: Chọn SP cần bảo hành (00902034)
+    action: click
+    selector: "text=00902034"
+    delay: 1000
+
+  - name: Xác nhận chọn SP bảo hành
+    action: click
+    role: { type: button, name: "Xác nhận (Enter)" }
+    delay: 2000
+
+  # ===== NHẬP SĐT + TẠO ĐƠN =====
+  - name: Nhập SĐT khách hàng
+    action: fill
+    role: { type: textbox, name: "Số điện thoại (F2)" }
+    value: "{{sdt_khach}}"
+    delay: 1000
+
+  - name: Tạo đơn (F4)
+    action: click
+    role: { type: button, name: "Tạo đơn (F4)" }
+    delay: 5000
+
+  # ===== THANH TOÁN =====
+  - name: Chọn thanh toán Tiền mặt
+    action: click
+    text: "Tiền mặt"
+    delay: 1000
+
+  - name: Thanh toán (Shift+Enter)
+    action: click
+    text: "Thanh toán (Shift+Enter)"
+    delay: 3000
+
+  # ===== HOÀN TẤT =====
+  - name: Hoàn tất đơn hàng (F4)
+    action: click
+    role: { type: button, name: "Hoàn tất (F4)" }
+    delay: 5000
+
+  # ===== EVIDENCE =====
+  - name: Screenshot kết quả
+    action: screenshot
+    value: "screenshots/uc1-complete.png"
+
+assertions:
+  - type: visible
+    selector: ".order-success, .ant-result-success"
+    message: "Đơn hàng tạo thành công"

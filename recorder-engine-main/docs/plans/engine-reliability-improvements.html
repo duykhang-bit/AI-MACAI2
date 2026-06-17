@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plan: Engine Reliability Improvements</title>
+<style>
+:root {
+  --bg: #ffffff;
+  --fg: #1d1d1f;
+  --fg2: #6e6e73;
+  --accent: #0071e3;
+  --border: #e5e5ea;
+  --card: #f5f5f7;
+  --success: #34c759;
+  --warn: #ff9500;
+  --danger: #ff3b30;
+  --radius: 12px;
+  --font: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1c1c1e;
+    --fg: #f5f5f7;
+    --fg2: #98989d;
+    --border: #38383a;
+    --card: #2c2c2e;
+  }
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font); background: var(--bg); color: var(--fg); line-height: 1.6; padding: 3rem 1.5rem; max-width: 900px; margin: 0 auto; }
+h1 { font-size: 2rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 0.5rem; }
+h2 { font-size: 1.4rem; font-weight: 600; margin: 2.5rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); }
+h3 { font-size: 1.1rem; font-weight: 600; margin: 1.5rem 0 0.5rem; }
+p, li { color: var(--fg); font-size: 0.95rem; }
+.meta { color: var(--fg2); font-size: 0.85rem; margin-bottom: 2rem; }
+.card { background: var(--card); border-radius: var(--radius); padding: 1.5rem; margin: 1rem 0; }
+.tag { display: inline-block; font-size: 0.75rem; font-weight: 500; padding: 0.2rem 0.6rem; border-radius: 6px; margin-right: 0.4rem; }
+.tag-p1 { background: #ffebee; color: var(--danger); }
+.tag-p2 { background: #fff3e0; color: var(--warn); }
+.tag-p3 { background: #e8f5e9; color: var(--success); }
+ul { padding-left: 1.5rem; margin: 0.5rem 0; }
+li { margin: 0.3rem 0; }
+code { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.85rem; background: var(--card); padding: 0.15rem 0.4rem; border-radius: 4px; }
+pre { background: var(--card); border-radius: var(--radius); padding: 1rem 1.25rem; overflow-x: auto; margin: 0.75rem 0; font-size: 0.85rem; }
+pre code { background: none; padding: 0; }
+table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.9rem; }
+th, td { padding: 0.6rem 0.8rem; text-align: left; border-bottom: 1px solid var(--border); }
+th { font-weight: 600; color: var(--fg2); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.02em; }
+.priority { font-weight: 600; }
+.p-high { color: var(--danger); }
+.p-med { color: var(--warn); }
+.p-low { color: var(--success); }
+</style>
+</head>
+<body>
+
+<h1>Plan: Engine Reliability Improvements</h1>
+<p class="meta">Ngày: 2026-06-04 &nbsp;|&nbsp; Project: @ai-test/recorder-engine &nbsp;|&nbsp; 5 issues</p>
+
+<h2>Tổng quan</h2>
+<p>5 vấn đề cần cải thiện cho recorder-engine để tăng độ ổn định khi record/replay trên nhiều app và cross-platform (Windows).</p>
+
+<div class="card">
+<strong>⚠️ Cập nhật sau review code (2026-06-04):</strong> Issue 3 (text động) <strong>phần lớn đã được implement</strong> trong recorder hiện tại (<code>isVolatileText</code>, <code>classifyAnchor</code>, auto-variabilize, VERIFY→AUTO-PICK). Scope thu hẹp còn vá gap nhỏ. Issue 1 đơn giản hơn dự kiến (runner đã wait element — chỉ cần bỏ delay thừa). Issue 5 có fix sạch hơn (Node.js launcher thay vì .cmd thủ công).
+</div>
+
+<table>
+<thead><tr><th>#</th><th>Vấn đề</th><th>Ưu tiên</th><th>Effort</th><th>Trạng thái code</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Thay delay hardcode bằng wait element</td><td class="priority p-high">P1</td><td>Small</td><td>Runner đã wait; bỏ delay thừa</td></tr>
+<tr><td>2</td><td>Popup bất ngờ chặn thao tác (auto-dismiss)</td><td class="priority p-high">P1</td><td>Medium</td><td>Gap thật — chưa có</td></tr>
+<tr><td>3</td><td>Bắt element theo text động (vá gap)</td><td class="priority p-med">P2</td><td>Small</td><td>~80% đã có; vá assert + pattern</td></tr>
+<tr><td>4</td><td>Hover → hiện nút bấm → chưa bắt được</td><td class="priority p-med">P2</td><td>Medium</td><td>Gap thật — thiếu mouseover listener</td></tr>
+<tr><td>5</td><td>Windows: frt-test CLI cần frt-test-win riêng</td><td class="priority p-med">P2</td><td>Small</td><td>bin là bash — đổi Node launcher</td></tr>
+</tbody>
+</table>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<h2>Issue 1: Thay delay hardcode bằng Wait Element</h2>
+
+<div class="card">
+<h3>Hiện trạng</h3>
+<p>Recorder tự gắn <code>delay: 1000</code> cho mọi step (click, fill, selectOption, keyboard) trong <code>recorder.ts</code> dòng 1546–1610. <strong>Quan trọng:</strong> runner <em>đã</em> wait element rồi — <code>click</code> chờ <code>waitFor visible</code>, <code>fill</code> click trước khi fill, <code>selectOption</code> chờ <code>attached</code>. Vậy <code>delay: 1000</code> chỉ là padding THỪA chồng lên cơ chế wait sẵn có → chậm vô ích, không giải quyết flaky.</p>
+</div>
+
+<h3>Giải pháp (đơn giản hóa sau review)</h3>
+<ul>
+<li><strong>Bỏ <code>delay: 1000</code> mặc định</strong> trong <code>actionToStep()</code> (4 chỗ: click, fill, selectOption, keyboard). Đây là fix chính.</li>
+<li><strong>Dựa vào wait sẵn có của runner</strong> — không cần thêm <code>waitForDomStable()</code> như bản plan đầu (runner đã chờ element visible/attached trước mỗi action).</li>
+<li><strong>Bổ sung wait cho action thiếu</strong>: <code>keyboard</code> hiện không wait gì. Thêm: nếu step trước là điều hướng → chờ <code>networkidle</code> nhẹ. Còn lại giữ nguyên.</li>
+<li><strong>Giữ <code>delay</code> field trong schema</strong> cho edge case (animation chậm) nhưng recorder KHÔNG tự thêm. Flow cũ có <code>delay</code> vẫn chạy (backward compat).</li>
+</ul>
+
+<h3>File changes</h3>
+<pre><code>src/recorder.ts   — actionToStep(): xóa `delay: 1000` ở 4 case (click/fill/selectOption/keyboard)
+src/runner.ts     — (tùy chọn) keyboard case: chờ load state nếu cần
+src/types.ts      — không đổi (delay vẫn giữ cho manual override)</code></pre>
+
+<h3>Exit criteria</h3>
+<ul>
+<li>Recorder không sinh <code>delay</code> trong YAML output trừ khi user explicit chỉ định.</li>
+<li>Runner chạy flow cũ (có <code>delay</code>) vẫn pass backward-compatible.</li>
+<li>Flow mới (không delay) chạy nhanh hơn ≥30% so với flow cũ cùng nội dung, không tăng tỉ lệ fail.</li>
+</ul>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<h2>Issue 2: Auto-dismiss Popup bất ngờ</h2>
+
+<div class="card">
+<h3>Hiện trạng</h3>
+<p>Runner chỉ dismiss <strong>browser dialog</strong> (alert/confirm/prompt) và <strong>OneSignal notification</strong>. Khi web app hiển thị modal/popup tự custom (vd: quảng cáo, survey, cookie consent, toast overlay) → tester click vào vùng trống bên ngoài popup để tắt → recorder ghi nhận click vào coordinate "trống" → khi replay, popup chưa kịp hiện hoặc đã đóng → step fail.</p>
+</div>
+
+<h3>Giải pháp</h3>
+<ol>
+<li><strong>Runner — Popup Interceptor</strong>: inject MutationObserver theo dõi element mới xuất hiện match pattern popup phổ biến:
+<pre><code>// Selectors phổ biến cho popup/modal/overlay
+const POPUP_PATTERNS = [
+  '.ant-modal-mask', '.ant-modal-wrap',
+  '.modal-backdrop', '.modal.show',
+  '[class*="popup"]', '[class*="overlay"]',
+  '[class*="cookie"]', '[class*="consent"]',
+  '[role="dialog"]', '[role="alertdialog"]',
+  '.ant-notification', '.ant-message',
+];</code></pre>
+</li>
+<li><strong>Khi phát hiện popup</strong> → auto-dismiss:
+  <ul>
+    <li>Tìm nút close (✕, "Đóng", "Close", "Cancel", "Bỏ qua") → click.</li>
+    <li>Nếu không có nút close → click vào mask/backdrop (nếu clickable để dismiss).</li>
+    <li>Nếu popup là notification/toast → chờ tự mất (timeout 5s).</li>
+  </ul>
+</li>
+<li><strong>Recorder side</strong>: khi user click vào mask/overlay → KHÔNG ghi step "click ở vị trí trống". Detect click target là backdrop → skip recording action đó, thay bằng ghi log <code>[auto-dismiss] popup detected</code>.</li>
+<li><strong>Config</strong>: cho phép disable auto-dismiss qua <code>config.autoPopupDismiss: false</code> nếu flow cần test popup behavior.</li>
+</ol>
+
+<h3>File changes</h3>
+<pre><code>src/runner.ts     — thêm injectPopupDismisser() vào page context khi launch
+src/recorder.ts   — detect click on overlay → skip/mark as popup-dismiss
+src/types.ts      — thêm autoPopupDismiss? vào FlowConfig</code></pre>
+
+<h3>Exit criteria</h3>
+<ul>
+<li>Runner tự dismiss popup Ant Modal khi xuất hiện giữa flow → step tiếp theo không bị block.</li>
+<li>Runner tự dismiss toast/notification → không ảnh hưởng click element bên dưới.</li>
+<li>Recorder không ghi click "vào vùng trống" khi tắt popup → YAML sạch hơn.</li>
+</ul>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<h2>Issue 3: Tối ưu bắt Element theo text động</h2>
+
+<div class="card">
+<h3>Hiện trạng — PHẦN LỚN ĐÃ CÓ ✅</h3>
+<p>Sau khi đọc <code>recorder.ts</code>, hệ thống xử lý text động <strong>đã được implement khá đầy đủ</strong>:</p>
+<ul>
+<li><code>isVolatileText()</code> (dòng 774) — bắt "tồn", "số lượng/SL", giá <code>đ/₫</code>, số + đơn vị (viên/vỉ/hộp/ống...), chuỗi số ≥3 chữ số.</li>
+<li><code>classifyAnchor()</code> (dòng 660) — phân biệt anchor STATIC (label/header) vs DATA (cell dữ liệu).</li>
+<li><strong>Auto-variabilize</strong> (dòng 829) — anchor DATA động → tự đẩy thành <code>{{var}}</code>, tên biến lấy từ table header (<code>deriveVarName</code>) hoặc form label, push vào <code>flow.variables</code>.</li>
+<li><strong>VERIFY→AUTO-PICK lazy tiering</strong> — sinh locator theo bậc độ bền (flat → relative → css), <code>rankFlat</code>/<code>anchorRank</code> phạt volatile text → tự né bắt theo số tiền/tồn kho.</li>
+</ul>
+<p>→ Plan gốc ("thêm isDynamicText, ưu tiên testId>role>relative") <strong>trùng với cái đã có</strong>. Scope thật sự chỉ còn vá vài gap nhỏ.</p>
+</div>
+
+<h3>Gap còn lại (scope thu hẹp)</h3>
+<ol>
+<li><strong>[Gap chính] Assert mode ghi giá trị động literal.</strong> Khi user dùng Assert mode (Ctrl+Shift+A) click vào số tiền/tồn kho → recorder ghi <code>expected: "1,234,000đ"</code> nguyên văn (recorder.ts ~1140). Replay với data khác → fail.
+  <ul>
+    <li>Fix: trong assert handler, chạy <code>isVolatileText(expectedValue)</code> → nếu volatile, cảnh báo + đề xuất parameterize thành <code>{{var}}</code>, hoặc đổi <code>assertType: 'text'</code> sang <code>'visible'</code> (chỉ verify element tồn tại, không so giá trị).</li>
+  </ul>
+</li>
+<li><strong>[Gap nhỏ] Mở rộng <code>isVolatileText</code> patterns.</strong> Hiện sót: <code>%</code> đứng riêng, <code>$</code>/USD/ngoại tệ, ngày <code>dd/mm/yyyy</code> đứng độc lập (dù năm 4 số bị <code>\d{3,}</code> bắt một phần).
+  <ul>
+    <li>Fix: thêm pattern <code>$/USD/€</code>, <code>\d+%</code>, ngày <code>\d{1,2}[/\-.]\d{1,2}[/\-.]\d{2,4}</code>.</li>
+  </ul>
+</li>
+</ol>
+
+<h3>File changes</h3>
+<pre><code>src/recorder.ts   — assert handler: detect volatile expected → parameterize / đổi sang visible
+src/recorder.ts   — isVolatileText(): thêm pattern $/USD/%/ngày</code></pre>
+
+<h3>Exit criteria</h3>
+<ul>
+<li>Assert mode click vào số tiền → KHÔNG ghi <code>expected: "1,234,000đ"</code> literal; thay bằng <code>{{var}}</code> hoặc <code>assertType: visible</code>.</li>
+<li><code>isVolatileText("12.5%")</code>, <code>isVolatileText("$99.00")</code>, <code>isVolatileText("04/06/2026")</code> đều trả <code>true</code>.</li>
+<li>Flow replay pass khi data thay đổi (khác số tiền/tồn kho/%).</li>
+<li>Regression: flow click element thường (text tĩnh) KHÔNG bị parameterize nhầm.</li>
+</ul>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<h2>Issue 4: Hover → hiện nút bấm → bắt action</h2>
+
+<div class="card">
+<h3>Hiện trạng</h3>
+<p>Khi user hover vào icon/row → các action buttons mới hiện ra (visibility: visible / display: block) → user click button đó. Hiện tại recorder <strong>không ghi nhận hover event</strong> (chỉ ghi click/fill/keyboard). Runner hỗ trợ <code>action: 'hover'</code> nhưng recorder không emit nó → khi replay, button chưa hiện → click fail.</p>
+</div>
+
+<h3>Giải pháp</h3>
+<ol>
+<li><strong>Recorder — detect hover-to-reveal pattern</strong>:
+  <ul>
+    <li>Khi user click vào element mà <strong>trước click 500ms, element đó chưa visible</strong> (hoặc cha/ông nó mới visible) → suy ra đã có hover trigger.</li>
+    <li>Inject script track <code>mouseenter</code> event trên mọi element → lưu last-hovered element.</li>
+    <li>Khi click xảy ra trên element vừa mới visible → tự chèn step <code>hover</code> trước step <code>click</code> trong actions list.</li>
+  </ul>
+</li>
+<li><strong>Heuristic detect hover target</strong>: element được hover = tổ tiên gần nhất của click target mà trigger visibility change. Tìm bằng cách:
+  <ul>
+    <li>Track <code>mouseenter</code> → ghi lại ancestor chain.</li>
+    <li>Khi visibility change detected (MutationObserver on style/class) → map lại ancestor nào trigger sự thay đổi.</li>
+  </ul>
+</li>
+<li><strong>Runner — hover + waitFor</strong>: step hover đã hỗ trợ. Thêm implicit wait sau hover: chờ child element visible trước khi proceed sang step tiếp.</li>
+</ol>
+
+<h3>File changes</h3>
+<pre><code>src/recorder.ts   — inject script: track mouseover (debounced), detect hover-reveal, emit hover action
+src/recorder.ts   — buildFlow(): insert hover step trước click khi detect pattern
+src/runner.ts     — hover case: thêm wait cho revealed element sau hover</code></pre>
+
+<div class="card">
+<strong>⚠️ Phần khó nhất trong 5 issue.</strong> Detect "click target vừa được reveal bởi hover" dễ false-positive (mouseover fire liên tục). Đề xuất tiếp cận an toàn:
+<ul>
+<li>Track <code>mouseover</code> với debounce, lưu element hover gần nhất + thời điểm.</li>
+<li>Trong pointerup handler: nếu click target (hoặc ancestor gần) <strong>không visible</strong> ở thời điểm 1 hover trước đó và <strong>chỉ visible sau khi hover</strong> ancestor → mới emit hover step.</li>
+<li>Nếu không chắc → KHÔNG emit (thà thiếu hover step còn hơn ghi hover thừa làm flow rối). Có thể bổ sung phím tắt thủ công "ghi hover" nếu auto-detect chưa đủ tin cậy.</li>
+</ul>
+Nếu auto-detect quá flaky trong thực nghiệm → fallback sang phương án thủ công (hotkey đánh dấu hover) thay vì cố ép heuristic.
+</div>
+
+<h3>Exit criteria</h3>
+<ul>
+<li>User hover icon → button hiện → click button → recorder ghi: step hover + step click (2 steps).</li>
+<li>Runner replay: hover → chờ button visible → click → pass.</li>
+<li>Không false positive: hover bình thường (không reveal gì) → KHÔNG ghi hover step thừa.</li>
+</ul>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<h2>Issue 5: Cross-platform CLI (Windows support)</h2>
+
+<div class="card">
+<h3>Hiện trạng</h3>
+<p>Command <code>frt-test</code> wire qua <code>npm link</code> (field <code>bin</code> trong package.json). Nhưng <code>bin/frt-test</code> là <strong>bash script</strong> (<code>#!/usr/bin/env bash</code>). Trên Windows, npm sinh shim <code>.cmd</code> bọc script này nhưng khi chạy lại cố gọi qua <code>bash</code> — không có Git Bash/WSL trên PATH → fail → agent buộc phải tạo <code>frt-test-win</code> riêng. README dòng 50 cũng chỉ hướng dẫn <code>npm link</code> cho macOS/Linux.</p>
+</div>
+
+<h3>Giải pháp (sạch hơn plan đầu)</h3>
+<p>Thay vì maintain 2 file (<code>frt-test</code> bash + <code>frt-test.cmd</code> thủ công, dễ desync), <strong>đổi <code>bin/frt-test</code> thành Node.js launcher</strong>. Khi bin là Node script, <code>npm link</code>/<code>npm install</code> <strong>tự sinh</strong> shim <code>frt-test</code> (unix) + <code>frt-test.cmd</code> + <code>frt-test.ps1</code> (Windows) → cross-platform tự động, 1 nguồn duy nhất.</p>
+<pre><code>#!/usr/bin/env node
+// bin/frt-test — cross-platform launcher
+const { spawnSync } = require('node:child_process');
+const path = require('node:path');
+const engineDir = path.resolve(__dirname, '..');
+const tsxBin = path.join(engineDir, 'node_modules', 'tsx', 'dist', 'cli.mjs');
+const r = spawnSync(process.execPath, [tsxBin, path.join(engineDir, 'src', 'cli.ts'), ...process.argv.slice(2)],
+  { stdio: 'inherit' });
+process.exit(r.status ?? 1);</code></pre>
+<ul>
+<li>Gọi <code>tsx/dist/cli.mjs</code> trực tiếp bằng <code>process.execPath</code> (node) → không phụ thuộc <code>.bin/tsx</code> symlink (vốn cũng là bash trên unix, <code>.cmd</code> trên win).</li>
+<li><code>package.json bin</code> giữ nguyên <code>"frt-test": "./bin/frt-test"</code> — npm tự lo phần shim.</li>
+<li>Bỏ logic resolve symlink BSD trong bash script cũ (không cần — Node <code>__dirname</code> đã chuẩn cross-platform).</li>
+</ul>
+
+<h3>File changes</h3>
+<pre><code>bin/frt-test       — REWRITE: bash → Node.js launcher (#!/usr/bin/env node)
+README.md          — bỏ hướng dẫn frt-test-win; ghi rõ `npm link` chạy cho cả Windows
+docs/guide-vi.html — cập nhật bước setup Windows</code></pre>
+
+<h3>Exit criteria</h3>
+<ul>
+<li>Trên Windows (cmd.exe / PowerShell): sau <code>npm link</code>, <code>frt-test --help</code> chạy được không cần WSL/Git Bash, không cần file <code>frt-test-win</code>.</li>
+<li>Trên macOS/Linux: <code>frt-test</code> vẫn chạy như cũ (verify <code>frt-test list</code>, <code>frt-test play</code>).</li>
+<li>Không còn file/script đặc thù Windows nào cần maintain riêng.</li>
+</ul>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<h2>Thứ tự thực hiện (Dependency)</h2>
+
+<div class="card">
+<pre><code>Issue 5 (Windows CLI)      ─── Độc lập, nhỏ → làm trước (unblock user ngay)
+Issue 1 (Bỏ delay thừa)    ─── Độc lập, nhỏ → làm cùng Issue 5
+Issue 3 (Vá text động)     ─── Độc lập, recorder-side, nhỏ
+Issue 2 (Popup dismiss)    ─── Vừa, runner + recorder
+Issue 4 (Hover detect)     ─── Khó nhất, làm cuối (có fallback thủ công)</code></pre>
+<p>Sau review: Issue 1 và 3 nhỏ hơn dự kiến (không còn phụ thuộc lẫn nhau như plan đầu — runner đã wait sẵn nên Issue 2/4 không cần chờ Issue 1).</p>
+</div>
+
+<h3>Đề xuất sprint</h3>
+<table>
+<thead><tr><th>Sprint</th><th>Issues</th><th>Estimated days</th></tr></thead>
+<tbody>
+<tr><td>Sprint 1</td><td>#5 Windows CLI + #1 Bỏ delay + #3 Vá text động</td><td>2-3 days</td></tr>
+<tr><td>Sprint 2</td><td>#2 Popup dismiss</td><td>2 days</td></tr>
+<tr><td>Sprint 3</td><td>#4 Hover detect (+ fallback thủ công nếu cần)</td><td>2-3 days</td></tr>
+</tbody>
+</table>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<h2>Risks & Notes</h2>
+<ul>
+<li><strong>Backward compatibility</strong>: flow YAML cũ có <code>delay: 1000</code> phải vẫn chạy được. Runner giữ support <code>delay</code> field, chỉ recorder không tự sinh.</li>
+<li><strong>Popup false positive</strong>: auto-dismiss có thể đóng popup quan trọng (confirm delete…). Giải pháp: chỉ dismiss popup "không có action button nguy hiểm" (không có "Xóa"/"Delete"). Config <code>autoPopupDismiss: false</code> cho flow cần test popup.</li>
+<li><strong>Hover detection accuracy</strong>: mouseenter fire liên tục khi di chuột. Cần debounce + chỉ emit khi CÓ visibility change thực sự xảy ra.</li>
+<li><strong>Windows path separator</strong>: các hàm dùng <code>path.join</code> / <code>path.resolve</code> — Node.js tự handle. Chỉ cần check nơi nào dùng hardcode <code>/</code>.</li>
+</ul>
+
+</body>
+</html>

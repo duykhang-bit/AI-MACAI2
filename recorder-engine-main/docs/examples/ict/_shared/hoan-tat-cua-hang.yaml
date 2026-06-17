@@ -1,0 +1,23 @@
+# Shared Flow: Hoàn tất chọn cửa hàng + dismiss popup
+# Sau login, cần hoàn tất cửa hàng và dismiss popup thông báo
+# Import: use: _shared/hoan-tat-cua-hang.yaml
+
+name: Hoàn tất chọn cửa hàng
+description: Click Hoàn tất sau login + dismiss popup "Vui lòng bật thông báo"
+tags: [shared, setup]
+author: HienNTN
+created: "2025-05-29"
+
+steps:
+  - name: Click Hoàn tất chọn cửa hàng
+    action: click
+    role: { type: button, name: "Hoàn tất" }
+    waitAfter: networkIdle
+    delay: 2000
+
+  - name: Dismiss popup thông báo (nếu có)
+    action: click
+    role: { type: button, name: "Đồng ý" }
+    optional: true
+    timeout: 5000
+    delay: 1000

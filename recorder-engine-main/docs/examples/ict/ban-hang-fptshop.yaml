@@ -1,0 +1,159 @@
+# Flow: ban hang FPTShop
+# Author: recorder
+# Created: 2026-05-29
+# Run: frt-test play ban-hang-fptshop.yaml
+
+name: ban hang FPTShop
+description: "Recorded flow: ban hang FPTShop"
+tags:
+  - recorded
+author: recorder
+created: "2026-05-29"
+config:
+  baseUrl: https://ci.ict.frt.vn
+  timeout: 30000
+variables: {}
+steps:
+  - name: Navigate to https://ci.ict.frt.vn
+    action: goto
+    value: https://ci.ict.frt.vn
+    waitAfter: domContentLoaded
+
+  # ===== LOGIN (theo pattern spec đã pass) =====
+  - name: Đợi SSO redirect
+    action: wait
+    value: "**/Account/Login**"
+    timeout: 30000
+
+  - name: Nhập tài khoản
+    action: fill
+    selector: "#mat-input-3"
+    value: hienntn
+
+  - name: Nhập mật khẩu
+    action: fill
+    selector: "#mat-input-4"
+    value: f
+
+  - name: Bấm Đăng nhập
+    action: click
+    role: { type: button, name: "Đăng nhập" }
+    delay: 8000
+
+  # ===== CHỌN CỬA HÀNG → HOÀN TẤT =====
+  # Notification popup (OneSignal "Đồng ý") tự động dismiss bởi runner engine
+  - name: Click "Hoàn tất" (popup chọn địa chỉ đăng nhập)
+    action: click
+    selector: "button:has-text('Hoàn tất')"
+    force: true
+    timeout: 30000
+    delay: 3000
+  - name: >-
+      Click div:nth-child(1) > div:nth-child(2) > div > div > div > main > div > div > div:nth-child(2) >
+      div:nth-child(1) > a > img
+    action: click
+    selector: >-
+      div:nth-child(1) > div:nth-child(2) > div > div > div > main > div > div > div:nth-child(2) > div:nth-child(1) > a
+      > img
+    delay: 1000
+  - name: "Click #cmb-employee"
+    action: click
+    selector: "#cmb-employee"
+    delay: 1000
+  - name: Click "104880 - Nguyễn Thị Ngọc Hiển DX"
+    action: click
+    selector: >-
+      div:nth-child(3) > div > div > div:nth-child(2) > div:nth-child(1) > div > div > div:nth-child(8) > div > div >
+      span
+    delay: 1000
+  - name: Click "Xác nhận (Enter)"
+    action: click
+    selector: div:nth-child(2) > div > div:nth-child(2) > div > div:nth-child(2) > div:nth-child(2) > button:nth-child(2)
+    delay: 1000
+  - name: "Click #search-product-input_session:31438:1780022357008"
+    action: click
+    selector: "#search-product-input_session:31438:1780022357008"
+    delay: 1000
+  - name: "Fill #search-product-input_session:31438:1780022357008 with \"cáp\""
+    action: fill
+    selector: "#search-product-input_session:31438:1780022357008"
+    value: cáp
+  - name: Click "Thêm vào giỏ hàng"
+    action: click
+    selector: >-
+      div:nth-child(5) > div > div:nth-child(2) > div > div:nth-child(2) > div:nth-child(2) > div > div >
+      div:nth-child(2) > div > div:nth-child(2) > div > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) >
+      div:nth-child(3) > button:nth-child(1) > span
+    delay: 1000
+  - name: "Click #focus__phone--number_session:31438:1780022357008"
+    action: click
+    selector: "#focus__phone--number_session:31438:1780022357008"
+    delay: 1000
+  - name: "Fill #focus__phone--number_session:31438:1780022357008 with \"0971214034\""
+    action: fill
+    selector: "#focus__phone--number_session:31438:1780022357008"
+    value: "0971214034"
+  - name: Click "STTSản phẩmSố lượngĐơn giáThành tiềnKhoSản phẩm ch"
+    action: click
+    selector: "#table-contain-cart"
+    delay: 1000
+  - name: Click "Tạo đơn (F4)"
+    action: click
+    selector: >-
+      div:nth-child(1) > div:nth-child(2) > div > div > div > div > main > div > div > div:nth-child(2) > div > div >
+      div:nth-child(2) > div:nth-child(2) > div:nth-child(3) > button > span
+    delay: 1000
+  - name: >-
+      Click div:nth-child(1) > div:nth-child(2) > div > div > div > div > main > div > div > div:nth-child(2) > div >
+      div > div:nth-child(3) > div:nth-child(1) > div > div > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) >
+      div:nth-child(1) > label > span > input
+    action: click
+    selector: >-
+      div:nth-child(1) > div:nth-child(2) > div > div > div > div > main > div > div > div:nth-child(2) > div > div >
+      div:nth-child(3) > div:nth-child(1) > div > div > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) >
+      div:nth-child(1) > label > span > input
+    delay: 1000
+  - name: >-
+      Fill div:nth-child(1) > div:nth-child(2) > div > div > div > div > main > div > div > div:nth-child(2) > div > div
+      > div:nth-child(3) > div:nth-child(1) > div > div > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) >
+      div:nth-child(1) > label > span > input with "on"
+    action: fill
+    selector: >-
+      div:nth-child(1) > div:nth-child(2) > div > div > div > div > main > div > div > div:nth-child(2) > div > div >
+      div:nth-child(3) > div:nth-child(1) > div > div > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) >
+      div:nth-child(1) > label > span > input
+    value: "on"
+  - name: "Click \"Thanh toán\_ (Shift+Enter): 100.000đ\""
+    action: click
+    selector: >-
+      div:nth-child(1) > div:nth-child(2) > div > div > div > div > main > div > div > div:nth-child(2) > div > div >
+      div:nth-child(3) > div:nth-child(1) > div > div > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) >
+      div:nth-child(2) > div > div:nth-child(2) > button > span
+    delay: 1000
+  - name: Click "Hoàn tất (F4)"
+    action: click
+    selector: "#btn__finish--F4_314381048801780022382780"
+    delay: 1000
+  - name: Click "Hoàn tất đơn hàng"
+    action: click
+    selector: >-
+      div:nth-child(4) > div > div:nth-child(2) > div > div:nth-child(2) > div:nth-child(1) > div > div:nth-child(1) >
+      h3
+    delay: 1000
+  - name: Click "2382780"
+    action: click
+    selector: >-
+      div:nth-child(4) > div > div:nth-child(2) > div > div:nth-child(2) > div:nth-child(1) > div > div:nth-child(1) >
+      h4 > div > span
+    delay: 1000
+  - name: Click "Xem bill (F3)"
+    action: click
+    selector: >-
+      div:nth-child(1) > div:nth-child(2) > div > div > div > div > main > div:nth-child(1) > div:nth-child(2) > div >
+      div:nth-child(9) > button > span
+    delay: 1000
+  - name: Click div:nth-child(4) > button > span > svg > path
+    action: click
+    selector: div:nth-child(4) > button > span > svg > path
+    delay: 1000
+assertions: []

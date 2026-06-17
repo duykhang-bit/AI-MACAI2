@@ -1,0 +1,14 @@
+#!/usr/bin/env node
+// frt-test — cross-platform CLI launcher for @ai-test/recorder-engine
+// npm auto-generates .cmd/.ps1 shims on Windows from this Node entry.
+const { spawnSync } = require('node:child_process');
+const path = require('node:path');
+const engineDir = path.resolve(__dirname, '..');
+const tsx = path.join(engineDir, 'node_modules', 'tsx', 'dist', 'cli.mjs');
+const cli = path.join(engineDir, 'src', 'cli.ts');
+const result = spawnSync(
+  process.execPath,
+  [tsx, cli, ...process.argv.slice(2)],
+  { stdio: 'inherit' }
+);
+process.exit(result.status ?? 1);

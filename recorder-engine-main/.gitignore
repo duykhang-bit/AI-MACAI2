@@ -1,0 +1,10 @@
+node_modules/
+.engine-version-cache.json
+screenshots/*
+!screenshots/.gitkeep
+reports/*
+!reports/.gitkeep
+.env
+.DS_Store
+*.log
+dist/

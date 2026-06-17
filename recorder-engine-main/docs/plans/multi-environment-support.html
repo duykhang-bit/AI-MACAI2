@@ -1,0 +1,1078 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Multi-Environment Support — CI / UAT / PROD</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #fbfbfd;
+    --fg: #1d1d1f;
+    --muted: #6e6e73;
+    --line: #d2d2d7;
+    --card: #ffffff;
+    --accent: #0066cc;
+    --code-bg: #f5f5f7;
+    --code-fg: #1d1d1f;
+    --warn-bg: #fff4e5;
+    --warn-fg: #663c00;
+    --ok-bg: #e8f5e9;
+    --ok-fg: #1b5e20;
+    --info-bg: #e3f2fd;
+    --info-fg: #0d47a1;
+    --danger-bg: #ffebee;
+    --danger-fg: #b71c1c;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1d1d1f;
+      --fg: #f5f5f7;
+      --muted: #8e8e93;
+      --line: #38383a;
+      --card: #2c2c2e;
+      --accent: #2997ff;
+      --code-bg: #2c2c2e;
+      --code-fg: #f5f5f7;
+      --warn-bg: #3b2f1c;
+      --warn-fg: #ffd60a;
+      --ok-bg: #1b3a1d;
+      --ok-fg: #34c759;
+      --info-bg: #1c2e3b;
+      --info-fg: #64b5f6;
+      --danger-bg: #3b1c1c;
+      --danger-fg: #ff6b6b;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    line-height: 1.6;
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 920px; margin: 0 auto; padding: 64px 32px 120px; }
+  header { border-bottom: 1px solid var(--line); padding-bottom: 32px; margin-bottom: 48px; }
+  h1 { font-size: 40px; font-weight: 600; letter-spacing: -0.02em; margin: 0 0 12px; line-height: 1.15; }
+  .meta { color: var(--muted); font-size: 14px; margin: 0; }
+  .meta strong { color: var(--fg); font-weight: 500; }
+  h2 { font-size: 28px; font-weight: 600; letter-spacing: -0.01em; margin: 56px 0 16px; line-height: 1.25; }
+  h3 { font-size: 20px; font-weight: 600; margin: 32px 0 12px; }
+  h4 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; }
+  p { margin: 0 0 16px; }
+  ul, ol { padding-left: 24px; margin: 0 0 16px; }
+  li { margin-bottom: 6px; }
+  code {
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    background: var(--code-bg);
+    color: var(--code-fg);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.9em;
+  }
+  pre {
+    background: var(--code-bg);
+    color: var(--code-fg);
+    padding: 16px 20px;
+    border-radius: 12px;
+    overflow-x: auto;
+    margin: 16px 0;
+    font-size: 13px;
+    line-height: 1.55;
+    border: 1px solid var(--line);
+  }
+  pre code { background: transparent; padding: 0; font-size: inherit; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 24px 28px;
+    margin: 16px 0 24px;
+  }
+  .callout { padding: 16px 20px; border-radius: 12px; margin: 16px 0; font-size: 14px; }
+  .callout.warn { background: var(--warn-bg); color: var(--warn-fg); }
+  .callout.ok { background: var(--ok-bg); color: var(--ok-fg); }
+  .callout.info { background: var(--info-bg); color: var(--info-fg); }
+  .callout.danger { background: var(--danger-bg); color: var(--danger-fg); }
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+  th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-weight: 600; color: var(--muted); font-size: 13px; text-transform: uppercase; letter-spacing: 0.04em; }
+  td code { font-size: 12px; }
+  .pill {
+    display: inline-block; padding: 2px 10px; border-radius: 999px;
+    font-size: 12px; font-weight: 500; background: var(--code-bg); color: var(--muted);
+  }
+  .pill.ok { background: var(--ok-bg); color: var(--ok-fg); }
+  .pill.warn { background: var(--warn-bg); color: var(--warn-fg); }
+  .pill.info { background: var(--info-bg); color: var(--info-fg); }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 720px) { .grid { grid-template-columns: 1fr; } }
+  .toc { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 20px 28px; margin-bottom: 32px; }
+  .toc ul { margin: 0; padding-left: 20px; }
+  .toc li { margin-bottom: 4px; }
+  .toc a { color: var(--accent); text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+  hr { border: 0; border-top: 1px solid var(--line); margin: 48px 0; }
+  .checklist li { list-style: none; padding-left: 28px; position: relative; margin-bottom: 8px; }
+  .checklist li::before { content: "☐"; position: absolute; left: 0; color: var(--muted); font-size: 18px; line-height: 1.4; }
+  .checklist li.done::before { content: "✅"; }
+  .diff-add { color: var(--ok-fg); }
+  .diff-rem { color: var(--danger-fg); text-decoration: line-through; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>Multi-Environment Support<br>CI / UAT / PROD</h1>
+  <p class="meta">
+    <strong>Project:</strong> @ai-test/recorder-engine &nbsp;·&nbsp;
+    <strong>Status:</strong> <span class="pill ok">APPROVED — REV 2, all questions resolved</span> &nbsp;·&nbsp;
+    <strong>Created:</strong> 2026-06-04 &nbsp;·&nbsp;
+    <strong>Updated:</strong> 2026-06-04
+  </p>
+  <p class="meta" style="margin-top: 8px;">
+    <strong>Author:</strong> AI Agent &nbsp;·&nbsp;
+    <strong>Type:</strong> Engine feature + chain config schema migration
+  </p>
+</header>
+
+<div class="toc">
+  <strong>Mục lục</strong>
+  <ul>
+    <li><a href="#context">1. Context — vấn đề hiện tại</a></li>
+    <li><a href="#goals">2. Goals &amp; Non-goals</a></li>
+    <li><a href="#schema">3. Đề xuất schema mới</a></li>
+    <li><a href="#backcompat">4. Backward compatibility</a></li>
+    <li><a href="#changes">5. Thay đổi theo file</a></li>
+    <li><a href="#cli">6. CLI surface</a></li>
+    <li><a href="#flow-yaml">7. Migration của Flow YAML</a></li>
+    <li><a href="#recorder">8. Recorder behavior</a></li>
+    <li><a href="#scaffold">9. Scaffold template + add-app</a></li>
+    <li><a href="#existing-chains">10. Migration cho 8 chains đã onboard</a></li>
+    <li><a href="#deliverables">11. Deliverables / Acceptance Criteria</a></li>
+    <li><a href="#tests">12. Test plan</a></li>
+    <li><a href="#docs">13. Doc updates</a></li>
+    <li><a href="#open-questions">14. Open questions — user cần trả lời</a></li>
+    <li><a href="#tech-validation">15. Technology validation</a></li>
+    <li><a href="#stages">16. Implementation stages</a></li>
+  </ul>
+</div>
+
+<div class="callout info">
+  <strong>📌 REV 2 — Đã chốt với user (2026-06-04):</strong>
+  <ul style="margin: 8px 0 0;">
+    <li><strong>Q1 ✅</strong> Tên env <code>ci / uat / prod</code> dùng chung cho cả 8 chuỗi.</li>
+    <li><strong>Q2 ✅</strong> <code>--env</code> <em>luôn required</em>. Không có <code>default_env</code>. Không gõ <code>--env</code> → fail ngay.</li>
+    <li><strong>Q3 ✅</strong> <strong>Mỗi env = 1 file YAML riêng.</strong> Không auto-rewrite YAML. Không inject <code>{{baseUrl}}</code> tự động. Test CI và UAT là 2 file độc lập.</li>
+    <li><strong>Q4 ⚠️</strong> Pharmacy làm pilot, nhưng <strong>hiện tại chỉ có URL CI</strong>. UAT/PROD thêm sau khi user cung cấp URL. Schema phải hỗ trợ env "chưa có URL".</li>
+    <li><strong>Q5 ✅</strong> Bump engine v0.x → v1.0 (schema breaking ở format, dù backward-compat đọc).</li>
+    <li><strong>Q6 ✅</strong> Support env var <code>FRT_TEST_ENV</code> cho CI/CD pipeline.</li>
+    <li><strong>Q7 ✅</strong> Per-env settings — out of scope plan này (Option A). Sẽ làm sau nếu có nhu cầu.</li>
+  </ul>
+  <strong>📌 Yêu cầu bổ sung quan trọng:</strong> Mỗi môi trường có thể có DOM/flow khác nhau → record riêng. Engine không giả định "test CI chạy được trên UAT". User chủ động prompt agent để clone/migrate test giữa các env.
+</div>
+
+<h2 id="context">1. Context — vấn đề hiện tại</h2>
+
+<p>Engine recorder hiện tại đã lên 8 chuỗi (LAB, Pharmacy, ICT, DS, BO, Data, Platform, VAC). Mỗi chuỗi có nhiều <em>app</em> (RSA, ecom, portal…), nhưng schema config <code>config/environments.yaml</code> chỉ map mỗi app sang <strong>một</strong> URL duy nhất:</p>
+
+<pre><code># Pharmacy hiện tại
+apps:
+  rsa:
+    baseUrl: "https://ci-rsa-web.frt.vn"      # ⚠️ chỉ CI
+  rsa-ecom:
+    baseUrl: "https://ci-rsa-ecom.frt.vn"     # ⚠️ chỉ CI
+default_app: rsa</code></pre>
+
+<p>Hệ quả:</p>
+<ul>
+  <li>Test YAML hardcode URL CI: <code>config.baseUrl: https://ci-rsa-web.frt.vn</code> + step <code>goto value: https://ci-rsa-web.frt.vn</code>.</li>
+  <li>Muốn chạy test trên UAT/PROD → phải sửa file YAML hoặc sửa <code>environments.yaml</code> bằng tay.</li>
+  <li>Không thể có pipeline regression: <em>"chạy bộ test pharmacy/rsa trên UAT trước khi promote PROD"</em> mà không hack tạm.</li>
+</ul>
+
+<div class="callout warn">
+  <strong>Tên gọi đang lẫn lộn:</strong> file đặt tên <code>environments.yaml</code> nhưng nội dung lại là <code>apps</code> (theo schema mới). Đây là di sản từ schema cũ (xem <code>config.ts</code> còn xử lý cả <code>environments</code> key lẫn <code>apps</code> key). Plan này sẽ giữ tên file để không phá backward-compat của 8 chains, nhưng nội dung sẽ thêm tầng <code>urls.{env}</code>.
+</div>
+
+<h2 id="goals">2. Goals &amp; Non-goals</h2>
+
+<h3>Goals</h3>
+<ul>
+  <li>Schema config hỗ trợ <strong>nhiều env per app</strong> (CI / UAT / PROD).</li>
+  <li>Tester chọn env qua CLI flag <strong>required</strong>: <code>frt-test play --app rsa --env uat &lt;file&gt;</code>. Không có default → ép tester gõ rõ → tránh nhầm chạy lên PROD.</li>
+  <li>Mỗi env có <strong>file YAML riêng</strong> trong folder riêng: <code>flows/{app}/{env}/&lt;name&gt;.yaml</code>. Record xong cho CI ≠ record xong cho UAT.</li>
+  <li>Recorder mở browser tới URL của <code>(app, env)</code>, lưu YAML vào folder env tương ứng.</li>
+  <li>Scaffold chain mới hỗ trợ nhập nhiều env per app, env có thể "chưa có URL" (placeholder để bổ sung sau).</li>
+  <li>Backward-compat: 8 chains đã onboard chạy được sau update engine. Migration là opt-in.</li>
+  <li>Có command <strong>helper</strong> để user clone test CI sang UAT làm seed: <code>clone-flow --from ci --to uat &lt;file&gt;</code>. KHÔNG tự động assume test CI chạy được UAT.</li>
+  <li>Support env var <code>FRT_TEST_ENV=uat</code> cho CI/CD pipeline (ngoài CLI flag).</li>
+</ul>
+
+<h3>Non-goals</h3>
+<ul>
+  <li>❌ <strong>Không</strong> auto-parametrize URL trong YAML. Test CI và UAT là 2 file YAML độc lập, có thể có DOM/flow khác nhau (theo yêu cầu user).</li>
+  <li>❌ <strong>Không</strong> có default env. Phải truyền <code>--env</code> mỗi lần.</li>
+  <li>❌ Không tách env-specific data vào nhiều file config (vd <code>environments.ci.yaml</code>) — giữ 1 file <code>environments.yaml</code>.</li>
+  <li>❌ Không thêm logic <em>secrets</em> per-env (credentials login UAT khác PROD) — plan riêng.</li>
+  <li>❌ Không support per-step env override.</li>
+  <li>❌ Không thêm dependency mới.</li>
+</ul>
+
+<h2 id="schema">3. Đề xuất schema mới</h2>
+
+<p>Schema v2 đặt URL theo cặp <code>(app, env)</code>. Mỗi app có một map <code>urls</code> với key là tên env. Có top-level <code>environments</code> để define metadata env (label, description).</p>
+
+<p><strong>Khác biệt quan trọng so với draft đầu (REV 2):</strong></p>
+<ul>
+  <li>❌ Bỏ <code>default_env</code>. <code>--env</code> luôn required.</li>
+  <li>✅ Cho phép env "chưa có URL" (giá trị <code>null</code>) — placeholder để bổ sung sau.</li>
+  <li>✅ Folder structure tách theo env: <code>flows/{app}/{env}/&lt;name&gt;.yaml</code>.</li>
+</ul>
+
+<pre><code># Pharmacy — schema v2 (REV 2)
+schema_version: 2
+
+environments:
+  ci:
+    label: "CI (Auto test)"
+    description: "Continuous Integration — auto deploy từ main"
+  uat:
+    label: "UAT (Pre-production)"
+    description: "User Acceptance Test"
+  prod:
+    label: "Production"
+    description: "Production — chỉ smoke test, không destructive"
+
+apps:
+  rsa:
+    description: "Pharmacy — RSA Web POS"
+    urls:
+      ci: "https://ci-rsa-web.frt.vn"
+      uat: null      # ← chưa có URL, frt-test play --env uat sẽ fail rõ ràng
+      prod: null     # ← chưa có URL
+  rsa-ecom:
+    description: "Pharmacy — RSA Ecommerce"
+    urls:
+      ci: "https://ci-rsa-ecom.frt.vn"
+      uat: null
+      prod: null
+  web-eho:
+    description: "Pharmacy — EHO Web"
+    urls:
+      ci: "https://ci-eho-web.frt.vn"
+      uat: null
+      prod: null
+
+default_app: rsa
+# default_env: KHÔNG CÓ — buộc tester gõ --env mỗi lần
+
+settings:
+  timeout: 30000
+  headless: false
+  screenshotOnFail: true</code></pre>
+
+<h3>Folder layout cho YAML test (mới)</h3>
+
+<pre><code>frt-test-pharmacy/
+├── config/
+│   └── environments.yaml
+├── flows/
+│   ├── rsa/                      ← app
+│   │   ├── _shared/              ← shared cho tất cả env của app rsa
+│   │   │   └── login.yaml
+│   │   ├── ci/                   ← test cho rsa @ ci
+│   │   │   └── tao-don-hang-ban-tai-quay.yaml
+│   │   ├── uat/                  ← test cho rsa @ uat (riêng, có thể khác CI)
+│   │   │   └── tao-don-hang-ban-tai-quay.yaml
+│   │   └── prod/                 ← test cho rsa @ prod
+│   │       └── smoke-tao-don-hang.yaml
+│   ├── rsa-ecom/
+│   │   ├── ci/
+│   │   ├── uat/
+│   │   └── prod/
+│   └── web-eho/
+│       ├── ci/
+│       ├── uat/
+│       └── prod/
+├── reports/
+└── screenshots/</code></pre>
+
+<div class="callout info">
+  <strong>Nguyên tắc folder:</strong> Mỗi <code>(app, env)</code> = 1 folder riêng. File YAML cùng tên ở 2 env khác nhau là 2 test độc lập, không share nội dung. <code>_shared/</code> dùng chung trong cùng app (mọi env), thường chứa login flow.
+</div>
+
+<h3>Vì sao đặt env <em>trong</em> app, không tách riêng?</h3>
+<table>
+  <tr><th>Cách A — env trong app (chọn)</th><th>Cách B — matrix top-level</th></tr>
+  <tr>
+    <td>
+      <code>apps.rsa.urls.ci</code><br>
+      ✅ Đọc theo app: nhìn 1 chỗ thấy hết URL của 1 app<br>
+      ✅ Tự nhiên mở rộng: app mới copy block, sửa URL<br>
+      ✅ Dễ migrate từ schema cũ (string → object)
+    </td>
+    <td>
+      <code>environments.ci.apps.rsa</code><br>
+      ❌ Đảo ngược điểm nhìn: muốn xem rsa phải mở 3 block ci/uat/prod<br>
+      ❌ Khó add app mới (phải sửa nhiều block)<br>
+      ❌ Migrate phức tạp hơn
+    </td>
+  </tr>
+</table>
+
+<h3>Resolve algorithm</h3>
+<pre><code>function resolveBaseUrl(app: string, env: string): string {
+  const appCfg = config.apps[app];
+  if (!appCfg) throw new Error(`App "${app}" không có trong config`);
+
+  // Schema v2 (urls map)
+  if (appCfg.urls) {
+    if (!(env in appCfg.urls)) {
+      const available = Object.keys(appCfg.urls).join(', ');
+      throw new Error(
+        `App "${app}" không định nghĩa env "${env}". Có sẵn: ${available}`
+      );
+    }
+    const url = appCfg.urls[env];
+    if (url == null || url === '') {
+      throw new Error(
+        `App "${app}" / env "${env}": URL chưa được set (giá trị null). ` +
+        `Sửa config/environments.yaml hoặc dùng: frt-test add-env --app ${app} --env ${env} --url <URL>`
+      );
+    }
+    return url;
+  }
+
+  // Schema v1 (legacy: single baseUrl string) — chỉ accept env="default"
+  if (appCfg.baseUrl) {
+    if (env &amp;&amp; env !== 'default') {
+      throw new Error(
+        `Chuỗi này dùng schema v1 (chưa migrate). --env "${env}" không support. ` +
+        `Migrate: frt-test migrate-config`
+      );
+    }
+    return appCfg.baseUrl;
+  }
+
+  throw new Error(`App "${app}" không có baseUrl/urls`);
+}
+
+function resolveEnv(envOpt?: string): string {
+  // Priority: CLI flag > env var. KHÔNG có default.
+  const env = envOpt || process.env.FRT_TEST_ENV;
+  if (!env) {
+    throw new Error(
+      'Thiếu --env. Phải chỉ định môi trường: --env ci|uat|prod ' +
+      '(hoặc set FRT_TEST_ENV)'
+    );
+  }
+  return env;
+}</code></pre>
+
+<h2 id="backcompat">4. Backward compatibility</h2>
+
+<table>
+  <tr><th>Schema</th><th>Detection</th><th>Behavior</th></tr>
+  <tr>
+    <td><strong>v0</strong> (oldest)<br><code>environments: { default: ... }</code></td>
+    <td>Có key <code>environments</code> ở root + có <code>default</code></td>
+    <td>Đã handle trong <code>config.ts</code> hiện tại. Tiếp tục giữ.</td>
+  </tr>
+  <tr>
+    <td><strong>v1</strong> (current)<br><code>apps.{app}.baseUrl: string</code></td>
+    <td>Có <code>apps</code>, mỗi app có <code>baseUrl</code> string</td>
+    <td>Giữ chạy. <code>--env</code> bị warn + ignore.</td>
+  </tr>
+  <tr>
+    <td><strong>v2</strong> (new)<br><code>apps.{app}.urls: { ci, uat, prod }</code></td>
+    <td>Có <code>schema_version: 2</code> hoặc app có <code>urls</code> map</td>
+    <td>Resolve theo env. <code>--env</code> required nếu không có <code>default_env</code>.</td>
+  </tr>
+</table>
+
+<div class="callout ok">
+  <strong>Nguyên tắc:</strong> Engine sau update phải đọc được cả 3 schema. Test cũ ở 8 chains chạy không sửa gì. Migration là <em>opt-in</em> qua command <code>frt-test migrate-config</code>.
+</div>
+
+<h2 id="changes">5. Thay đổi theo file</h2>
+
+<h3><code>src/config.ts</code></h3>
+<ul>
+  <li>Mở rộng interface <code>AppConfig</code>: thêm <code>urls?: Record&lt;string, string&gt;</code> bên cạnh <code>baseUrl?: string</code>.</li>
+  <li>Mở rộng <code>EnvConfig</code>: thêm <code>environments?: Record&lt;string, EnvMeta&gt;</code>, <code>default_env?: string</code>, <code>schema_version?: number</code>.</li>
+  <li>Sửa <code>resolveBaseUrl(app?, env?)</code> theo algorithm ở §3. Hiện tại signature là <code>resolveBaseUrl(app?)</code> → đổi thành <code>resolveBaseUrl(app?, env?)</code>.</li>
+  <li>Thêm helper <code>listEnvironments(): string[]</code> + <code>resolveEnv(envOpt?): string</code>.</li>
+</ul>
+
+<h3><code>src/cli.ts</code></h3>
+<ul>
+  <li>Thêm option <code>-E, --env &lt;env&gt;</code> cho <code>play</code> + <code>record</code> commands. Required ở runtime (resolveEnv throw nếu thiếu).</li>
+  <li>Sửa <code>resolveBaseUrl(opts.app)</code> → <code>resolveBaseUrl(opts.app, env)</code> với <code>env = resolveEnv(opts.env)</code>.</li>
+  <li>Cập nhật <code>flowsDir</code>: <code>flows/{app}/{env}/</code> thay vì <code>flows/{app}/</code>. <code>rootFlowsDir</code> giữ nguyên (cho shared resolve).</li>
+  <li>Cập nhật <code>meta</code> trong <code>runOptions</code>: thêm <code>env</code> để reporter render.</li>
+  <li>Banner khi chạy: in rõ <code>App: rsa | Env: uat | URL: https://...</code>.</li>
+  <li>Thêm command mới: <code>migrate-config</code>, <code>envs</code>, <code>add-env</code>, <code>clone-flow</code>.</li>
+</ul>
+
+<h3><code>src/runner.ts</code></h3>
+<ul>
+  <li>Constructor: <code>FlowRunner(flowsDir, rootFlowsDir)</code> — flowsDir trỏ vào <code>flows/{app}/{env}/</code>.</li>
+  <li>Trong <code>run()</code>: nhận thêm <code>options.meta.env</code>. Inject <code>baseUrl</code>, <code>env</code>, <code>app</code> vào <code>vars</code> (để YAML có thể optional dùng <code>{{baseUrl}}</code> nếu muốn — không bắt buộc):
+    <pre><code>const vars: FlowVariable = {
+  ...(flow.variables || {}),
+  baseUrl: options?.meta?.baseUrl || flow.config?.baseUrl || '',
+  env: options?.meta?.env || '',
+  app: options?.meta?.app || '',
+  ...(options?.variables || {}),
+};</code></pre>
+  </li>
+  <li><code>RunResult.env?: string</code> — lưu env đã chạy vào kết quả để reporter hiển thị.</li>
+  <li><code>listFlows()</code>: scan recursive trong <code>flows/{app}/{env}/</code> như cũ.</li>
+  <li><code>runAll(env)</code>: chỉ chạy YAML trong folder env tương ứng.</li>
+</ul>
+
+<h3><code>src/types.ts</code></h3>
+<ul>
+  <li><code>FlowConfig</code>: <code>baseUrl</code> giữ nguyên (legacy + tùy chọn).</li>
+  <li><code>RunResult</code>: thêm <code>env?: string</code>.</li>
+  <li>Thêm interface <code>EnvironmentMeta { label?: string; description?: string }</code>.</li>
+  <li>Thêm field optional vào <code>FlowFile</code>: <code>recorded_against?: { app: string; env: string; url: string; date: string }</code> (metadata).</li>
+</ul>
+
+<h3><code>src/recorder.ts</code></h3>
+<ul>
+  <li>Constructor + <code>start()</code>: nhận thêm <code>env</code>. Resolve URL = <code>resolveBaseUrl(app, env)</code>.</li>
+  <li>Save vào folder <code>flows/{app}/{env}/&lt;name&gt;.yaml</code> (không phải <code>flows/{app}/</code> như cũ).</li>
+  <li><strong>KHÔNG</strong> tự thay URL bằng <code>{{baseUrl}}</code>. Giữ nguyên URL hardcode trong step <code>goto</code>. (Theo Q3 của user: mỗi env = 1 record riêng, không assume share.)</li>
+  <li>Thêm metadata vào YAML: <code>recorded_against: { app, env, url, date }</code> để debug.</li>
+  <li>Cảnh báo nếu folder đã có file cùng tên: hỏi overwrite hay rename.</li>
+</ul>
+
+<h3><code>src/scaffold.ts</code></h3>
+<ul>
+  <li>Mở rộng <code>ScaffoldOpts</code>: thêm <code>envs: string[]</code>; <code>apps</code> map sang <code>{ name, urls: Record&lt;env, string&gt; }</code>.</li>
+  <li>CLI option <code>--apps</code> support 2 format:
+    <ul>
+      <li>Mới: <code>"rsa=ci:https://ci-rsa.frt.vn,uat:https://uat-rsa.frt.vn"</code></li>
+      <li>Backward-compat: <code>"rsa=https://x.frt.vn"</code> = chỉ env <code>ci</code>, các env khác null.</li>
+    </ul>
+  </li>
+  <li>Thêm option <code>--envs ci,uat,prod</code> (default <code>ci,uat,prod</code> theo quyết định Q1).</li>
+  <li>Render template <code>environments.yaml.tpl</code> với schema v2.</li>
+  <li>Tạo folder structure: <code>flows/{app}/{env}/</code> cho mọi cặp app × env, kèm <code>_shared/</code> per app.</li>
+  <li><strong>Command mới <code>add-env</code></strong>: thêm env mới (hoặc set URL cho env null) cho 1 app.</li>
+  <li><strong>Command mới <code>clone-flow --from ci --to uat &lt;file&gt;</code></strong>: copy YAML từ folder env này sang env khác làm seed. Đổi metadata <code>recorded_against.env</code>. KHÔNG đổi URL trong steps (user phải tự sửa hoặc re-record).</li>
+</ul>
+
+<h3><code>chain-template/config/environments.yaml.tpl</code></h3>
+<p>Cập nhật template render schema v2 với <code>{{ENVIRONMENTS_YAML}}</code> + <code>{{APPS_YAML_V2}}</code>. Default 3 env: ci/uat/prod, app pilot chỉ có CI URL, UAT/PROD null.</p>
+
+<h3><code>chain-template/flows/_shared/</code> + folder structure</h3>
+<p>Template folder thêm <code>{{APP}}/{{ENV}}/.gitkeep</code> render cho mỗi cặp app × env.</p>
+
+<h3><code>src/reporter.ts</code></h3>
+<ul>
+  <li>Hiển thị env trong console: <code>▶ Pharmacy / rsa @ uat → https://uat-rsa-web.frt.vn</code>.</li>
+  <li>HTML report: thêm cột Env, badge màu (CI=blue, UAT=orange, PROD=red).</li>
+</ul>
+
+<h3><code>src/migrate.ts</code> (mới)</h3>
+<ul>
+  <li>Convert <code>config/environments.yaml</code> v1 → v2:
+    <ul>
+      <li>URL hiện tại assign vào env <code>ci</code>.</li>
+      <li>Env <code>uat</code>, <code>prod</code> set <code>null</code> để user bổ sung sau.</li>
+      <li>Thêm <code>schema_version: 2</code>, <code>environments:</code> block.</li>
+    </ul>
+  </li>
+  <li>Move file YAML hiện có <code>flows/{app}/*.yaml</code> → <code>flows/{app}/ci/*.yaml</code> (giả định YAML hiện tại record trên CI URL).</li>
+  <li><strong>KHÔNG sửa nội dung YAML.</strong> URL hardcode giữ nguyên (theo Q3).</li>
+  <li>Tạo folder <code>flows/{app}/uat/.gitkeep</code> + <code>flows/{app}/prod/.gitkeep</code> để user record sau.</li>
+  <li><code>--dry-run</code> in diff (default), <code>--write</code> apply.</li>
+  <li>Backup gốc thành <code>config/environments.yaml.bak</code> + dùng <code>git mv</code> cho YAML để giữ history.</li>
+</ul>
+
+<h2 id="cli">6. CLI surface</h2>
+
+<table>
+  <tr><th>Command</th><th>Trước</th><th>Sau</th></tr>
+  <tr>
+    <td>play 1 file</td>
+    <td><code>frt-test play --app rsa file.yaml</code></td>
+    <td><code>frt-test play --app rsa --env ci file.yaml</code> (env required)</td>
+  </tr>
+  <tr>
+    <td>play all</td>
+    <td><code>frt-test play --app rsa --all</code></td>
+    <td><code>frt-test play --app rsa --env uat --all</code></td>
+  </tr>
+  <tr>
+    <td>record</td>
+    <td><code>frt-test record --app rsa -n "X"</code></td>
+    <td><code>frt-test record --app rsa --env ci -n "X"</code></td>
+  </tr>
+  <tr>
+    <td>list flows</td>
+    <td><code>frt-test list --app rsa</code></td>
+    <td><code>frt-test list --app rsa --env ci</code> (hoặc all env nếu không truyền)</td>
+  </tr>
+  <tr>
+    <td>list env (mới)</td>
+    <td>—</td>
+    <td><code>frt-test envs</code> → in 3 env có URL của mỗi app</td>
+  </tr>
+  <tr>
+    <td>add-env (mới)</td>
+    <td>—</td>
+    <td><code>frt-test add-env --app rsa --env uat --url https://uat-rsa.frt.vn</code></td>
+  </tr>
+  <tr>
+    <td>clone-flow (mới)</td>
+    <td>—</td>
+    <td><code>frt-test clone-flow --app rsa --from ci --to uat tao-don-hang.yaml</code></td>
+  </tr>
+  <tr>
+    <td>migrate-config (mới)</td>
+    <td>—</td>
+    <td><code>frt-test migrate-config --dry-run</code> / <code>--write</code></td>
+  </tr>
+</table>
+
+<h3>Behavior khi user không truyền <code>--env</code></h3>
+<p><strong>Quyết định Q2 → fail luôn.</strong> Engine throw error rõ ràng, in env có sẵn, gợi ý fix:</p>
+<pre><code>$ frt-test play --app rsa file.yaml
+❌ Thiếu --env. Phải chỉ định môi trường.
+
+  Có sẵn cho app "rsa":
+    --env ci    → https://ci-rsa-web.frt.vn
+    --env uat   → (chưa có URL, set bằng: frt-test add-env --app rsa --env uat --url ...)
+    --env prod  → (chưa có URL)
+
+  Hoặc set: export FRT_TEST_ENV=ci</code></pre>
+
+<div class="callout info">
+  <strong>Env var override:</strong> <code>FRT_TEST_ENV=uat frt-test play ...</code> để CI runner set 1 lần. Priority: CLI flag <code>--env</code> &gt; env var <code>FRT_TEST_ENV</code>. Vẫn KHÔNG có default.
+</div>
+
+<h2 id="flow-yaml">7. Flow YAML — không tham số hóa</h2>
+
+<p><strong>Quyết định REV 2:</strong> Mỗi env có file YAML riêng. URL hardcode trong YAML giữ nguyên. Engine KHÔNG inject hay rewrite URL.</p>
+
+<h3>Lý do (theo user)</h3>
+<ul>
+  <li>Mỗi env (CI/UAT/PROD) có thể có DOM/data/flow khác nhau (vd UAT có thêm bước OTP, PROD có data thật, CI có dummy).</li>
+  <li>Test record trên CI <em>không đảm bảo</em> chạy được trên UAT — selectors có thể khác.</li>
+  <li>Tham số hóa URL tự động dễ tạo cảm giác sai "test này chạy được mọi env" → nguy hiểm khi chạy lên PROD.</li>
+  <li>Tách file → tester rõ ràng phải verify lại trên từng env trước khi commit.</li>
+</ul>
+
+<h3>Workflow record cho 3 env</h3>
+<pre><code># 1. Record cho CI (đầu tiên)
+frt-test record --app rsa --env ci -n "Tao don hang"
+# → flows/rsa/ci/tao-don-hang.yaml (URL hardcode = https://ci-rsa-web.frt.vn)
+
+# 2. Cần test trên UAT → 2 lựa chọn:
+
+# Option A: Clone từ CI làm seed, sửa selector nếu cần
+frt-test clone-flow --app rsa --from ci --to uat tao-don-hang.yaml
+# → flows/rsa/uat/tao-don-hang.yaml (URL hardcode vẫn = ci-rsa-web — user phải replace)
+# User chạy thử, sửa selector nếu DOM khác, replace URL.
+
+# Option B: Record lại từ đầu (an toàn hơn)
+frt-test record --app rsa --env uat -n "Tao don hang"
+# → flows/rsa/uat/tao-don-hang.yaml (URL = https://uat-rsa-web.frt.vn)
+
+# 3. PROD: thường smoke test riêng, record fresh
+frt-test record --app rsa --env prod -n "Smoke tao don hang"
+# → flows/rsa/prod/smoke-tao-don-hang.yaml</code></pre>
+
+<h3>Cấu trúc file YAML — không thay đổi format</h3>
+<pre><code># flows/rsa/ci/tao-don-hang.yaml
+name: Tao don hang
+recorded_against:                          # ← metadata mới (optional, không ảnh hưởng runtime)
+  app: rsa
+  env: ci
+  url: "https://ci-rsa-web.frt.vn"
+  date: "2026-06-04"
+config:
+  baseUrl: "https://ci-rsa-web.frt.vn"     # ← giữ nguyên hardcode
+  timeout: 30000
+steps:
+  - name: Navigate to home
+    action: goto
+    value: "https://ci-rsa-web.frt.vn"     # ← giữ nguyên hardcode
+    waitAfter: networkIdle
+  # ... rest như cũ</code></pre>
+
+<div class="callout warn">
+  <strong>Engine vẫn inject <code>{{baseUrl}}</code> vào vars (theo §5)</strong> — nhưng đây là <em>optional</em> để user advance dùng nếu muốn (không bắt buộc). Default record thì hardcode URL như cũ.
+</div>
+
+<h3>Ưu/nhược điểm tách file</h3>
+<table>
+  <tr><th>Ưu</th><th>Nhược</th></tr>
+  <tr>
+    <td>
+      ✅ Test mỗi env độc lập, sửa không sợ phá env khác<br>
+      ✅ DOM khác nhau giữa env không phải workaround<br>
+      ✅ PROD có thể có smoke test riêng (subset, không destructive)<br>
+      ✅ Tester rõ "test UAT chưa có" thay vì assume CI test cover được
+    </td>
+    <td>
+      ❌ Duplicate code khi 3 env logic giống nhau<br>
+      ❌ Maintain 3x effort (sửa step thêm trên CI phải sửa cho UAT/PROD)<br>
+      ❌ Không có DRY ngay
+    </td>
+  </tr>
+</table>
+
+<p><code>clone-flow</code> giảm pain duplicate ban đầu. <code>_shared/</code> per app vẫn share login flow giữa các env.</p>
+
+<h2 id="recorder">8. Recorder behavior</h2>
+
+<p>Khi tester chạy <code>frt-test record --app rsa --env uat -n "X"</code>:</p>
+<ol>
+  <li>CLI resolve URL = <code>config.apps.rsa.urls.uat</code>. Nếu null → fail với gợi ý <code>add-env</code>.</li>
+  <li>Recorder mở browser tới URL đó, ghi action.</li>
+  <li>Save YAML vào <code>flows/rsa/uat/&lt;name&gt;.yaml</code>:
+    <ul>
+      <li>Step <code>goto</code> giữ URL hardcode (theo Q3).</li>
+      <li>Subsequent navigation cũng giữ URL hardcode.</li>
+      <li>Cross-domain (SSO redirect): giữ URL gốc + comment <code># external</code>.</li>
+    </ul>
+  </li>
+  <li>Thêm metadata vào YAML:
+    <pre><code>recorded_against:
+  app: rsa
+  env: uat
+  url: "https://uat-rsa-web.frt.vn"
+  date: "2026-06-04"</code></pre>
+  </li>
+  <li>Nếu file cùng tên đã tồn tại trong folder env đó: prompt user (<code>overwrite / rename / cancel</code>).</li>
+</ol>
+
+<h3>clone-flow command (mới)</h3>
+<p>Dành cho user muốn dùng test CI làm seed cho UAT/PROD:</p>
+<pre><code>$ frt-test clone-flow --app rsa --from ci --to uat tao-don-hang.yaml
+
+✅ Cloned: flows/rsa/ci/tao-don-hang.yaml → flows/rsa/uat/tao-don-hang.yaml
+   - URL trong steps: GIỮ NGUYÊN (https://ci-rsa-web.frt.vn).
+     Nếu UAT URL khác, sửa thủ công hoặc dùng find-replace.
+   - recorded_against.env: ci → uat
+   - recorded_against.url: cập nhật theo config UAT (nếu có), hoặc null kèm cảnh báo
+   ⚠️  Verify lại trên UAT trước khi commit. DOM/flow có thể khác CI.</code></pre>
+
+<p>Logic <code>clone-flow</code>:</p>
+<ol>
+  <li>Read source YAML, copy sang dest folder.</li>
+  <li>Update <code>recorded_against</code> metadata (env, url theo config).</li>
+  <li>NẾU URL UAT có sẵn trong config → optional offer find-replace URL CI → URL UAT trong steps (prompt user confirm). Default KHÔNG auto-replace để giữ explicit.</li>
+  <li>Print warning user phải verify lại.</li>
+</ol>
+
+<h2 id="scaffold">9. Scaffold template + add-app + add-env</h2>
+
+<h3>Onboard chuỗi mới (nâng cấp)</h3>
+
+<p>Format đầy đủ — chỉ định URL cho mỗi env có sẵn. Env không có URL set <code>null</code> hoặc bỏ qua:</p>
+<pre><code>frt-test scaffold-chain \
+  --name lab \
+  --display "LAB (Xét nghiệm)" \
+  --envs "ci,uat,prod" \
+  --apps "rsa-lab=ci:https://ci-lab-rsa.frt.vn" \
+  --apps "ecom-lab=ci:https://ci-lab-ecom.frt.vn,uat:https://uat-lab-ecom.frt.vn" \
+  --output ~/work/frt-test-lab \
+  --remote git@git2.fptshop.com.vn:ai-test/frt-test-lab.git \
+  --push</code></pre>
+
+<p>Kết quả:</p>
+<ul>
+  <li><code>rsa-lab</code>: chỉ <code>ci</code> có URL, <code>uat</code>/<code>prod</code> = null.</li>
+  <li><code>ecom-lab</code>: <code>ci</code>+<code>uat</code> có URL, <code>prod</code> = null.</li>
+  <li>Folder structure tạo đầy đủ: <code>flows/rsa-lab/{ci,uat,prod}/</code>, <code>flows/ecom-lab/{ci,uat,prod}/</code>.</li>
+</ul>
+
+<p>Backward-compat: <code>--apps "rsa-lab=https://ci-lab-rsa.frt.vn"</code> (1 URL không kèm env prefix) → tự assign vào env <code>ci</code>, các env khác null. Cảnh báo deprecation.</p>
+
+<h3>Add app vào chuỗi đã có</h3>
+<pre><code>frt-test add-app \
+  --name portal-lab \
+  --urls "ci:https://ci-lab-portal.frt.vn,uat:https://uat-lab-portal.frt.vn"
+# prod không có → tự set null</code></pre>
+
+<p>Backward-compat: <code>frt-test add-app --name portal-lab --url https://ci-lab-portal.frt.vn</code> (1 URL) → assign vào env <code>ci</code>, deprecation warning.</p>
+
+<h3>Add env / set URL cho env (mới)</h3>
+<pre><code># Set URL cho env null hoặc thay URL hiện tại
+frt-test add-env --app rsa-lab --env uat --url https://uat-lab-rsa.frt.vn
+
+# Define env mới chưa có (vd thêm 'sit' cho 1 chuỗi đặc biệt)
+frt-test add-env --app rsa-lab --env sit --url https://sit-lab-rsa.frt.vn
+# → Cảnh báo: env "sit" chưa có ở environments: section. Có muốn add không? (y/n)</code></pre>
+
+<h2 id="existing-chains">10. Migration cho 8 chains đã onboard</h2>
+
+<p>Migration logic (theo Q3 + Q4 chốt với user):</p>
+<ol>
+  <li>Convert <code>config/environments.yaml</code> v1 → v2:
+    <ul>
+      <li>URL hiện tại assign vào env <code>ci</code> (giả định all 8 chuỗi đang record trên CI).</li>
+      <li>Env <code>uat</code> + <code>prod</code> = <code>null</code> → user dùng <code>add-env</code> sau khi có URL.</li>
+      <li>Thêm <code>schema_version: 2</code> + <code>environments:</code> block (3 env tiêu chuẩn).</li>
+    </ul>
+  </li>
+  <li>Move file YAML hiện có:
+    <ul>
+      <li><code>flows/rsa/foo.yaml</code> → <code>flows/rsa/ci/foo.yaml</code> (dùng <code>git mv</code> để giữ history).</li>
+      <li><code>flows/rsa/_shared/login.yaml</code> giữ nguyên (shared cho mọi env).</li>
+      <li>Tạo folder rỗng <code>flows/rsa/uat/.gitkeep</code> + <code>flows/rsa/prod/.gitkeep</code>.</li>
+    </ul>
+  </li>
+  <li><strong>KHÔNG sửa nội dung file YAML.</strong> URL hardcode giữ nguyên.</li>
+  <li>Backup config: <code>environments.yaml</code> → <code>environments.yaml.bak</code>.</li>
+  <li>Print summary diff cho user xem.</li>
+</ol>
+
+<h3>Quy trình chạy migration cho 1 chuỗi</h3>
+<pre><code># 1. Update engine
+cd ~/work/recorder-engine &amp;&amp; git pull &amp;&amp; npm install
+
+# 2. Vào chain repo, dry-run xem trước
+cd ~/work/frt-test-pharmacy
+frt-test migrate-config --dry-run
+# → in diff: config v1 → v2, list file YAML sẽ move
+
+# 3. Apply
+frt-test migrate-config --write
+# → ghi config + git mv files
+
+# 4. Smoke test: phải pass như cũ (URL CI không đổi)
+frt-test play --app rsa --env ci --all
+
+# 5. Commit
+git status
+git add -A
+git commit -m "chore: migrate to schema v2 (multi-env support)"
+git push</code></pre>
+
+<h3>Pilot — Pharmacy</h3>
+<p>Theo Q4: Pharmacy hiện tại chỉ có URL CI. Migration sẽ:</p>
+<ul>
+  <li>Convert <code>environments.yaml</code>: 3 apps × 3 envs, chỉ env <code>ci</code> có URL, <code>uat</code>/<code>prod</code> = null.</li>
+  <li>Move <code>flows/rsa/tao-don-hang-ban-tai-quay.yaml</code> → <code>flows/rsa/ci/tao-don-hang-ban-tai-quay.yaml</code>.</li>
+  <li>Tạo folder <code>flows/rsa/uat/</code>, <code>flows/rsa/prod/</code> rỗng.</li>
+  <li>Smoke: <code>frt-test play --app rsa --env ci --all</code> phải pass.</li>
+  <li>Verify: <code>frt-test play --app rsa --env uat --all</code> phải fail rõ ràng với message "URL chưa được set".</li>
+</ul>
+
+<div class="callout warn">
+  <strong>Quan trọng — opt-in:</strong> Engine v1.0 (sau update) vẫn đọc được schema v1 (chưa migrate). Chuỗi nào chưa cần multi-env có thể delay migration. Không bị ép.
+</div>
+
+<h3>Migration prompt cho AI agent</h3>
+<p>Tạo file <code>docs/prompts/11-migrate-multi-env.md</code> hướng dẫn tester paste prompt:</p>
+<pre><code>Migrate chuỗi LAB sang schema multi-env.
+Hiện tại app rsa-lab và ecom-lab chỉ có URL CI.
+UAT/PROD URL sẽ bổ sung sau bằng add-env.</code></pre>
+
+<h2 id="deliverables">11. Deliverables / Acceptance Criteria</h2>
+
+<ul class="checklist">
+  <li><strong>D1.</strong> <code>config.ts</code> đọc được schema v0/v1/v2; <code>resolveBaseUrl(app, env)</code> + <code>resolveEnv(envOpt?)</code> hoạt động đúng. Schema v2 với env null → throw lỗi rõ ràng.</li>
+  <li><strong>D2.</strong> <code>--env</code> flag thêm vào <code>play</code> + <code>record</code> commands. Required: thiếu → fail với message kèm gợi ý fix. Support env var <code>FRT_TEST_ENV</code>.</li>
+  <li><strong>D3.</strong> <code>FlowRunner.run()</code> nhận <code>meta.env</code>; inject <code>baseUrl</code>, <code>env</code>, <code>app</code> vào <code>vars</code> (optional cho YAML dùng <code>{{baseUrl}}</code>).</li>
+  <li><strong>D4.</strong> Recorder save vào <code>flows/{app}/{env}/&lt;name&gt;.yaml</code>. URL hardcode trong steps GIỮ NGUYÊN. Thêm metadata <code>recorded_against</code>.</li>
+  <li><strong>D5.</strong> <code>scaffold-chain</code> hỗ trợ <code>--envs</code> + <code>--apps "name=env:url,env:url"</code>. Backward-compat input cũ (1 URL → assign vào <code>ci</code>).</li>
+  <li><strong>D6.</strong> <code>add-app</code> hỗ trợ <code>--urls "ci:..,uat:.."</code>. Backward-compat <code>--url</code>.</li>
+  <li><strong>D7.</strong> Command mới <code>add-env --app X --env Y --url Z</code>.</li>
+  <li><strong>D8.</strong> Command mới <code>migrate-config</code> với <code>--dry-run</code>/<code>--write</code>: convert config v1→v2 + <strong>git mv</strong> file YAML vào subfolder <code>ci/</code>. KHÔNG sửa nội dung YAML.</li>
+  <li><strong>D9.</strong> Command mới <code>envs</code>: list 3 env có/chưa có URL của mỗi app.</li>
+  <li><strong>D10.</strong> Command mới <code>clone-flow --app X --from ci --to uat &lt;file&gt;</code>: copy YAML giữa env folders, update metadata, KHÔNG auto-replace URL.</li>
+  <li><strong>D11.</strong> Reporter (console + HTML) hiển thị env. Color-coded badge.</li>
+  <li><strong>D12.</strong> Template <code>chain-template/config/environments.yaml.tpl</code> + folder structure (<code>{{APP}}/{{ENV}}/.gitkeep</code>) update sang v2.</li>
+  <li><strong>D13.</strong> <code>list</code> command: support <code>--env</code> để list theo env, hoặc list all envs nếu không truyền.</li>
+  <li><strong>D14.</strong> Tests: <code>config.test.ts</code> (resolver), <code>scaffold.test.ts</code> (extend), <code>migrate.test.ts</code> (mới), <code>clone-flow.test.ts</code> (mới).</li>
+  <li><strong>D15.</strong> Doc: cập nhật <code>README.md</code>, <code>docs/AGENT_PROMPTS.md</code>, prompts 02 + 03 + 04 + 05; thêm prompts 11 (migrate) + 12 (clone-flow).</li>
+  <li><strong>D16.</strong> SDD tại <code>docs/design/multi-environment-support.html</code>.</li>
+  <li><strong>D17.</strong> Pharmacy pilot migrate end-to-end:
+    <ul>
+      <li>Config v1 → v2 (chỉ CI có URL).</li>
+      <li><code>flows/rsa/tao-don-hang-ban-tai-quay.yaml</code> move sang <code>flows/rsa/ci/</code>.</li>
+      <li><code>frt-test play --app rsa --env ci --all</code> pass.</li>
+      <li><code>frt-test play --app rsa --env uat ...</code> fail với message rõ ràng.</li>
+    </ul>
+  </li>
+</ul>
+
+<h3>Exit criteria</h3>
+<ul class="checklist">
+  <li>Engine version bump → v1.0.0 (per Q5).</li>
+  <li>All existing tests pass (scaffold.test.ts hiện có).</li>
+  <li>Tests mới pass (config, migrate, clone-flow).</li>
+  <li>Pharmacy pilot: CI test play OK; UAT test fail rõ ràng (URL null).</li>
+  <li>Senior review verdict APPROVED (0 P0/P1 findings).</li>
+  <li>Tech freshness: no deprecated APIs.</li>
+  <li>Security scan CLEAN.</li>
+  <li>SDD complete tại <code>docs/design/multi-environment-support.html</code>.</li>
+</ul>
+
+<h2 id="tests">12. Test plan</h2>
+
+<table>
+  <tr><th>Test file</th><th>Coverage</th></tr>
+  <tr>
+    <td><code>config.test.ts</code> (mới)</td>
+    <td>
+      • Read schema v0 (legacy <code>environments</code>) → resolve OK với env="default"<br>
+      • Read schema v1 (<code>apps.X.baseUrl</code>) → resolve OK với env="default"; <code>--env=ci</code> throw<br>
+      • Read schema v2 (<code>apps.X.urls.{env}</code>) → resolve theo env<br>
+      • Schema v2: env không có trong urls → throw "có sẵn: ci,uat,prod"<br>
+      • Schema v2: env URL = null → throw với gợi ý <code>add-env</code><br>
+      • <code>resolveEnv</code>: thiếu --env và env var → throw rõ ràng<br>
+      • <code>resolveEnv</code>: priority CLI flag &gt; <code>FRT_TEST_ENV</code>
+    </td>
+  </tr>
+  <tr>
+    <td><code>scaffold.test.ts</code> (extend)</td>
+    <td>
+      • Scaffold với <code>--envs ci,uat,prod</code> + multi-URL apps → render đúng v2<br>
+      • Scaffold với app chỉ có CI URL → uat/prod = null trong output<br>
+      • Scaffold tạo folder <code>flows/{app}/{env}/</code> cho mọi cặp<br>
+      • Scaffold backward-compat: <code>--apps "x=https://..."</code> → render v2 chỉ env <code>ci</code> + warning<br>
+      • <code>add-app</code> với <code>--urls</code> map → ghi đúng vào config v2<br>
+      • <code>add-env</code> set URL cho env null<br>
+      • <code>add-env</code> với env không có ở <code>environments:</code> → cảnh báo
+    </td>
+  </tr>
+  <tr>
+    <td><code>migrate.test.ts</code> (mới)</td>
+    <td>
+      • Convert v1 config → v2 (URL hiện tại → env <code>ci</code>; uat/prod = null)<br>
+      • Move file YAML <code>flows/rsa/foo.yaml</code> → <code>flows/rsa/ci/foo.yaml</code><br>
+      • Giữ <code>_shared/</code> không di chuyển<br>
+      • KHÔNG sửa nội dung YAML<br>
+      • Tạo folder rỗng <code>flows/rsa/uat/.gitkeep</code><br>
+      • <code>--dry-run</code> không ghi file<br>
+      • Backup <code>environments.yaml.bak</code> được tạo khi <code>--write</code>
+    </td>
+  </tr>
+  <tr>
+    <td><code>clone-flow.test.ts</code> (mới)</td>
+    <td>
+      • Clone từ <code>ci</code> sang <code>uat</code>: file copy đúng vị trí<br>
+      • <code>recorded_against</code> metadata update<br>
+      • URL trong steps GIỮ NGUYÊN<br>
+      • Dest folder không tồn tại → tự tạo<br>
+      • File dest đã tồn tại → prompt overwrite/cancel
+    </td>
+  </tr>
+  <tr>
+    <td><code>runner.test.ts</code> (mới, smoke)</td>
+    <td>
+      • <code>baseUrl</code>, <code>env</code>, <code>app</code> được inject vào <code>vars</code><br>
+      • Step có <code>{{baseUrl}}</code> → interpolate đúng (optional, không bắt buộc dùng)<br>
+      • Meta env xuất hiện trong <code>RunResult</code>
+    </td>
+  </tr>
+  <tr>
+    <td>E2E pilot (Pharmacy)</td>
+    <td>
+      • Migrate config + move YAML<br>
+      • <code>play --app rsa --env ci tao-don-hang-ban-tai-quay.yaml</code> → pass<br>
+      • <code>play --app rsa --env uat tao-don-hang-ban-tai-quay.yaml</code> → fail "URL chưa được set"<br>
+      • <code>play --app rsa</code> (thiếu --env) → fail rõ ràng
+    </td>
+  </tr>
+</table>
+
+<h2 id="docs">13. Doc updates</h2>
+
+<ul>
+  <li><code>README.md</code> (engine): thêm 1 dòng <code>--env</code> ở Quick Start prompts.</li>
+  <li><code>docs/AGENT_PROMPTS.md</code>: thêm row "Migrate config sang multi-env" (prompt 11).</li>
+  <li><code>docs/prompts/02-onboard-new-chain.md</code>: cập nhật ví dụ <code>--envs</code> + multi-URL.</li>
+  <li><code>docs/prompts/03-add-app-to-chain.md</code>: cập nhật <code>--urls</code> syntax.</li>
+  <li><code>docs/prompts/05-play-test.md</code>: thêm flag <code>--env</code>.</li>
+  <li><code>docs/prompts/11-migrate-multi-env.md</code>: tạo mới.</li>
+  <li><code>docs/engine-development.md</code>: thêm note về schema v0/v1/v2 + migration policy.</li>
+  <li><code>docs/git-structure.md</code>: bảng compatible matrix engine version × chain schema.</li>
+  <li><code>chain-template/README.md.tpl</code>: ví dụ command có <code>--env</code>.</li>
+</ul>
+
+<h2 id="open-questions">14. Open questions — chỉ còn Q7</h2>
+
+<div class="card">
+  <h4>Q1 ✅ Đã chốt</h4>
+  <p><code>ci</code>, <code>uat</code>, <code>prod</code> dùng cho cả 8 chuỗi.</p>
+</div>
+
+<div class="card">
+  <h4>Q2 ✅ Đã chốt</h4>
+  <p><code>--env</code> required. Thiếu → fail. Không có <code>default_env</code>.</p>
+</div>
+
+<div class="card">
+  <h4>Q3 ✅ Đã chốt</h4>
+  <p>Mỗi env = 1 file YAML riêng. KHÔNG auto-rewrite YAML. KHÔNG inject <code>{{baseUrl}}</code> vào step. URL hardcode giữ nguyên.</p>
+</div>
+
+<div class="card">
+  <h4>Q4 ✅ Đã chốt</h4>
+  <p>Pharmacy pilot. Hiện chỉ có URL CI. UAT/PROD = null trong config, user bổ sung sau bằng <code>add-env</code>.</p>
+</div>
+
+<div class="card">
+  <h4>Q5 ✅ Đã chốt</h4>
+  <p>Engine bump → v1.0.0.</p>
+</div>
+
+<div class="card">
+  <h4>Q6 ✅ Đã chốt</h4>
+  <p>Support env var <code>FRT_TEST_ENV</code> cho CI/CD.</p>
+</div>
+
+<div class="card">
+  <h4>Q7 ⏳ Per-env settings (cần user trả lời)</h4>
+  <p><strong>Mô tả lại:</strong></p>
+  <p>File <code>environments.yaml</code> hiện có block <code>settings:</code> ở top-level:</p>
+  <pre><code>settings:
+  timeout: 30000
+  headless: false
+  screenshotOnFail: true</code></pre>
+  <p><code>timeout: 30000</code> = 30s cho mọi action. PROD network thường chậm hơn CI/UAT (qua VPN, firewall, traffic thật) → có thể cần <code>timeout: 60000</code>.</p>
+  <p><strong>Câu hỏi:</strong> Có muốn override settings theo env không?</p>
+  <pre><code># Option A — Out of scope (đề xuất)
+# Giữ settings top-level, không override theo env.
+# Khi nào thực sự cần (chuỗi A báo cáo PROD timeout) thì làm plan riêng sau.
+
+# Option B — Làm luôn
+environments:
+  ci:
+    label: "CI"
+    settings:                        # ← override per env
+      timeout: 30000
+  prod:
+    label: "Production"
+    settings:
+      timeout: 60000                 # ← prod chậm hơn
+      headless: true                 # ← prod chỉ chạy headless
+settings:                            # ← default fallback
+  timeout: 30000</code></pre>
+  <p><strong>Khuyến nghị:</strong> <em>Option A — out of scope</em>. Lý do:</p>
+  <ul>
+    <li>Plan này đã đủ rộng (4 command mới, schema migration, folder restructure).</li>
+    <li>Chưa có user complaint cụ thể về timeout PROD chậm.</li>
+    <li>Khi cần thì tester có thể override per-test bằng <code>config.timeout</code> trong YAML.</li>
+    <li>Làm sau dễ hơn — schema add field optional, backward-compat.</li>
+  </ul>
+  <p><strong>Bạn chọn A hay B?</strong></p>
+</div>
+
+<h2 id="tech-validation">15. Technology validation</h2>
+
+<table>
+  <tr><th>Tech</th><th>Version</th><th>Use</th><th>Note</th></tr>
+  <tr>
+    <td><code>commander</code></td>
+    <td>existing</td>
+    <td>CLI options (<code>--env</code>)</td>
+    <td>API stable, không thay đổi pattern</td>
+  </tr>
+  <tr>
+    <td><code>js-yaml</code></td>
+    <td>existing</td>
+    <td>Parse YAML config + flows</td>
+    <td>Read v0/v1/v2 không thay đổi cách dùng</td>
+  </tr>
+  <tr>
+    <td><code>@playwright/test</code></td>
+    <td>existing</td>
+    <td>Browser automation</td>
+    <td>Không liên quan thay đổi này</td>
+  </tr>
+  <tr>
+    <td><code>tsx</code> + <code>typescript</code></td>
+    <td>existing</td>
+    <td>Run + compile</td>
+    <td>Không thay đổi</td>
+  </tr>
+</table>
+
+<div class="callout ok">
+  <strong>Plan này KHÔNG thêm dependency mới.</strong> Tất cả thay đổi nằm trong code TS hiện hữu. Context7 validation đầy đủ sẽ chạy ở stage implementation (theo workflow rule W1) — chủ yếu để verify API <code>commander</code> add option pattern và <code>js-yaml</code> dump options vẫn là cách dùng latest.
+</div>
+
+<h2 id="stages">16. Implementation stages</h2>
+
+<p>Plan này sẽ chia thành 3 stages khi execute (sau khi user approve):</p>
+
+<table>
+  <tr><th>Stage</th><th>Deliverables</th><th>Exit gate</th></tr>
+  <tr>
+    <td><strong>Stage 1</strong><br>Core engine + config + folder restructure</td>
+    <td>D1, D2, D3, D11, D13, D14 (config tests), D16 (SDD start)</td>
+    <td>
+      • <code>config.test.ts</code> pass (cover v0/v1/v2 + null URL + missing env)<br>
+      • Schema v1 chains chạy không sửa (smoke với Pharmacy fixture v1)<br>
+      • <code>--env</code> flag hoạt động với schema v2 mock fixture<br>
+      • <code>FRT_TEST_ENV</code> override hoạt động<br>
+      • <code>FlowRunner</code> tìm flows trong <code>flows/{app}/{env}/</code>
+    </td>
+  </tr>
+  <tr>
+    <td><strong>Stage 2</strong><br>Recorder + scaffold + commands mới</td>
+    <td>D4, D5, D6, D7, D8, D9, D10, D12, D14 (extend tests)</td>
+    <td>
+      • Recorder save vào <code>flows/{app}/{env}/</code> với metadata (smoke record)<br>
+      • Scaffold tạo chain v2 với multi-env, folder structure đầy đủ<br>
+      • <code>migrate-config --dry-run</code> in diff đúng cho Pharmacy (mock workspace)<br>
+      • <code>add-env</code>, <code>clone-flow</code>, <code>envs</code> hoạt động<br>
+      • All tests pass
+    </td>
+  </tr>
+  <tr>
+    <td><strong>Stage 3</strong><br>Pilot + doc + senior review + security scan</td>
+    <td>D15, D17, D16 (SDD complete), Senior review, Security scan</td>
+    <td>
+      • Pharmacy migrate end-to-end pass:<br>
+      &nbsp;&nbsp;– config v1 → v2 với null UAT/PROD<br>
+      &nbsp;&nbsp;– <code>flows/rsa/tao-don-hang-ban-tai-quay.yaml</code> moved sang <code>flows/rsa/ci/</code><br>
+      &nbsp;&nbsp;– <code>play --app rsa --env ci --all</code> pass<br>
+      &nbsp;&nbsp;– <code>play --app rsa --env uat ...</code> fail rõ ràng<br>
+      &nbsp;&nbsp;– <code>play --app rsa</code> (thiếu --env) fail rõ ràng<br>
+      • Tất cả prompt docs + README updated (prompts 02, 03, 04, 05, 11, 12)<br>
+      • Senior review APPROVED (0 P0/P1)<br>
+      • Tech freshness: no deprecated APIs<br>
+      • Security scan CLEAN<br>
+      • SDD complete
+    </td>
+  </tr>
+</table>
+
+<hr>
+
+<h2>Tóm tắt cho user</h2>
+
+<div class="callout info">
+  <strong>Tóm gọn (REV 2):</strong>
+  <ul>
+    <li>Schema config nâng cấp: <code>apps.{app}.urls.{env}</code> thay vì 1 baseUrl/app.</li>
+    <li><code>--env</code> required (không có default). <code>FRT_TEST_ENV</code> env var support.</li>
+    <li>Mỗi env = 1 file YAML riêng tại <code>flows/{app}/{env}/</code>. KHÔNG auto-tham-số-hóa URL.</li>
+    <li>4 command mới: <code>add-env</code>, <code>clone-flow</code>, <code>migrate-config</code>, <code>envs</code>.</li>
+    <li>Backward-compat: 8 chains đã onboard chạy không sửa. Migration opt-in.</li>
+    <li>Pharmacy pilot: chỉ có CI URL hiện tại, UAT/PROD = null đến khi user cung cấp.</li>
+  </ul>
+  <strong>Effort estimate:</strong> 2 ngày work cho 1 dev (3 stages, 17 deliverables).<br>
+  <strong>Risk:</strong> Thấp — không thêm dep, không breaking với chain repos cũ, có dry-run + backup.<br>
+  <strong>Cần user trả lời:</strong> Chỉ còn Q7 (per-env settings — đề xuất out of scope).
+</div>
+
+</div>
+</body>
+</html>

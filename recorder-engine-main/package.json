@@ -1,0 +1,30 @@
+{
+  "name": "@ai-test/recorder-engine",
+  "version": "1.0.0",
+  "description": "AI Test Recorder Engine — Record & Replay E2E Tests via AI Agent prompts",
+  "bin": {
+    "frt-test": "./bin/frt-test"
+  },
+  "scripts": {
+    "record": "node --import tsx src/cli.ts record",
+    "play": "node --import tsx src/cli.ts play",
+    "play:all": "node --import tsx src/cli.ts play --all",
+    "play:tag": "node --import tsx src/cli.ts play --tag",
+    "convert": "node --import tsx src/cli.ts convert",
+    "list": "node --import tsx src/cli.ts list",
+    "scaffold-chain": "node --import tsx src/cli.ts scaffold-chain",
+    "add-app": "node --import tsx src/cli.ts add-app",
+    "test": "node --import tsx --test src/scaffold.test.ts"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.44.0",
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "commander": "^12.1.0",
+    "js-yaml": "^4.1.1"
+  }
+}

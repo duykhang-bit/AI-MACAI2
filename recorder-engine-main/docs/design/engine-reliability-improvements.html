@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Engine Reliability Improvements — SDD</title>
+<style>
+:root { --bg: #fff; --fg: #1d1d1f; --muted: #6e6e73; --border: #d2d2d7; --code-bg: #f5f5f7; --accent: #0071e3; }
+@media (prefers-color-scheme: dark) { :root { --bg: #1d1d1f; --fg: #f5f5f7; --muted: #a1a1a6; --border: #424245; --code-bg: #2c2c2e; --accent: #2997ff; } }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif; background: var(--bg); color: var(--fg); line-height: 1.6; padding: 3rem 1.5rem; max-width: 780px; margin: 0 auto; }
+h1 { font-size: 2rem; font-weight: 700; margin-bottom: .5rem; }
+h2 { font-size: 1.25rem; font-weight: 600; margin-top: 2.5rem; margin-bottom: .75rem; color: var(--accent); }
+h3 { font-size: 1rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: .5rem; }
+p, li { margin-bottom: .5rem; }
+ul { padding-left: 1.25rem; }
+code { font-family: 'SF Mono', Menlo, monospace; font-size: .85em; background: var(--code-bg); padding: .15em .35em; border-radius: 4px; }
+pre { background: var(--code-bg); padding: 1rem; border-radius: 8px; overflow-x: auto; margin: 1rem 0; font-size: .85rem; }
+pre code { background: none; padding: 0; }
+table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .9rem; }
+th, td { text-align: left; padding: .5rem .75rem; border-bottom: 1px solid var(--border); }
+th { font-weight: 600; }
+.meta { color: var(--muted); font-size: .85rem; margin-bottom: 2rem; }
+</style>
+</head>
+<body>
+<h1>Engine Reliability Improvements</h1>
+<p class="meta">SDD — 2026-06-04 | Plan: docs/plans/engine-reliability-improvements.html</p>
+
+<h2>Context</h2>
+<p>FRT Test Recorder engine có 2 vấn đề ảnh hưởng reliability khi replay recorded flows:</p>
+<ul>
+<li><strong>Issue #1</strong>: Mỗi step (click/fill/selectOption/keyboard) mặc định gắn <code>delay: 1000</code> — gây chậm vô ích vì runner đã tự wait element.</li>
+<li><strong>Issue #3</strong>: Assert mode record text literal cho giá trị volatile (tiền, %, ngày) → flaky khi data thay đổi.</li>
+</ul>
+
+<h2>Requirements</h2>
+<ul>
+<li>Xóa <code>delay: 1000</code> khỏi 4 case trong <code>actionToStep()</code>. Giữ field <code>delay</code> trong type (backward compat).</li>
+<li>Mở rộng <code>isVolatileText()</code> nhận thêm: currency ($, €, USD, EUR), percentage (%), date (dd/mm/yyyy).</li>
+<li>Khi assert mode chọn type=text mà value volatile → auto-downgrade sang <code>assertType: 'visible'</code> + log debug.</li>
+</ul>
+
+<h2>Design Decisions</h2>
+<h3>Issue #1: Remove hardcoded delay</h3>
+<ul>
+<li>Surgical removal — chỉ xóa <code>delay: 1000</code>, không thay bằng logic khác.</li>
+<li>Runner đã có <code>waitFor</code>, <code>waitAfter</code>, và auto-wait của Playwright → không cần padding.</li>
+<li>Old flows đã save <code>delay: 1000</code> trong YAML vẫn hoạt động (runner vẫn đọc field).</li>
+</ul>
+
+<h3>Issue #3a: Volatile text patterns</h3>
+<ul>
+<li>Thêm 3 regex mới vào <code>isVolatileText()</code>, chèn TRƯỚC rule <code>\d{3,}</code> (ưu tiên semantic match).</li>
+<li>Date pattern dùng character class <code>[/\-.\]</code> cover separator phổ biến (/, -, ., \).</li>
+<li><code>04/06/2026</code> cũng match bởi rule <code>\d{3,}</code> (year=2026), nhưng date regex cho semantic rõ hơn.</li>
+</ul>
+
+<h3>Issue #3b: Auto-safe volatile assert</h3>
+<ul>
+<li>Dùng biến <code>effectiveType</code> thay vì mutate <code>chosenType</code> — giữ original choice cho debug nếu cần.</li>
+<li>Log format: <code>__FRT_RECORD_DEBUG__: [auto-safe] volatile assert text → changed to visible: "value"</code></li>
+<li>Chỉ affect <code>chosenType === 'text'</code> — các type khác (count, containsAll, visible) không bị ảnh hưởng.</li>
+</ul>
+
+<h2>File Changes</h2>
+<table>
+<tr><th>File</th><th>Change</th></tr>
+<tr><td><code>src/recorder.ts</code></td><td>Line 1546: remove <code>delay: 1000</code> from click step</td></tr>
+<tr><td><code>src/recorder.ts</code></td><td>Line 1569: remove <code>delay: 1000</code> from fill step</td></tr>
+<tr><td><code>src/recorder.ts</code></td><td>Line 1601: remove <code>delay: 1000</code> from selectOption step</td></tr>
+<tr><td><code>src/recorder.ts</code></td><td>Line 1610: remove <code>delay: 1000</code> from keyboard step</td></tr>
+<tr><td><code>src/recorder.ts</code></td><td>Line ~779-780: add 3 new regex patterns to <code>isVolatileText()</code></td></tr>
+<tr><td><code>src/recorder.ts</code></td><td>Line ~1118-1123: add auto-safe volatile text → visible downgrade logic</td></tr>
+<tr><td><code>src/recorder.ts</code></td><td>Line ~1128,1150: <code>chosenType</code> → <code>effectiveType</code> in locator condition + record call</td></tr>
+</table>
+
+<h2>Verification</h2>
+<ul>
+<li>✅ <code>grep -n 'delay: 1000' src/recorder.ts</code> → 0 results</li>
+<li>✅ <code>isVolatileText('12.5%')</code> → true (percent pattern)</li>
+<li>✅ <code>isVolatileText('$99.00')</code> → true (currency pattern)</li>
+<li>✅ <code>isVolatileText('04/06/2026')</code> → true (date pattern + \d{3,})</li>
+<li>✅ All 46 tests pass (scaffold, config, migrate, clone-flow)</li>
+</ul>
+
+<h2>Issue #2: Auto-dismiss Popups/Modals</h2>
+
+<h3>Design Decisions</h3>
+<ul>
+<li><strong>Config field</strong>: <code>autoPopupDismiss?: boolean</code> in <code>FlowConfig</code> — opt-out pattern (default true). Set <code>false</code> when testing popup behavior itself.</li>
+<li><strong>Injection point</strong>: Second <code>addInitScript</code> after existing OneSignal dismisser. Same pattern: MutationObserver on <code>document.body</code>.</li>
+<li><strong>Throttle</strong>: 300ms timestamp-based throttle avoids performance overhead from rapid DOM mutations.</li>
+<li><strong>Safety guard</strong>: Danger words regex (<code>/xóa|delete|xác nhận xóa|confirm delete/i</code>) prevents accidental data destruction. If only dangerous buttons found → skip entirely.</li>
+<li><strong>Close button priority</strong>: <code>[aria-label*="close"]</code> → <code>[class*="close"]</code> → text match (×, ✕, Đóng, Close, Cancel, Bỏ qua, Huỷ).</li>
+<li><strong>Auto-disappearing elements</strong>: <code>.ant-notification-notice</code>, <code>.ant-message-notice</code> are skipped (they auto-dismiss themselves).</li>
+<li><strong>Modal mask fallback</strong>: If no safe close button found for <code>.ant-modal-mask/.ant-modal-wrap</code>, click mask itself (standard Ant Design dismiss-by-clicking-outside).</li>
+<li><strong>Recorder skip</strong>: Backdrop/mask clicks filtered in <code>pointerup</code> handler — avoids recording useless "click overlay" steps that break replay.</li>
+<li><strong>Cleanup</strong>: Observer disconnects on <code>beforeunload</code> to prevent memory leaks across navigations.</li>
+</ul>
+
+<h3>File Changes — Issue #2</h3>
+<table>
+<tr><th>File</th><th>Line</th><th>Change</th></tr>
+<tr><td><code>src/types.ts</code></td><td>19</td><td>Add <code>autoPopupDismiss?: boolean</code> to <code>FlowConfig</code></td></tr>
+<tr><td><code>src/runner.ts</code></td><td>580–639</td><td>Add conditional <code>addInitScript</code> with MutationObserver popup dismisser</td></tr>
+<tr><td><code>src/recorder.ts</code></td><td>1068–1076</td><td>Skip recording backdrop/mask clicks in pointerup handler</td></tr>
+</table>
+
+<h3>Verification — Issue #2</h3>
+<ul>
+<li>✅ <code>grep -n 'autoPopupDismiss' src/types.ts src/runner.ts</code> → found in both files</li>
+<li>✅ <code>grep -n 'popup backdrop' src/recorder.ts</code> → found skip log</li>
+<li>✅ All 46 tests pass (scaffold, config, migrate, clone-flow)</li>
+</ul>
+
+<h2>Issue #4 — Hover-to-Reveal Detection</h2>
+
+<h3>Context</h3>
+<p>Hidden action buttons (edit/delete icons) only appear on row hover. Recorder missed these → playback clicks fail because target never becomes visible. Runner already supports <code>action: 'hover'</code> — recorder just needed to emit it.</p>
+
+<h3>Design Decisions</h3>
+<ul>
+<li><strong>Auto-detect over manual hotkey</strong>: Chose auto-detection (mouseover tracking + ancestor heuristic) because it requires zero user awareness. User just hovers naturally; recorder infers the intent. A manual hotkey would be forgotten and adds cognitive load.</li>
+<li><strong>Debounce 150ms</strong>: Prevents capturing every child element as mouse traverses. Only the final resting element is stored as hover target.</li>
+<li><strong>1500ms hover window</strong>: If click happens within 1.5s of the last hover, check relationship. This accommodates CSS transition delays and user think time.</li>
+<li><strong>Ancestor heuristic</strong>: Only emit hover when the hover target is an ancestor of the raw click target (hoverEl.contains(rawTarget)). This covers the pattern: hover on row → hidden button inside row appears → click button.</li>
+<li><strong>Runner enhancement</strong>: Added <code>waitFor({ state: 'visible' })</code> before hover (ensures element exists) and <code>waitForTimeout(300)</code> after (allows CSS transitions to reveal children).</li>
+<li><strong>actionToStep</strong>: Handles role/text/selector locator types for hover steps, generates descriptive step names.</li>
+</ul>
+
+<h3>File Changes — Issue #4</h3>
+<table>
+<tr><th>File</th><th>Line</th><th>Change</th></tr>
+<tr><td><code>src/recorder.ts</code></td><td>~1260</td><td>Add hover state variables (<code>__lastHoverTarget</code>, <code>__lastHoverTime</code>, <code>__hoverDebounceTimer</code>)</td></tr>
+<tr><td><code>src/recorder.ts</code></td><td>~1278</td><td>Add <code>mouseover</code> listener with 150ms debounce</td></tr>
+<tr><td><code>src/recorder.ts</code></td><td>~1224</td><td>Hover-reveal detection in pointerup (ancestor check + emit before click)</td></tr>
+<tr><td><code>src/recorder.ts</code></td><td>~1660</td><td>Add <code>case 'hover'</code> to <code>actionToStep()</code></td></tr>
+<tr><td><code>src/runner.ts</code></td><td>~288</td><td>Enhanced hover case: <code>waitFor</code> + <code>hover</code> + <code>waitForTimeout(300)</code></td></tr>
+</table>
+
+<h3>Verification — Issue #4</h3>
+<ul>
+<li>✅ <code>grep -n "mouseover" src/recorder.ts</code> → listener at line 1278–1279</li>
+<li>✅ <code>grep -n "waitForTimeout(300)" src/runner.ts</code> → line 293</li>
+<li>✅ <code>grep -n "case 'hover'" src/recorder.ts</code> → line 1660</li>
+<li>✅ All 46 tests pass (scaffold, config, migrate, clone-flow)</li>
+</ul>
+
+<h2>Autonomous Decisions</h2>
+<ul>
+<li><strong>Auto-detect over manual hotkey</strong>: Chose auto-detection because it's invisible to the user — no extra key to remember. Hover-reveal is a common UI pattern (table row actions, icon tooltips) and should "just work" without user intervention.</li>
+<li><strong>Hover emitted only when ancestor relationship exists</strong>: Conservative heuristic — only emits hover step when the hovered element contains the subsequently clicked element. This avoids false positives from unrelated hover→click sequences on the same page.</li>
+<li><strong>No new types added</strong>: Verified <code>types.ts</code> — <code>'hover'</code> already exists in the FlowStep action union. No RecordedAction changes needed since the payload goes through the generic <code>__frtRecord</code> binding.</li>
+</ul>
+</body>
+</html>
