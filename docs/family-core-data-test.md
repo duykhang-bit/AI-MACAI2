@@ -153,3 +153,6 @@ note nagfy 23/03 còn 2 tiếng
 
 / mẫu test case
 
+
+ tạo flow session trên RAI Portal ở phase Verify cho các tickets, rồi chuyển Done với cac ticket này: 
+

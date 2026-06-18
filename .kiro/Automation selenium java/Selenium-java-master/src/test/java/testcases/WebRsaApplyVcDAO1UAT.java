@@ -25,7 +25,7 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import listeners.TestListener;
 
 @Listeners(TestListener.class)
-public class WebRsaApplyVcUAT extends BaseTest1 {
+public class WebRsaApplyVcDAO1UAT extends BaseTest1 {
 
     @Override
     protected String getBaseUrl() {
@@ -57,8 +57,8 @@ public class WebRsaApplyVcUAT extends BaseTest1 {
         wait = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(30));
     }
 
-    @Test(priority = 1, description = "FLOW - Tạo đơn bán hàng RSA Web", invocationCount = 2)
-    public void testCreateOrderFlow() throws InterruptedException {
+    @Test(priority = 1, description = "FLOW - Tạo đơn bán hàng RSA Web", invocationCount = 1)
+    public void WebRsaApplyVcDAO1UAT () throws InterruptedException {
 
         JavascriptExecutor js = (JavascriptExecutor) driver;
 
@@ -183,7 +183,7 @@ public class WebRsaApplyVcUAT extends BaseTest1 {
 
         /*
          * =========================
-         * TC05 - CHỌN MỤC BÁN HÀNG
+         * TC05 - CHỌN MỤC BÁN HÀNGF
          * =========================
          */
         ExtentTest tc05 = test.createNode("TC05 - Chọn mục Bán hàng");
@@ -524,6 +524,6 @@ public class WebRsaApplyVcUAT extends BaseTest1 {
         System.out.println("MÃ ĐƠN HÀNG: " + orderCode);
         System.out.println("========================================");
 
-        test.pass("✅ Hoàn thành flow tạo đơn bán hàng RSA Web. Mã đơn: " + orderCode);
+        test.pass("✅ Hoàn thành flow đươn apply cc đảo 1 RSA Web. Mã đơn: " + orderCode);
     }
 }
