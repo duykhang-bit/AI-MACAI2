@@ -92,8 +92,8 @@ public class MudCodeProvider {
     }
 
     private static Path getCounterPath(String fileName) {
-        // Lưu counter ở thư mục target/mud-counters/ (không commit lên git)
-        return Paths.get("target", "mud-counters", fileName);
+        // Lưu counter ở src/test/resources/data/mud-counters/ (KHÔNG bị mvn clean xóa)
+        return Paths.get("src", "test", "resources", "data", "mud-counters", fileName);
     }
 
     /**
