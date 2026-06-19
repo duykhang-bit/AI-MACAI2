@@ -88,10 +88,29 @@ public class TC13 extends BaseTest1 {
         wait = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(30));
     }
 
-    @Test(priority = 1, description = "FLOW - Tạo đơn đơn giản 1 SP (LIVROAL 350 US PHARMA 3X10)", invocationCount = 1)
+    @Test(priority = 1, description = "FLOW - Tạo đơn orca tặng 50k (LIVROAL 350 US PHARMA 3X10)", invocationCount = 1)
     public void TC013 () throws InterruptedException {
 
         JavascriptExecutor js = (JavascriptExecutor) driver;
+
+        /*
+         * =========================
+         * PRE-CONDITION: Clear cache quota promotion trước khi tạo đơn
+         * =========================
+         */
+        try {
+            java.net.http.HttpClient httpClient = java.net.http.HttpClient.newHttpClient();
+            java.net.http.HttpRequest request = java.net.http.HttpRequest.newBuilder()
+                    .uri(java.net.URI.create("http://uat-promotion-listener.lc.frt.local/api/promotion/clear-cache-quota?promotionCode=KM-0625-1172&phone=0835089291&type=MedicinalProperties"))
+                    .header("accept", "*/*")
+                    .POST(java.net.http.HttpRequest.BodyPublishers.noBody())
+                    .build();
+            java.net.http.HttpResponse<String> response = httpClient.send(request, java.net.http.HttpResponse.BodyHandlers.ofString());
+            System.out.println("[TC13] Clear cache quota: HTTP " + response.statusCode() + " — " + response.body());
+        } catch (Exception e) {
+            System.out.println("[TC13] ⚠️ Clear cache quota failed: " + e.getMessage());
+        }
+        Thread.sleep(1000);
 
         /*
          * =========================
@@ -513,81 +532,102 @@ public class TC13 extends BaseTest1 {
          * =========================
          */
         try {
-            tcVerifyPrice.info("Navigating tới trang Promotion để verify serial...");
+            tcVerifyPrice.info("Mở browser mới để login Promotion bằng acc giant...");
             
-            // Navigate sang trang promotion
-            driver.get("https://uat-promotion.frt.vn");
-            Thread.sleep(3000);
-
-            // Login bằng acc giant/123456
+            // Tạo browser mới hoàn toàn (driver mới) để login promotion
+            org.openqa.selenium.WebDriver promoDriver = null;
             try {
-                WebElement loginUser = wait.until(ExpectedConditions.elementToBeClickable(
-                        By.xpath("//input[@type='text' or @name='username' or @name='LoginInput.UserNameOrEmailAddress' or contains(@placeholder,'user') or contains(@placeholder,'tài khoản')]")));
-                loginUser.clear();
-                loginUser.sendKeys("giant");
+                ChromeOptions promoOptions = new ChromeOptions();
+                Map<String, Object> promoPrefs = new HashMap<>();
+                promoPrefs.put("profile.default_content_setting_values.notifications", 2);
+                promoPrefs.put("credentials_enable_service", false);
+                promoPrefs.put("profile.password_manager_enabled", false);
+                promoOptions.setExperimentalOption("prefs", promoPrefs);
+                promoOptions.addArguments("--start-maximized");
+                promoOptions.addArguments("--remote-allow-origins=*");
 
-                WebElement loginPass = wait.until(ExpectedConditions.elementToBeClickable(
-                        By.xpath("//input[@type='password' or @name='password' or @name='LoginInput.Password']")));
-                loginPass.clear();
-                loginPass.sendKeys("123456");
+                promoDriver = new ChromeDriver(promoOptions);
+                org.openqa.selenium.support.ui.WebDriverWait promoWait = 
+                    new org.openqa.selenium.support.ui.WebDriverWait(promoDriver, Duration.ofSeconds(30));
+                JavascriptExecutor promoJs = (JavascriptExecutor) promoDriver;
 
-                WebElement loginBtn = wait.until(ExpectedConditions.elementToBeClickable(
-                        By.xpath("//button[@type='submit' or contains(.,'Đăng nhập') or contains(.,'Login') or @id='kt_login_signin_submit']")));
-                loginBtn.click();
+                // Navigate thẳng tới link search serial (sẽ redirect sang login nếu chưa auth)
+                promoDriver.get("https://uat-promotion.frt.vn/search-serial-by-phonenumber?voucherType=1&searchBy=phoneNumber&phoneNumber=0835089291");
+                Thread.sleep(3000);
+
+                // Login bằng acc giant/123456 (nếu bị redirect về login page)
+                try {
+                    promoWait.until(ExpectedConditions.elementToBeClickable(
+                            By.name("LoginInput.UserNameOrEmailAddress")))
+                            .sendKeys("giant");
+
+                    promoWait.until(ExpectedConditions.elementToBeClickable(
+                            By.name("LoginInput.Password")))
+                            .sendKeys("123456");
+
+                    promoDriver.findElement(By.id("kt_login_signin_submit")).click();
+                    Thread.sleep(5000);
+                    tcVerifyPrice.pass("✅ Login Promotion bằng acc giant thành công");
+                } catch (Exception loginEx) {
+                    tcVerifyPrice.info("Đã login sẵn — không cần login lại");
+                }
+
+                // Sau login, navigate lại link search (đảm bảo đúng page)
+                promoDriver.get("https://uat-promotion.frt.vn/search-serial-by-phonenumber?voucherType=1&searchBy=phoneNumber&phoneNumber=0835089291");
                 Thread.sleep(5000);
-            } catch (Exception loginEx) {
-                tcVerifyPrice.info("Có thể đã login sẵn hoặc form login khác");
-            }
 
-            // Navigate tới trang search serial by phone
-            driver.get("https://uat-promotion.frt.vn/search-serial-by-phonenumber?voucherType=1&searchBy=phoneNumber&phoneNumber=0835089291");
-            Thread.sleep(5000);
+                // Click trang cuối (page 7)
+                try {
+                    WebElement lastPage = promoWait.until(ExpectedConditions.elementToBeClickable(
+                            By.xpath("//li[contains(@class,'ant-pagination-item')][last()] | " +
+                                    "//a[text()='7'] | //li[@title='7']//a | " +
+                                    "//button[text()='7'] | //li[contains(@title,'7')]")));
+                    promoJs.executeScript("arguments[0].click();", lastPage);
+                    Thread.sleep(3000);
+                } catch (Exception e) {
+                    tcVerifyPrice.info("⚠️ Không tìm thấy page 7 — có thể chỉ 1 page");
+                }
 
-            // Click nút "Tìm kiếm"
-            try {
-                WebElement btnTimKiem = wait.until(ExpectedConditions.elementToBeClickable(
-                        By.xpath("//button[contains(.,'Tìm kiếm')] | //button[contains(.,'Tìm Kiếm')]")));
-                js.executeScript("arguments[0].click();", btnTimKiem);
-                Thread.sleep(3000);
-            } catch (Exception e) {
-                Thread.sleep(2000);
-            }
+                // Lấy page source
+                String promoPageSource = promoDriver.getPageSource();
 
-            // Click trang cuối (page 7)
-            try {
-                WebElement lastPage = wait.until(ExpectedConditions.elementToBeClickable(
-                        By.xpath("//li[contains(@class,'ant-pagination-item')][last()] | " +
-                                "//a[text()='7'] | //li[@title='7']//a | " +
-                                "//button[text()='7'] | //li[contains(@title,'7')]")));
-                js.executeScript("arguments[0].click();", lastPage);
-                Thread.sleep(3000);
-            } catch (Exception e) {
-                tcVerifyPrice.info("⚠️ Không tìm thấy page 7 — có thể chỉ 1 page");
-            }
+                // Check: "ORCA Thuốc Kê Đơn - Bill 500K - 800K"
+                if (promoPageSource.contains("ORCA Thuốc Kê Đơn") || promoPageSource.contains("Bill 500K - 800K")) {
+                    tcVerifyPrice.pass("✅ Serial 'ORCA Thuốc Kê Đơn - Bill 500K - 800K - Tặng mã ưu đãi 50,000đ' tìm thấy");
+                } else {
+                    tcVerifyPrice.fail("❌ Không tìm thấy serial ORCA Thuốc Kê Đơn trên trang Promotion");
+                }
 
-            // Lấy page source sau khi load trang cuối
-            String promoPageSource = driver.getPageSource();
+                // Check: Mã đơn hàng khớp + lấy serial code
+                String serialCode = "";
+                try {
+                    // Lấy serial code từ dòng cuối cùng trong bảng (cột Serial)
+                    java.util.List<WebElement> serialCells = promoDriver.findElements(
+                            By.xpath("//table//tbody//tr[last()]//td[2] | //tr[last()]//td[contains(@class,'serial') or position()=2]"));
+                    if (!serialCells.isEmpty()) {
+                        serialCode = serialCells.get(serialCells.size() - 1).getText().trim();
+                    }
+                } catch (Exception e) {}
 
-            // Check: có dòng "ORCA Thuốc Kê Đơn - Bill 500K - 800K - Tặng mã ưu đãi 50,000đ"
-            if (promoPageSource.contains("ORCA Thuốc Kê Đơn") || promoPageSource.contains("Bill 500K - 800K")) {
-                tcVerifyPrice.pass("✅ Serial 'ORCA Thuốc Kê Đơn - Bill 500K - 800K - Tặng mã ưu đãi 50,000đ' tìm thấy trên Promotion");
-            } else {
-                tcVerifyPrice.fail("❌ Không tìm thấy serial ORCA Thuốc Kê Đơn trên trang Promotion");
-            }
+                if (!orderCode.isEmpty() && promoPageSource.contains(orderCode)) {
+                    tcVerifyPrice.pass("✅ Mã đơn hàng " + orderCode + " khớp với serial " + serialCode + " trên Promotion");
+                } else {
+                    tcVerifyPrice.info("⚠️ Mã đơn hàng " + orderCode + " chưa khớp — serial: " + serialCode);
+                }
 
-            // Check: Mã đơn hàng khớp
-            if (!orderCode.isEmpty() && promoPageSource.contains(orderCode)) {
-                tcVerifyPrice.pass("✅ Mã đơn hàng " + orderCode + " khớp với serial trên Promotion");
-            } else {
-                tcVerifyPrice.info("⚠️ Mã đơn hàng " + orderCode + " chưa khớp — có thể cần thời gian sync");
-            }
+                // Check: Ngày hôm nay
+                String today = new java.text.SimpleDateFormat("dd/MM/yyyy").format(new java.util.Date());
+                if (promoPageSource.contains(today)) {
+                    tcVerifyPrice.pass("✅ Ngày hiệu lực " + today + " hiển thị đúng");
+                } else {
+                    tcVerifyPrice.info("⚠️ Không tìm thấy ngày " + today + " trên trang");
+                }
 
-            // Check: Ngày hôm nay (format dd/MM/yyyy)
-            String today = new java.text.SimpleDateFormat("dd/MM/yyyy").format(new java.util.Date());
-            if (promoPageSource.contains(today)) {
-                tcVerifyPrice.pass("✅ Ngày hiệu lực " + today + " hiển thị đúng");
-            } else {
-                tcVerifyPrice.info("⚠️ Không tìm thấy ngày " + today + " trên trang");
+            } finally {
+                // Đóng browser promotion
+                if (promoDriver != null) {
+                    promoDriver.quit();
+                }
             }
 
         } catch (Exception e) {
