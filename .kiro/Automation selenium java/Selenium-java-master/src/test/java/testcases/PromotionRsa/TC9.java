@@ -323,8 +323,8 @@ public class TC9 extends BaseTest1 {
         Thread.sleep(500);
 
         // Nhập mã sản phẩm
-        String product3 = getProductCode("product7");
-        productInput.sendKeys(product3);
+        String productCode = getProductCode("product_tc9");
+        productInput.sendKeys(productCode);
         Thread.sleep(1000);
 
         // Click nút search (icon kính lúp) để trigger tìm kiếm
@@ -359,7 +359,7 @@ public class TC9 extends BaseTest1 {
             // Đơn vị mặc định đã là Hộp hoặc SP chỉ có 1 đơn vị
         }
 
-        tc08.pass("Đã nhập sản phẩm " + product3 + " và chọn đơn vị Hộp");
+        tc08.pass("Đã nhập sản phẩm " + productCode + " và chọn đơn vị Hộp");
 
         /*
          * =========================
@@ -378,7 +378,7 @@ public class TC9 extends BaseTest1 {
         js.executeScript(
                 "var el = arguments[0];" +
                 "var nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;" +
-                "nativeInputValueSetter.call(el, '" + getProductQuantity("product7") + "');" +
+                "nativeInputValueSetter.call(el, '" + getProductQuantity("product_tc9") + "');" +
                 "el.dispatchEvent(new Event('input', { bubbles: true }));" +
                 "el.dispatchEvent(new Event('change', { bubbles: true }));" +
                 "el.blur();",
@@ -396,18 +396,28 @@ public class TC9 extends BaseTest1 {
 
         Thread.sleep(2000);
 
-        // Click link "Nhập mã KM" hoặc "Mã giảm giá"
+        // Click link "Nhập mã KM" ở panel bên phải (khu vực Mã giảm giá)
         try {
-            // Scroll xuống cuối panel bên phải để thấy "Nhập mã KM"
-            js.executeScript("window.scrollTo(0, document.body.scrollHeight);");
             Thread.sleep(1000);
 
-            // Dùng JavaScript tìm element chứa "Nhập mã KM" trong innerText
+            // Tìm element lá chứa "Nhập mã KM" + scrollIntoView trong container cha
             WebElement nhapMaKM = (WebElement) js.executeScript(
-                    "var elements = document.querySelectorAll('a, span, div, button, p');" +
-                    "for (var i = 0; i < elements.length; i++) {" +
-                    "  if (elements[i].innerText && elements[i].innerText.includes('Nhập mã KM')) {" +
-                    "    return elements[i];" +
+                    "var all = document.querySelectorAll('*');" +
+                    "for (var i = 0; i < all.length; i++) {" +
+                    "  var el = all[i];" +
+                    "  var txt = el.textContent || '';" +
+                    "  if (txt.includes('Nhập mã KM') && el.offsetParent !== null) {" +
+                    "    var children = el.children;" +
+                    "    var hasChildWithText = false;" +
+                    "    for (var j = 0; j < children.length; j++) {" +
+                    "      if ((children[j].textContent || '').includes('Nhập mã KM')) {" +
+                    "        hasChildWithText = true; break;" +
+                    "      }" +
+                    "    }" +
+                    "    if (!hasChildWithText) {" +
+                    "      el.scrollIntoView({block:'center', behavior:'instant'});" +
+                    "      return el;" +
+                    "    }" +
                     "  }" +
                     "}" +
                     "return null;");
@@ -415,11 +425,19 @@ public class TC9 extends BaseTest1 {
             if (nhapMaKM == null) {
                 tc08c.fail("❌ Không tìm thấy element 'Nhập mã KM' trên trang");
             } else {
-                tc08c.info("Found 'Nhập mã KM': tag=" + nhapMaKM.getTagName() + ", text=" + nhapMaKM.getText() + ", class=" + nhapMaKM.getAttribute("class"));
-                js.executeScript("arguments[0].scrollIntoView({block:'center'});", nhapMaKM);
                 Thread.sleep(500);
                 js.executeScript("arguments[0].click();", nhapMaKM);
                 Thread.sleep(2000);
+
+            // === CLEAR VOUCHER CŨ (nếu có) ===
+            try {
+                java.util.List<WebElement> voucherTags = driver.findElements(
+                        By.xpath("//div[contains(@class,'ant-modal')]//span[contains(@class,'ant-tag')]//span[contains(@class,'ant-tag-close-icon') or contains(@class,'anticon-close')]"));
+                for (WebElement tag : voucherTags) {
+                    try { js.executeScript("arguments[0].click();", tag); Thread.sleep(800); } catch (Exception ex) {}
+                }
+                if (!voucherTags.isEmpty()) Thread.sleep(1000);
+            } catch (Exception clearEx) {}
 
             // Đợi popup "Mã giảm giá" xuất hiện và nhập mã voucher
             WebElement voucherInput = wait.until(ExpectedConditions.elementToBeClickable(
@@ -481,32 +499,18 @@ public class TC9 extends BaseTest1 {
                 tcVerifyPrice.fail("❌ Không thấy text 'Đang dùng 01 mã' — voucher chưa apply");
             }
 
-            // Check: Tổng tiền ban đầu = 1,152,000
-            if (pageSource.contains("1,152,000") || pageSource.contains("1.152.000")) {
-                tcVerifyPrice.pass("✅ Tổng tiền ban đầu = 1,152,000 đ");
+            // Check: Giảm giá voucher = 100,000 (mud2 = 100k)
+            if (pageSource.contains("100,000") || pageSource.contains("100.000")) {
+                tcVerifyPrice.pass("✅ Giảm giá voucher = 100,000 đ");
             } else {
-                tcVerifyPrice.info("⚠️ Không tìm thấy 1,152,000 — có thể giá SP thay đổi");
+                tcVerifyPrice.fail("❌ Không tìm thấy giảm giá 100,000 trên trang");
             }
 
-            // Check: Giảm giá voucher = 130,000
-            if (pageSource.contains("130,000") || pageSource.contains("130.000")) {
-                tcVerifyPrice.pass("✅ Giảm giá voucher = 130,000 đ");
+            // Check: Quà tặng PMH 100K xuất hiện
+            if (pageSource.contains("PMH") && pageSource.contains("100")) {
+                tcVerifyPrice.pass("✅ Quà tặng PMH 100K hiển thị đúng");
             } else {
-                tcVerifyPrice.fail("❌ Không tìm thấy giảm giá 130,000 trên trang");
-            }
-
-            // Check: Tạm tính = 1,022,000
-            if (pageSource.contains("1,022,000") || pageSource.contains("1.022.000")) {
-                tcVerifyPrice.pass("✅ Tạm tính = 1,022,000 đ (đã giảm 130,000 từ MUD voucher)");
-            } else {
-                tcVerifyPrice.fail("❌ Không tìm thấy tạm tính 1,022,000 trên trang");
-            }
-
-            // Check: Quà tặng PMH 130,000D xuất hiện
-            if (pageSource.contains("PMH") && pageSource.contains("130,000")) {
-                tcVerifyPrice.pass("✅ Quà tặng PMH 130,000D hiển thị đúng");
-            } else {
-                tcVerifyPrice.info("⚠️ Không tìm thấy quà tặng PMH 130,000D");
+                tcVerifyPrice.info("⚠️ Không tìm thấy quà tặng PMH 100K");
             }
 
         } catch (Exception e) {

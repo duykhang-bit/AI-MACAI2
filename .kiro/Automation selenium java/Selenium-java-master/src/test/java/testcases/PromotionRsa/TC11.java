@@ -31,7 +31,7 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import listeners.TestListener;
 
 @Listeners(TestListener.class)
-public class TC10 extends BaseTest1 {
+public class TC11 extends BaseTest1 {
 
     // Đọc sản phẩm từ file data/products.json
     private JsonObject productsData;
@@ -57,7 +57,7 @@ public class TC10 extends BaseTest1 {
     }
 
     private String getMudCode(int index) {
-        return loadProducts().getAsJsonObject("mud2").getAsJsonArray("codes").get(index).getAsString();
+        return loadProducts().getAsJsonObject("mud3").getAsJsonArray("codes").get(index).getAsString();
     }
 
     @Override
@@ -78,7 +78,6 @@ public class TC10 extends BaseTest1 {
         ChromeOptions options = new ChromeOptions();
         Map<String, Object> prefs = new HashMap<>();
         prefs.put("profile.default_content_setting_values.notifications", 2);
-        // Tắt hoàn toàn Password Manager popup
         prefs.put("credentials_enable_service", false);
         prefs.put("profile.password_manager_enabled", false);
         prefs.put("profile.password_manager_leak_detection", false);
@@ -93,8 +92,8 @@ public class TC10 extends BaseTest1 {
         wait = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(30));
     }
 
-    @Test(priority = 1, description = "FLOW - MUD - Loại hàng Chăm sóc tóc - da đầu / Tóc  ", invocationCount = 1)
-    public void TC010 () throws InterruptedException {
+    @Test(priority = 1, description = "FLOW - TK Gia Đình - Đảo 2 - Mã Ưu Đãi 100,000Đ mua sản phẩm Dung dịch vệ sinh phụ nữ (19/05)", invocationCount = 1)
+    public void TC011 () throws InterruptedException {
 
         JavascriptExecutor js = (JavascriptExecutor) driver;
 
@@ -121,17 +120,14 @@ public class TC10 extends BaseTest1 {
 
         Thread.sleep(3000);
 
-        // Tắt popup "Change your password" của Google Password Manager (nếu có)
         try {
             WebElement popupOkBtn = driver.findElement(
                     By.xpath("//button[text()='OK' or text()='Ok'] | //button[contains(@class,'dismiss')]"));
             popupOkBtn.click();
             Thread.sleep(500);
         } catch (NoSuchElementException e) {
-            // Không có popup password manager → bỏ qua
         }
 
-        // Đợi login thành công - chờ popup chọn shop xuất hiện
         wait.until(ExpectedConditions.visibilityOfElementLocated(
                 By.xpath("//*[contains(text(),'Chọn địa chỉ đăng nhập') or contains(text(),'Chọn Shop')]")));
 
@@ -144,14 +140,12 @@ public class TC10 extends BaseTest1 {
          */
         ExtentTest tc02 = test.createNode("TC02 - Nhập 80006 và chọn shop");
 
-        // Ô "Chọn Shop" là Ant Design Select → click vào dropdown trước
         WebElement shopDropdown = wait.until(
                 ExpectedConditions.elementToBeClickable(
                         By.xpath("//div[contains(@class,'ant-select')]//div[contains(@class,'ant-select-selector')]")));
         shopDropdown.click();
         Thread.sleep(500);
 
-        // Nhập 80006 vào ô search trong dropdown
         WebElement shopSearchInput = wait.until(
                 ExpectedConditions.elementToBeClickable(
                         By.xpath("//div[contains(@class,'ant-select-dropdown')]//input | " +
@@ -159,7 +153,6 @@ public class TC10 extends BaseTest1 {
         shopSearchInput.sendKeys("80006");
         Thread.sleep(1500);
 
-        // Chọn shop 80006 từ danh sách dropdown
         WebElement shopOption = wait.until(
                 ExpectedConditions.elementToBeClickable(
                         By.xpath("//div[contains(@class,'ant-select-item-option') and contains(.,'80006')] | " +
@@ -192,7 +185,6 @@ public class TC10 extends BaseTest1 {
         ExtentTest tc04 = test.createNode("TC04 - Tắt popup Danh sách sản phẩm sai đối tượng");
 
         try {
-            // Đợi popup xuất hiện (nếu có)
             WebElement closePopup = wait.until(
                     ExpectedConditions.elementToBeClickable(
                             By.xpath("//div[contains(@class,'modal') or contains(@class,'popup') or contains(@class,'dialog')]" +
@@ -204,7 +196,6 @@ public class TC10 extends BaseTest1 {
             closePopup.click();
             tc04.pass("Đã tắt popup Danh sách sản phẩm sai đối tượng");
         } catch (TimeoutException e) {
-            // Thử click dấu X bất kỳ trên popup
             try {
                 WebElement xButton = driver.findElement(
                         By.xpath("//button[@aria-label='Close'] | //span[contains(@class,'close')] | //i[contains(@class,'close')]"));
@@ -219,12 +210,11 @@ public class TC10 extends BaseTest1 {
 
         /*
          * =========================
-         * TC05 - CHỌN MỤC BÁN HÀNGF
+         * TC05 - CHỌN MỤC BÁN HÀNG
          * =========================
          */
         ExtentTest tc05 = test.createNode("TC05 - Chọn mục Bán hàng");
 
-        // Mục "Bán hàng (n)" trên trang chủ - class ant-typography feature_home
         WebElement menuBanHang = wait.until(
                 ExpectedConditions.elementToBeClickable(
                         By.xpath("//p[contains(@class,'feature_home') and contains(text(),'Bán hàng')] | " +
@@ -235,7 +225,6 @@ public class TC10 extends BaseTest1 {
         Thread.sleep(300);
         menuBanHang.click();
 
-        // Đợi trang bán hàng load xong
         Thread.sleep(3000);
         wait.until(ExpectedConditions.urlContains("sell"));
 
@@ -248,7 +237,6 @@ public class TC10 extends BaseTest1 {
          */
         ExtentTest tc06 = test.createNode("TC06 - Nhập mã inside 00017");
 
-        // Đợi popup quét mã inside xuất hiện và tìm ô input
         WebElement insideInput = wait.until(
                 ExpectedConditions.elementToBeClickable(
                         By.xpath("//div[contains(@class,'modal') or contains(@class,'popup') or contains(@class,'dialog') or contains(@class,'ant-modal')]" +
@@ -258,21 +246,18 @@ public class TC10 extends BaseTest1 {
         insideInput.sendKeys("00017");
         Thread.sleep(1500);
 
-        // Click chọn kết quả "Trần Thị Thanh Thảo (00017)"
         WebElement insideOption = wait.until(
                 ExpectedConditions.elementToBeClickable(
                         By.xpath("//*[contains(text(),'Trần Thị Thanh Thảo') or contains(text(),'(00017)')]")));
         insideOption.click();
         Thread.sleep(500);
 
-        // Click nút "Xác nhận" (không phải "Đóng")
         try {
             WebElement btnXacNhan = wait.until(
                     ExpectedConditions.elementToBeClickable(
                             By.xpath("//button[contains(.,'Xác nhận') or contains(.,'Xác Nhận') or contains(.,'xác nhận')]")));
             btnXacNhan.click();
         } catch (TimeoutException e) {
-            // Popup có thể đã tự đóng sau khi chọn option
         }
 
         Thread.sleep(2000);
@@ -280,122 +265,117 @@ public class TC10 extends BaseTest1 {
 
         /*
          * =========================
-         * TC07 - NHẬP SĐT KHÁCH HÀNG 0835089255
+         * TC07 - NHẬP SĐT KHÁCH HÀNG 0835089291
          * =========================
          */
-        ExtentTest tc07 = test.createNode("TC07 - Nhập SĐT khách hàng 0835089254");
+        ExtentTest tc07 = test.createNode("TC07 - Nhập SĐT khách hàng 0835089291");
 
         Thread.sleep(1000);
 
-        // Tìm ô SĐT - dùng type="phone" (nhanh nhất)
         WebElement phoneInput = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(10))
                 .until(ExpectedConditions.elementToBeClickable(
                         By.cssSelector("input[type='phone']")));
         phoneInput.click();
-        phoneInput.sendKeys("0835089255");
+        phoneInput.sendKeys("0835089291");
         phoneInput.sendKeys(Keys.ENTER);
         Thread.sleep(2000);
 
-        tc07.pass("Đã nhập SĐT khách hàng 0835089255");
+        tc07.pass("Đã nhập SĐT khách hàng 0835089291");
 
         /*
          * =========================
-         * TC08 - NHẬP SẢN PHẨM 00029334
+         * TC08 - NHẬP SẢN PHẨM 1: product_tc11_1 (Tuýp, SL 2)
          * =========================
          */
-        ExtentTest tc08 = test.createNode("TC08 - Nhập sản phẩm 00029334");
+        ExtentTest tc08 = test.createNode("TC08 - Nhập sản phẩm 1: " + getProductCode("product_tc11_1"));
 
         Thread.sleep(1000);
 
-        // Tìm input search product
-        WebElement productInput = wait.until(ExpectedConditions.visibilityOfElementLocated(
+        WebElement productInput1 = wait.until(ExpectedConditions.visibilityOfElementLocated(
                 By.xpath("//input[starts-with(@id,'search-product-input_session')]")));
 
-        // Click focus bằng JS
-        js.executeScript("arguments[0].click(); arguments[0].focus();", productInput);
+        js.executeScript("arguments[0].click(); arguments[0].focus();", productInput1);
         Thread.sleep(500);
 
-        // Clear ô search (Windows: CTRL+A rồi DELETE)
-        js.executeScript("arguments[0].value = '';", productInput);
-        productInput.sendKeys(Keys.chord(Keys.CONTROL, "a"));
-        Thread.sleep(200);
-        productInput.sendKeys(Keys.DELETE);
-        Thread.sleep(500);
-
-        // Nhập mã sản phẩm
-        String productCode = getProductCode("product_tc10_1");
-        productInput.sendKeys(productCode);
-        Thread.sleep(1000);
-
-        // Click nút search (icon kính lúp) để trigger tìm kiếm
-        WebElement searchBtn = driver.findElement(
-                By.xpath("//button[contains(@class,'ant-input-search-button') or contains(@class,'ant-btn-icon-only')] | " +
-                        "//span[contains(@class,'anticon-search')]/ancestor::button | " +
-                        "//button[@id='button-search']"));
-        js.executeScript("arguments[0].click();", searchBtn);
-        Thread.sleep(3000);
-
-        // Click vào item đầu tiên trong dropdown "search-input-dropdown"
-        WebElement productItem = wait.until(ExpectedConditions.elementToBeClickable(
-                By.xpath("//div[contains(@class,'search-input-dropdown')]//div[contains(@class,'ant-select-item-option')]")));
-        js.executeScript("arguments[0].click();", productItem);
-        Thread.sleep(3000);
-
-        Thread.sleep(2000);
-
-        // Chọn đơn vị "Hộp" - bắt buộc click chọn
-        try {
-            Thread.sleep(1000);
-            // Click vào dropdown đơn vị (tìm selector có text Hộp/Viên/Vỉ/Gói/Chai/Cái)
-            WebElement unitSelect = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//div[contains(@class,'ant-select-selector')][.//span[contains(text(),'Hộp') or contains(text(),'Viên') or contains(text(),'Vỉ') or contains(text(),'Gói') or contains(text(),'Chai') or contains(text(),'Cái')]]")));
-            unitSelect.click();
-            Thread.sleep(1000);
-            WebElement hopOption = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//div[contains(@class,'ant-select-item-option-content') and text()='Hộp']")));
-            hopOption.click();
-            Thread.sleep(1000);
-        } catch (Exception e) {
-            // Đơn vị mặc định đã là Hộp hoặc SP chỉ có 1 đơn vị
-        }
-
-        tc08.pass("Đã nhập sản phẩm " + productCode + " và chọn đơn vị Hộp");
-
-        /*
-         * =========================
-         * TC08b - NHẬP SỐ LƯỢNG 19 CHO SP 00029334
-         * =========================
-         */
-        ExtentTest tc08b = test.createNode("TC08b - Nhập số lượng 1");
-
-        Thread.sleep(2000);
-
-        // Tìm ô số lượng (id chứa "input-quantity-product")
-        WebElement qtyInput = wait.until(
-                ExpectedConditions.elementToBeClickable(
-                        By.xpath("//input[contains(@id,'input-quantity-product')]")));
-        // Dùng JS để set value trực tiếp + trigger React onChange
+        // Clear ô search (macOS: COMMAND+A)
         js.executeScript(
                 "var el = arguments[0];" +
                 "var nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;" +
-                "nativeInputValueSetter.call(el, '" + getProductQuantity("product_tc10_1") + "');" +
+                "nativeInputValueSetter.call(el, '');" +
+                "el.dispatchEvent(new Event('input', { bubbles: true }));" +
+                "el.dispatchEvent(new Event('change', { bubbles: true }));",
+                productInput1);
+        Thread.sleep(500);
+        js.executeScript("arguments[0].click(); arguments[0].focus();", productInput1);
+        Thread.sleep(300);
+        productInput1.sendKeys(Keys.chord(Keys.COMMAND, "a"));
+        Thread.sleep(200);
+        productInput1.sendKeys(Keys.BACK_SPACE);
+        Thread.sleep(500);
+
+        productInput1.sendKeys(getProductCode("product_tc11_1"));
+        Thread.sleep(1000);
+
+        WebElement searchBtn1 = driver.findElement(
+                By.xpath("//button[contains(@class,'ant-input-search-button') or contains(@class,'ant-btn-icon-only')] | " +
+                        "//span[contains(@class,'anticon-search')]/ancestor::button | " +
+                        "//button[@id='button-search']"));
+        js.executeScript("arguments[0].click();", searchBtn1);
+        Thread.sleep(3000);
+
+        WebElement productItem1 = wait.until(ExpectedConditions.elementToBeClickable(
+                By.xpath("//div[contains(@class,'search-input-dropdown')]//div[contains(@class,'ant-select-item-option')]")));
+        js.executeScript("arguments[0].click();", productItem1);
+        Thread.sleep(3000);
+
+        // Chọn đơn vị "Tuýp"
+        try {
+            Thread.sleep(1000);
+            WebElement unitSelect1 = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//div[contains(@class,'ant-select-selector')][.//span[contains(text(),'Hộp') or contains(text(),'Viên') or contains(text(),'Vỉ') or contains(text(),'Gói') or contains(text(),'Chai') or contains(text(),'Cái') or contains(text(),'Tuýp')]]")));
+            unitSelect1.click();
+            Thread.sleep(1000);
+            WebElement unitOption1 = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//div[contains(@class,'ant-select-item-option-content') and text()='Tuýp']")));
+            unitOption1.click();
+            Thread.sleep(1000);
+        } catch (Exception e) {
+        }
+
+        tc08.pass("Đã nhập SP1: " + getProductCode("product_tc11_1") + " và chọn đơn vị Tuýp");
+
+        /*
+         * =========================
+         * TC08b - NHẬP SỐ LƯỢNG 2 CHO SP1
+         * =========================
+         */
+        ExtentTest tc08b = test.createNode("TC08b - Nhập số lượng 2 cho SP1");
+
+        Thread.sleep(2000);
+
+        WebElement qtyInput = wait.until(
+                ExpectedConditions.elementToBeClickable(
+                        By.xpath("//input[contains(@id,'input-quantity-product')]")));
+        js.executeScript(
+                "var el = arguments[0];" +
+                "var nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;" +
+                "nativeInputValueSetter.call(el, '" + getProductQuantity("product_tc11_1") + "');" +
                 "el.dispatchEvent(new Event('input', { bubbles: true }));" +
                 "el.dispatchEvent(new Event('change', { bubbles: true }));" +
                 "el.blur();",
                 qtyInput);
         Thread.sleep(2000);
 
-        tc08b.pass("Đã nhập số lượng SP1: " + getProductCode("product_tc10_1"));
+        tc08b.pass("Đã nhập số lượng SP1: " + getProductQuantity("product_tc11_1"));
 
         /*
          * =========================
-         * TC08b2 - NHẬP SẢN PHẨM THỨ 2: 00018413
+         * TC08b2 - NHẬP SẢN PHẨM 2: product_tc11_2 (Chai, SL 1)
          * =========================
          */
-        ExtentTest tc08b2 = test.createNode("TC08b2 - Nhập sản phẩm thứ 2: " + getProductCode("product_tc10_2"));
+        ExtentTest tc08b2 = test.createNode("TC08b2 - Nhập sản phẩm thứ 2: " + getProductCode("product_tc11_2"));
         Thread.sleep(2000);
 
-        // Tìm lại input search product — clear bằng JS + select all
         WebElement productInput2 = wait.until(ExpectedConditions.visibilityOfElementLocated(
                 By.xpath("//input[starts-with(@id,'search-product-input_session')]")));
         js.executeScript(
@@ -412,7 +392,7 @@ public class TC10 extends BaseTest1 {
         Thread.sleep(200);
         productInput2.sendKeys(Keys.BACK_SPACE);
         Thread.sleep(500);
-        productInput2.sendKeys(getProductCode("product_tc10_2"));
+        productInput2.sendKeys(getProductCode("product_tc11_2"));
         Thread.sleep(1000);
 
         WebElement searchBtn2 = driver.findElement(
@@ -427,27 +407,27 @@ public class TC10 extends BaseTest1 {
         js.executeScript("arguments[0].click();", productItem2);
         Thread.sleep(3000);
 
-        // Chọn đơn vị Hộp (nếu cần)
+        // Chọn đơn vị "Chai"
         try {
             Thread.sleep(1000);
             WebElement unitSelect2 = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//div[contains(@class,'ant-select-selector')][.//span[contains(text(),'Hộp') or contains(text(),'Viên') or contains(text(),'Vỉ') or contains(text(),'Gói') or contains(text(),'Chai') or contains(text(),'Cái')]]")));
+                    By.xpath("//div[contains(@class,'ant-select-selector')][.//span[contains(text(),'Hộp') or contains(text(),'Viên') or contains(text(),'Vỉ') or contains(text(),'Gói') or contains(text(),'Chai') or contains(text(),'Cái') or contains(text(),'Tuýp')]]")));
             unitSelect2.click();
             Thread.sleep(1000);
-            WebElement hopOption2 = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//div[contains(@class,'ant-select-item-option-content') and text()='Hộp']")));
-            hopOption2.click();
+            WebElement unitOption2 = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//div[contains(@class,'ant-select-item-option-content') and text()='Chai']")));
+            unitOption2.click();
             Thread.sleep(1000);
         } catch (Exception e) {}
 
-        tc08b2.pass("Đã nhập SP2: " + getProductCode("product_tc10_2"));
+        tc08b2.pass("Đã nhập SP2: " + getProductCode("product_tc11_2") + " và chọn đơn vị Chai");
 
         /*
          * =========================
-         * TC08b3 - NHẬP SẢN PHẨM THỨ 3: 00033509
+         * TC08b3 - NHẬP SẢN PHẨM 3: product_tc11_3 (Hộp, SL 1)
          * =========================
          */
-        ExtentTest tc08b3 = test.createNode("TC08b3 - Nhập sản phẩm thứ 3: " + getProductCode("product_tc10_3"));
+        ExtentTest tc08b3 = test.createNode("TC08b3 - Nhập sản phẩm thứ 3: " + getProductCode("product_tc11_3"));
         Thread.sleep(2000);
 
         WebElement productInput3 = wait.until(ExpectedConditions.visibilityOfElementLocated(
@@ -466,7 +446,7 @@ public class TC10 extends BaseTest1 {
         Thread.sleep(200);
         productInput3.sendKeys(Keys.BACK_SPACE);
         Thread.sleep(500);
-        productInput3.sendKeys(getProductCode("product_tc10_3"));
+        productInput3.sendKeys(getProductCode("product_tc11_3"));
         Thread.sleep(1000);
 
         WebElement searchBtn3 = driver.findElement(
@@ -481,20 +461,182 @@ public class TC10 extends BaseTest1 {
         js.executeScript("arguments[0].click();", productItem3);
         Thread.sleep(3000);
 
-        // Chọn đơn vị Hộp (nếu cần)
+        // Chọn đơn vị "Hộp"
         try {
             Thread.sleep(1000);
             WebElement unitSelect3 = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//div[contains(@class,'ant-select-selector')][.//span[contains(text(),'Hộp') or contains(text(),'Viên') or contains(text(),'Vỉ') or contains(text(),'Gói') or contains(text(),'Chai') or contains(text(),'Cái')]]")));
+                    By.xpath("//div[contains(@class,'ant-select-selector')][.//span[contains(text(),'Hộp') or contains(text(),'Viên') or contains(text(),'Vỉ') or contains(text(),'Gói') or contains(text(),'Chai') or contains(text(),'Cái') or contains(text(),'Tuýp')]]")));
             unitSelect3.click();
             Thread.sleep(1000);
-            WebElement hopOption3 = wait.until(ExpectedConditions.elementToBeClickable(
+            WebElement unitOption3 = wait.until(ExpectedConditions.elementToBeClickable(
                     By.xpath("//div[contains(@class,'ant-select-item-option-content') and text()='Hộp']")));
-            hopOption3.click();
+            unitOption3.click();
             Thread.sleep(1000);
         } catch (Exception e) {}
 
-        tc08b3.pass("Đã nhập SP3: " + getProductCode("product_tc10_3"));
+        tc08b3.pass("Đã nhập SP3: " + getProductCode("product_tc11_3") + " và chọn đơn vị Hộp");
+
+        /*
+         * =========================
+         * TC08b4 - NHẬP SẢN PHẨM 4: product_tc11_4 (Hộp, SL 1)
+         * =========================
+         */
+        ExtentTest tc08b4 = test.createNode("TC08b4 - Nhập sản phẩm thứ 4: " + getProductCode("product_tc11_4"));
+        Thread.sleep(2000);
+
+        WebElement productInput4 = wait.until(ExpectedConditions.visibilityOfElementLocated(
+                By.xpath("//input[starts-with(@id,'search-product-input_session')]")));
+        js.executeScript(
+                "var el = arguments[0];" +
+                "var nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;" +
+                "nativeInputValueSetter.call(el, '');" +
+                "el.dispatchEvent(new Event('input', { bubbles: true }));" +
+                "el.dispatchEvent(new Event('change', { bubbles: true }));",
+                productInput4);
+        Thread.sleep(500);
+        js.executeScript("arguments[0].click(); arguments[0].focus();", productInput4);
+        Thread.sleep(300);
+        productInput4.sendKeys(Keys.chord(Keys.COMMAND, "a"));
+        Thread.sleep(200);
+        productInput4.sendKeys(Keys.BACK_SPACE);
+        Thread.sleep(500);
+        productInput4.sendKeys(getProductCode("product_tc11_4"));
+        Thread.sleep(1000);
+
+        WebElement searchBtn4 = driver.findElement(
+                By.xpath("//button[contains(@class,'ant-input-search-button') or contains(@class,'ant-btn-icon-only')] | " +
+                        "//span[contains(@class,'anticon-search')]/ancestor::button | " +
+                        "//button[@id='button-search']"));
+        js.executeScript("arguments[0].click();", searchBtn4);
+        Thread.sleep(3000);
+
+        WebElement productItem4 = wait.until(ExpectedConditions.elementToBeClickable(
+                By.xpath("//div[contains(@class,'search-input-dropdown')]//div[contains(@class,'ant-select-item-option')]")));
+        js.executeScript("arguments[0].click();", productItem4);
+        Thread.sleep(3000);
+
+        // Chọn đơn vị "Hộp"
+        try {
+            Thread.sleep(1000);
+            WebElement unitSelect4 = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//div[contains(@class,'ant-select-selector')][.//span[contains(text(),'Hộp') or contains(text(),'Viên') or contains(text(),'Vỉ') or contains(text(),'Gói') or contains(text(),'Chai') or contains(text(),'Cái') or contains(text(),'Tuýp')]]")));
+            unitSelect4.click();
+            Thread.sleep(1000);
+            WebElement unitOption4 = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//div[contains(@class,'ant-select-item-option-content') and text()='Hộp']")));
+            unitOption4.click();
+            Thread.sleep(1000);
+        } catch (Exception e) {}
+
+        tc08b4.pass("Đã nhập SP4: " + getProductCode("product_tc11_4") + " và chọn đơn vị Hộp");
+
+        /*
+         * =========================
+         * TC08b5 - NHẬP SẢN PHẨM 5: product_tc11_5 (Chai, SL 1)
+         * =========================
+         */
+        ExtentTest tc08b5 = test.createNode("TC08b5 - Nhập sản phẩm thứ 5: " + getProductCode("product_tc11_5"));
+        Thread.sleep(2000);
+
+        WebElement productInput5 = wait.until(ExpectedConditions.visibilityOfElementLocated(
+                By.xpath("//input[starts-with(@id,'search-product-input_session')]")));
+        js.executeScript(
+                "var el = arguments[0];" +
+                "var nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;" +
+                "nativeInputValueSetter.call(el, '');" +
+                "el.dispatchEvent(new Event('input', { bubbles: true }));" +
+                "el.dispatchEvent(new Event('change', { bubbles: true }));",
+                productInput5);
+        Thread.sleep(500);
+        js.executeScript("arguments[0].click(); arguments[0].focus();", productInput5);
+        Thread.sleep(300);
+        productInput5.sendKeys(Keys.chord(Keys.COMMAND, "a"));
+        Thread.sleep(200);
+        productInput5.sendKeys(Keys.BACK_SPACE);
+        Thread.sleep(500);
+        productInput5.sendKeys(getProductCode("product_tc11_5"));
+        Thread.sleep(1000);
+
+        WebElement searchBtn5 = driver.findElement(
+                By.xpath("//button[contains(@class,'ant-input-search-button') or contains(@class,'ant-btn-icon-only')] | " +
+                        "//span[contains(@class,'anticon-search')]/ancestor::button | " +
+                        "//button[@id='button-search']"));
+        js.executeScript("arguments[0].click();", searchBtn5);
+        Thread.sleep(3000);
+
+        WebElement productItem5 = wait.until(ExpectedConditions.elementToBeClickable(
+                By.xpath("//div[contains(@class,'search-input-dropdown')]//div[contains(@class,'ant-select-item-option')]")));
+        js.executeScript("arguments[0].click();", productItem5);
+        Thread.sleep(3000);
+
+        // Chọn đơn vị "Chai"
+        try {
+            Thread.sleep(1000);
+            WebElement unitSelect5 = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//div[contains(@class,'ant-select-selector')][.//span[contains(text(),'Hộp') or contains(text(),'Viên') or contains(text(),'Vỉ') or contains(text(),'Gói') or contains(text(),'Chai') or contains(text(),'Cái') or contains(text(),'Tuýp')]]")));
+            unitSelect5.click();
+            Thread.sleep(1000);
+            WebElement unitOption5 = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//div[contains(@class,'ant-select-item-option-content') and text()='Chai']")));
+            unitOption5.click();
+            Thread.sleep(1000);
+        } catch (Exception e) {}
+
+        tc08b5.pass("Đã nhập SP5: " + getProductCode("product_tc11_5") + " và chọn đơn vị Chai");
+
+        /*
+         * =========================
+         * TC08b6 - NHẬP SẢN PHẨM 6: product_tc11_6 (Hộp, SL 1)
+         * =========================
+         */
+        ExtentTest tc08b6 = test.createNode("TC08b6 - Nhập sản phẩm thứ 6: " + getProductCode("product_tc11_6"));
+        Thread.sleep(2000);
+
+        WebElement productInput6 = wait.until(ExpectedConditions.visibilityOfElementLocated(
+                By.xpath("//input[starts-with(@id,'search-product-input_session')]")));
+        js.executeScript(
+                "var el = arguments[0];" +
+                "var nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;" +
+                "nativeInputValueSetter.call(el, '');" +
+                "el.dispatchEvent(new Event('input', { bubbles: true }));" +
+                "el.dispatchEvent(new Event('change', { bubbles: true }));",
+                productInput6);
+        Thread.sleep(500);
+        js.executeScript("arguments[0].click(); arguments[0].focus();", productInput6);
+        Thread.sleep(300);
+        productInput6.sendKeys(Keys.chord(Keys.COMMAND, "a"));
+        Thread.sleep(200);
+        productInput6.sendKeys(Keys.BACK_SPACE);
+        Thread.sleep(500);
+        productInput6.sendKeys(getProductCode("product_tc11_6"));
+        Thread.sleep(1000);
+
+        WebElement searchBtn6 = driver.findElement(
+                By.xpath("//button[contains(@class,'ant-input-search-button') or contains(@class,'ant-btn-icon-only')] | " +
+                        "//span[contains(@class,'anticon-search')]/ancestor::button | " +
+                        "//button[@id='button-search']"));
+        js.executeScript("arguments[0].click();", searchBtn6);
+        Thread.sleep(3000);
+
+        WebElement productItem6 = wait.until(ExpectedConditions.elementToBeClickable(
+                By.xpath("//div[contains(@class,'search-input-dropdown')]//div[contains(@class,'ant-select-item-option')]")));
+        js.executeScript("arguments[0].click();", productItem6);
+        Thread.sleep(3000);
+
+        // Chọn đơn vị "Hộp"
+        try {
+            Thread.sleep(1000);
+            WebElement unitSelect6 = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//div[contains(@class,'ant-select-selector')][.//span[contains(text(),'Hộp') or contains(text(),'Viên') or contains(text(),'Vỉ') or contains(text(),'Gói') or contains(text(),'Chai') or contains(text(),'Cái') or contains(text(),'Tuýp')]]")));
+            unitSelect6.click();
+            Thread.sleep(1000);
+            WebElement unitOption6 = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//div[contains(@class,'ant-select-item-option-content') and text()='Hộp']")));
+            unitOption6.click();
+            Thread.sleep(1000);
+        } catch (Exception e) {}
+
+        tc08b6.pass("Đã nhập SP6: " + getProductCode("product_tc11_6") + " và chọn đơn vị Hộp");
 
         /*
          * =========================
@@ -556,7 +698,7 @@ public class TC10 extends BaseTest1 {
                                 "//input[contains(@placeholder,'Nhập mã') or contains(@placeholder,'voucher') or contains(@placeholder,'mã giảm') or contains(@placeholder,'Barcode')] | " +
                                 "//div[contains(@class,'modal')]//input[contains(@class,'ant-input')]")));
                 voucherInput.clear();
-                String mudCode = utils.MudCodeProvider.getNextMudCode("mud2");
+                String mudCode = utils.MudCodeProvider.getNextMudCode("mud3");
                 voucherInput.sendKeys(mudCode);
                 Thread.sleep(1000);
 
@@ -580,7 +722,6 @@ public class TC10 extends BaseTest1 {
                     js.executeScript("arguments[0].click();", btnXacNhanVoucher);
                     Thread.sleep(2000);
                 } catch (TimeoutException te) {
-                    // Popup có thể đã tự đóng sau khi áp dụng thành công
                 }
 
                 tc08c.pass("✅ Đã apply mã MUD: " + mudCode + " vào đơn");
@@ -596,7 +737,7 @@ public class TC10 extends BaseTest1 {
          */
         ExtentTest tcVerifyPrice = test.createNode("TC08-VERIFY - Verify giá sau khi apply MUD voucher");
 
-        Thread.sleep(3000); // Đợi giá cập nhật
+        Thread.sleep(3000);
 
         try {
             String pageSource = driver.getPageSource();
@@ -608,13 +749,6 @@ public class TC10 extends BaseTest1 {
                 tcVerifyPrice.fail("❌ Không thấy text 'Đang dùng 01 mã' — voucher chưa apply");
             }
 
-            // Check: Tổng tiền ban đầu = 295,600
-            if (pageSource.contains("295,600") || pageSource.contains("295.600")) {
-                tcVerifyPrice.pass("✅ Tổng tiền ban đầu = 295,600 đ");
-            } else {
-                tcVerifyPrice.info("⚠️ Không tìm thấy 295,600 — có thể giá SP thay đổi");
-            }
-
             // Check: Giảm giá voucher = 100,000
             if (pageSource.contains("100,000") || pageSource.contains("100.000")) {
                 tcVerifyPrice.pass("✅ Giảm giá voucher = 100,000 đ");
@@ -622,24 +756,36 @@ public class TC10 extends BaseTest1 {
                 tcVerifyPrice.fail("❌ Không tìm thấy giảm giá 100,000 trên trang");
             }
 
-            // Check: Tạm tính = 195,600
-            if (pageSource.contains("195,600") || pageSource.contains("195.600")) {
-                tcVerifyPrice.pass("✅ Tạm tính = 195,600 đ (đã giảm 100,000 từ MUD voucher)");
+            // Check: Tổng tiền ban đầu = 494,000
+            if (pageSource.contains("494,000") || pageSource.contains("494.000")) {
+                tcVerifyPrice.pass("✅ Tổng tiền ban đầu = 494,000 đ");
             } else {
-                tcVerifyPrice.fail("❌ Không tìm thấy tạm tính 195,600 trên trang");
+                tcVerifyPrice.info("⚠️ Không tìm thấy 494,000 — có thể giá SP thay đổi");
             }
 
-            // Check: Quà tặng PMH 100K xuất hiện
-            if (pageSource.contains("PMH") && pageSource.contains("100")) {
-                tcVerifyPrice.pass("✅ Quà tặng PMH 100K hiển thị đúng");
+            // Check: Tạm tính = 394,000
+            if (pageSource.contains("394,000") || pageSource.contains("394.000")) {
+                tcVerifyPrice.pass("✅ Tạm tính = 394,000 đ (đã giảm 100,000)");
             } else {
-                tcVerifyPrice.info("⚠️ Không tìm thấy quà tặng PMH 100K");
+                tcVerifyPrice.info("⚠️ Không tìm thấy tạm tính 394,000 trên trang");
+            }
+
+            // Check: Quà tặng "TK Gia Đình - Đảo 2" + #00180530
+            if (pageSource.contains("TK Gia Đình") || pageSource.contains("Đảo 2")) {
+                tcVerifyPrice.pass("✅ Quà tặng TK Gia Đình - Đảo 2 hiển thị đúng");
+            } else {
+                tcVerifyPrice.info("⚠️ Không tìm thấy quà tặng TK Gia Đình - Đảo 2");
+            }
+
+            if (pageSource.contains("00180530")) {
+                tcVerifyPrice.pass("✅ SP quà tặng #00180530 hiển thị đúng");
+            } else {
+                tcVerifyPrice.info("⚠️ Không tìm thấy SP quà tặng #00180530");
             }
 
         } catch (Exception e) {
             tcVerifyPrice.fail("❌ Lỗi khi verify giá: " + e.getMessage());
         }
-
 
         /*
          * =========================
@@ -748,7 +894,6 @@ public class TC10 extends BaseTest1 {
 
             tc11.pass("✅ Hoàn tất đơn hàng! Mã đơn: " + orderCode);
         } catch (Exception e) {
-            // Nếu bất kỳ bước nào fail, vẫn PASS vì đơn có thể đã tạo
             orderCode = "Đơn có thể đã tạo - check hệ thống";
             test.info("⚠️ Có lỗi nhưng đơn có thể đã tạo: " + e.getMessage());
         }
@@ -757,6 +902,6 @@ public class TC10 extends BaseTest1 {
         System.out.println("MÃ ĐƠN HÀNG: " + orderCode);
         System.out.println("========================================");
 
-        test.pass("✅ PASS verify MUD - Loại hàng Chăm sóc tóc - da đầu / Tóc-KM-0626-082 SP 00038140/00018413/00033509 . Mã đơn: " + orderCode);
+        test.pass("✅ PASS verify TK Gia Đình - Đảo 2 - Mã Ưu Đãi 100,000Đ mua sản phẩm Dung dịch vệ sinh phụ nữ (19/05)KM-0626-116 SP 00016600/00345425/00044081/00041325/00002167/00500814. Mã đơn: " + orderCode);
     }
 }

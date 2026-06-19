@@ -2,7 +2,7 @@
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
 
 <!-- parallel="classes" + thread-count="6" = 6 class chạy cùng lúc -->
-<suite name="RSA  CI Suite" verbose="1" parallel="classes" thread-count="4">
+<suite name="RSA  CI Suite" verbose="1" parallel="classes" thread-count="13">
 
     <listeners>
         <listener class-name="listeners.TestListener"/>
@@ -12,10 +12,19 @@
     <test name="UAT Tests">
         <classes>
             <!-- Promotion RSA Tests -->
+            <class name="testcases.PromotionRsa.TC1"/>
+            <class name="testcases.PromotionRsa.TC2"/>
+            <class name="testcases.PromotionRsa.TC3"/>
+            <class name="testcases.PromotionRsa.TC4"/>
+            <class name="testcases.PromotionRsa.TC5"/>
+            <class name="testcases.PromotionRsa.TC6"/>
             <class name="testcases.PromotionRsa.TC7"/>
             <class name="testcases.PromotionRsa.TC8"/>
             <class name="testcases.PromotionRsa.TC9"/>
             <class name="testcases.PromotionRsa.TC10"/>
+            <class name="testcases.PromotionRsa.TC11"/>
+            <class name="testcases.PromotionRsa.TC12"/>
+            <class name="testcases.PromotionRsa.TC13"/>
      
 
             <!-- Family Tests -->
@@ -34,7 +43,8 @@
 </suite>
 <!--
 === LỆNH RUN TERMINAL ===
-cd ".kiro\Automation selenium java\Selenium-java-master"; mvn clean test
+cd ".kiro/Automation selenium java/Selenium-java-master" && mvn clean test
+
 
 CMD
 cd /d "C:\Users\khangld10\Documents\AI-MACAI2\.kiro\Automation selenium java\Selenium-java-master" & mvn clean test -Dfile.encoding=UTF-8

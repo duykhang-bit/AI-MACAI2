@@ -1,0 +1,47 @@
+{
+  "mcpServers": {
+    "ai-context-engine-company": {
+      "url": "https://ai-dlc.frt.vn/mcp",
+      "headers": {
+        "Authorization": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJxM2xrQzF2aEVJNnIzbHB6dDdfaFNKTVZ4S1QxdFVBSW9meHJsaTVHMFNZIn0.eyJleHAiOjE3ODExNDYwMTQsImlhdCI6MTc4MTE0NDIxNCwiYXV0aF90aW1lIjoxNzc5MjYxOTI4LCJqdGkiOiIxMmYwYmI2Ni1mNjZjLTRmOTEtYTMxYS0zZTIyYjBiODUwYjUiLCJpc3MiOiJodHRwczovL2tleWNsb2FrLmZydC52bi9yZWFsbXMvYWluLXByb2QiLCJhdWQiOiJhY2NvdW50Iiwic3ViIjoiZDEzMTIxODktMjZjNy00NWEwLWEzYjktNTY3YjU5YjFkOWVmIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoicG9ydGFsIiwic2Vzc2lvbl9zdGF0ZSI6IjUxZmRiNjg4LWQyNWYtNGQwNy04NGNhLTRlZmY1MGY4YTkwMyIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsiZGVmYXVsdC1yb2xlcy1haW4tcHJvZCIsIm9mZmxpbmVfYWNjZXNzIiwidW1hX2F1dGhvcml6YXRpb24iXX0sInJlc291cmNlX2FjY2VzcyI6eyJhY2NvdW50Ijp7InJvbGVzIjpbIm1hbmFnZS1hY2NvdW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJ2aWV3LXByb2ZpbGUiXX19LCJzY29wZSI6Im9wZW5pZCBlbWFpbCBvZmZsaW5lX2FjY2VzcyBwcm9maWxlIiwic2lkIjoiNTFmZGI2ODgtZDI1Zi00ZDA3LTg0Y2EtNGVmZjUwZjhhOTAzIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsIm5hbWUiOiJLaGFuZyBMw6ogRHV5IiwiZ3JvdXBzIjpbIi9BSVgvUEhBUk1BQ1kvdGVzdCJdLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJraGFuZ2xkMTAiLCJnaXZlbl9uYW1lIjoiS2hhbmciLCJmYW1pbHlfbmFtZSI6IkzDqiBEdXkiLCJlbWFpbCI6ImtoYW5nbGQxMEBmcHQuY29tIn0.Bx7Lxf_dzR4il7U4Q2BunrJXk_eHEgFI5xdMP87EwA_ctrMXnfAeYZ4K_lUGvmkQTlTHK72AFhsvX0REhqt2rZjX0AleKes6B-aWZpIMfTWCrYsNE68qoGnoVqTIwDaXl8_Wkvbf4SbyBjPhH9OwfY968aLQ8aS-h7pwBmJa1IWXwlTU6-M3GujaiEq7VQBIfR3bnjE996ED3ktSXb_WGuLkO737mPYefrdwjbRUaQTxciqBXsxIGhWPNck-6yeus_YkDLXzlzRpDMaQNGFh_ogoQJFRR6gMEE6hAMUcu5S85RKe9fEt683RYfQRs3_eIb7IIdr8LyD_1zAb5G5X-Q",
+        "X-API-Key": "ac2b798978c5ed0af70fab4b9df4b993ac0565604319a0199d6aaa56d5561823",
+        "X-Member-Id": "khangld10@fpt.com",
+        "X-GitLab-Token": "",
+        "X-Confluence-Token": "ODk0NjA1MTA5ODAyOg+0rnHSGv5pF0z1JAeGUbbGNB8u",
+        "X-Confluence-Username": "khangld10",
+        "X-Jira-Token": "MDIzNjc5OTYyNDgwOpH+jl4QLrFiMSyD2uLHfsyMsKDn"
+      },
+      "autoApprove": [
+        "jira_add_comment",
+        "jira_get_issue"
+      ]
+    },
+    "jira": {
+      "command": "uvx",
+      "args": [
+        "mcp-atlassian"
+      ],
+      "env": {
+        "JIRA_URL": "https://reqs.frt.vn",
+        "JIRA_PERSONAL_TOKEN": "MDIzNjc5OTYyNDgwOpH+jl4QLrFiMSyD2uLHfsyMsKDn"
+      },
+      "disabled": true,
+      "autoApprove": []
+    },
+    "postman-newman": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-postman"
+      ],
+      "env": {
+        "POSTMAN_COLLECTION_PATH": ".kiro/postman/Family p.postman_collection.json"
+      },
+      "disabled": true,
+      "autoApprove": [
+        "run_collection",
+        "run_request"
+      ]
+    }
+  }
+}
