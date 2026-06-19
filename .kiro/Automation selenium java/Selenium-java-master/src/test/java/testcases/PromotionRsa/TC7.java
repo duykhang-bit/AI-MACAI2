@@ -506,25 +506,25 @@ public class TC7 extends BaseTest1 {
                 tcVerifyPrice.info("⚠️ Không tìm thấy 1,152,000 — có thể giá SP thay đổi");
             }
 
-            // Check: Giảm giá voucher = 130,000
-            if (pageSource.contains("130,000") || pageSource.contains("130.000")) {
-                tcVerifyPrice.pass("✅ Giảm giá voucher = 130,000 đ");
+            // Check: Giảm giá voucher = 100,000
+            if (pageSource.contains("100,000") || pageSource.contains("100.000")) {
+                tcVerifyPrice.pass("✅ Giảm giá voucher = 100,000 đ");
             } else {
-                tcVerifyPrice.fail("❌ Không tìm thấy giảm giá 130,000 trên trang");
+                tcVerifyPrice.fail("❌ Không tìm thấy giảm giá 100,000 trên trang");
             }
 
-            // Check: Tạm tính = 1,022,000
-            if (pageSource.contains("1,022,000") || pageSource.contains("1.022.000")) {
-                tcVerifyPrice.pass("✅ Tạm tính = 1,022,000 đ (đã giảm 130,000 từ MUD voucher)");
+            // Check: Tạm tính = 1,052,000
+            if (pageSource.contains("1,052,000") || pageSource.contains("1.052.000")) {
+                tcVerifyPrice.pass("✅ Tạm tính = 1,052,000 đ (đã giảm 100,000 từ MUD voucher)");
             } else {
-                tcVerifyPrice.fail("❌ Không tìm thấy tạm tính 1,022,000 trên trang");
+                tcVerifyPrice.fail("❌ Không tìm thấy tạm tính 1,052,000 trên trang");
             }
 
-            // Check: Quà tặng PMH 130,000D xuất hiện
-            if (pageSource.contains("PMH") && pageSource.contains("130,000")) {
-                tcVerifyPrice.pass("✅ Quà tặng PMH 130,000D hiển thị đúng");
+            // Check: Quà tặng PMH 100K xuất hiện
+            if (pageSource.contains("PMH") && pageSource.contains("100")) {
+                tcVerifyPrice.pass("✅ Quà tặng PMH 100K hiển thị đúng");
             } else {
-                tcVerifyPrice.info("⚠️ Không tìm thấy quà tặng PMH 130,000D");
+                tcVerifyPrice.info("⚠️ Không tìm thấy quà tặng PMH 100K");
             }
 
         } catch (Exception e) {

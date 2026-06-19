@@ -318,7 +318,7 @@ public class TC5 extends BaseTest1 {
         Thread.sleep(500);
 
         // Nhập mã sản phẩm
-        String product3 = getProductCode("product7");
+        String product3 = getProductCode("product_tc5");
         productInput.sendKeys(product3);
         Thread.sleep(1000);
 
@@ -373,7 +373,7 @@ public class TC5 extends BaseTest1 {
         js.executeScript(
                 "var el = arguments[0];" +
                 "var nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;" +
-                "nativeInputValueSetter.call(el, '" + getProductQuantity("product7") + "');" +
+                "nativeInputValueSetter.call(el, '" + getProductQuantity("product_tc5") + "');" +
                 "el.dispatchEvent(new Event('input', { bubbles: true }));" +
                 "el.dispatchEvent(new Event('change', { bubbles: true }));" +
                 "el.blur();",
