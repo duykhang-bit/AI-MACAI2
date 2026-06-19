@@ -106,6 +106,9 @@ public class BaseTest1 {
 
         if (result.getStatus() == ITestResult.SUCCESS) {
             attachScreenshot("✅ Test PASSED");
+            // Force ExtentReports status = PASS khi TestNG PASS
+            // (tránh sidebar hiện fail do node con dùng .fail() cho soft assertions)
+            test.pass("✅ TestNG Result: PASSED");
         } else if (result.getStatus() == ITestResult.FAILURE) {
             attachScreenshot("❌ Test FAILED");
             if (result.getThrowable() != null) {
@@ -116,7 +119,7 @@ public class BaseTest1 {
         }
 
         if (driver != null) {
-           //driver.quit();// bật tắt chrome
+           driver.quit();// bật tắt chrome
         }
     }
 

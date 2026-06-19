@@ -2,7 +2,7 @@
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
 
 <!-- parallel="classes" + thread-count="6" = 6 class chạy cùng lúc -->
-<suite name="RSA  CI Suite" verbose="1" parallel="classes" thread-count="13">
+<suite name="RSA  CI Suite" verbose="1" parallel="classes" thread-count="4">
 
     <listeners>
         <listener class-name="listeners.TestListener"/>
@@ -43,7 +43,9 @@
 </suite>
 <!--
 === LỆNH RUN TERMINAL ===
-cd ".kiro/Automation selenium java/Selenium-java-master" && mvn clean test
+
+cd "/Users/leduykhang/Documents/Automation/AI-MACAI2/.kiro/Automation selenium java/Selenium-java-master" && mvn clean test -DsuiteXmlFile=src/test/resources/testng.xml
+
 
 
 CMD
