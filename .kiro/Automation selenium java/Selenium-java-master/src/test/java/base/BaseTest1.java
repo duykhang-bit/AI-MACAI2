@@ -72,7 +72,12 @@ public class BaseTest1 {
      * ========================= */
     @BeforeMethod
     public void setup(ITestResult result) {
-        test = extent.createTest(result.getMethod().getMethodName());
+        String testName = result.getMethod().getMethodName();
+        String desc = result.getMethod().getDescription();
+        if (desc != null && !desc.isEmpty()) {
+            testName = testName + " - " + desc;
+        }
+        test = extent.createTest(testName);
 
         WebDriverManager.chromedriver().setup();
 
@@ -111,12 +116,29 @@ public class BaseTest1 {
         }
 
         if (driver != null) {
-           driver.quit();// bật tắt chrome
+           //driver.quit();// bật tắt chrome
         }
     }
 
     @AfterSuite
-    public void flushReport() {
+    public void flushReport(org.testng.ITestContext context) {
+        // Tổng kết hiện trên sidebar report
+        int total = context.getAllTestMethods().length;
+        int passed = context.getPassedTests().size();
+        int failed = context.getFailedTests().size();
+        int skipped = context.getSkippedTests().size();
+        double passRate = total > 0 ? (passed * 100.0 / total) : 0;
+
+        com.aventstack.extentreports.ExtentTest summary = extent.createTest(
+                "📊 TỔNG KẾT: " + total + " TC | ✅" + passed + " Pass | ❌" + failed + " Fail | " + String.format("%.0f%%", passRate));
+        summary.info("📋 Total: " + total + " | ✅ Passed: " + passed + " | ❌ Failed: " + failed + " | ⏭️ Skipped: " + skipped);
+        summary.info("📊 Pass Rate: " + String.format("%.1f%%", passRate));
+        if (failed == 0) {
+            summary.pass("🎉 ALL TESTS PASSED!");
+        } else {
+            summary.fail("⚠️ " + failed + " test(s) FAILED");
+        }
+
         extent.flush();
     }
 

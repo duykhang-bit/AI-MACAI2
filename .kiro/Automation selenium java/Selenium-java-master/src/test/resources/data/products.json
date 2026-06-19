@@ -1,0 +1,50 @@
+{
+  "product1": {
+    "code": "00029334",
+    "quantity": "19",
+    "unit": "Hộp",
+    "note": "SP dùng cho WebRSAUAT (Family) - đơn bán hàng thường"
+  },
+  "product2": {
+    "code": "00017891",
+    "quantity": "1",
+    "unit": "Hộp",
+    "note": "SP thứ 2 dùng cho WebRSAUAT (Family) - đơn bán hàng thường"
+  },
+  "product3": {
+    "code": "00042994",
+    "quantity": "1",
+    "unit": "Hộp",
+    "note": "TC1 - CTKM nhóm hàng giảm giá KM-0626-070 | Giảm 5,000đ | Giá gốc 250,000 → Tạm tính 245,000"
+  },
+  "product4": {
+    "code": "00033668",
+    "quantity": "1",
+    "unit": "Hộp",
+    "note": "TC2 - CTKM loại hàng giảm giá KM-0626-115 | Giảm 5,000đ | Giá gốc 715,000 → Tạm tính 710,000"
+  },
+  "product5": {
+    "code": "C042300000097",
+    "quantity": "1",
+    "unit": "Chai",
+    "note": "TC3 - CTKM sản phẩm giảm giá KM-0626-071 | Giảm 7,000đ | Giá gốc 209,000 → Tạm tính 202,000"
+  },
+  "product6": {
+    "code": "C052300000457",
+    "quantity": "10",
+    "unit": "Hộp",
+    "note": "TC4 - CTKM tặng phẩm 20k KM-0626-074 | Voucher 20,000đ | Giá gốc 2,800,000 → Tạm tính 2,780,000"
+  },
+  "product7": {
+    "code": "00503257",
+    "quantity": "1",
+    "unit": "Hộp",
+    "note": "TC5 - CTKM đơn hàng tặng PMH 70k KM-0626-075 | Voucher 70,000đ | Giá gốc 1,152,000 → Tạm tính 1,082,000"
+  },
+  "product8": {
+    "code": "00051710",
+    "quantity": "1",
+    "unit": "Bộ",
+    "note": "TC6 - CTKM Combo KM-0626-034 | Giảm 600,000đ | Giá gốc 2,140,000 → Tạm tính 1,540,000 | SP combo click 'Thêm vào giỏ hàng'"
+  }
+}
