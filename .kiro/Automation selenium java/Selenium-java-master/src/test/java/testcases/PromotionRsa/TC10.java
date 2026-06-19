@@ -31,7 +31,7 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import listeners.TestListener;
 
 @Listeners(TestListener.class)
-public class TC7 extends BaseTest1 {
+public class TC10 extends BaseTest1 {
 
     // Đọc sản phẩm từ file data/products.json
     private JsonObject productsData;
@@ -57,7 +57,7 @@ public class TC7 extends BaseTest1 {
     }
 
     private String getMudCode(int index) {
-        return loadProducts().getAsJsonObject("mud").getAsJsonArray("codes").get(index).getAsString();
+        return loadProducts().getAsJsonObject("mud2").getAsJsonArray("codes").get(index).getAsString();
     }
 
     @Override
@@ -93,8 +93,8 @@ public class TC7 extends BaseTest1 {
         wait = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(30));
     }
 
-    @Test(priority = 1, description = "FLOW - MUD - loại hàng giảm giá ", invocationCount = 1)
-    public void TC07 () throws InterruptedException {
+    @Test(priority = 1, description = "FLOW - MUD - Loại hàng Chăm sóc tóc - da đầu / Tóc  ", invocationCount = 1)
+    public void TC010 () throws InterruptedException {
 
         JavascriptExecutor js = (JavascriptExecutor) driver;
 
@@ -396,7 +396,7 @@ public class TC7 extends BaseTest1 {
 
         Thread.sleep(2000);
 
-        // Click link "Nhập mã KM" ở panel bên phải (khu vực Mã giảm giá)
+        // Click link "Nhập mã KM" hoặc "Mã giảm giá"
         try {
             // Scroll xuống cuối panel bên phải để thấy "Nhập mã KM"
             js.executeScript("window.scrollTo(0, document.body.scrollHeight);");
@@ -421,44 +421,43 @@ public class TC7 extends BaseTest1 {
                 js.executeScript("arguments[0].click();", nhapMaKM);
                 Thread.sleep(2000);
 
-            // Nhập mã voucher vào ô input trong popup/dialog "Mã giảm giá"
-            // Ô input có thể là input text bình thường trong ant-modal hoặc trực tiếp trên panel
-            WebElement voucherInput = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//div[contains(@class,'ant-modal')]//input[@type='text'] | " +
-                            "//div[contains(@class,'ant-modal')]//input[not(@type='hidden') and not(@type='checkbox') and not(@type='radio')] | " +
-                            "//div[contains(@class,'ant-modal')]//input[contains(@class,'ant-input')] | " +
-                            "//input[contains(@placeholder,'Nhập mã') or contains(@placeholder,'voucher') or contains(@placeholder,'mã giảm') or contains(@placeholder,'Barcode')] | " +
-                            "//div[contains(@class,'modal')]//input[contains(@class,'ant-input')]")));
-            voucherInput.clear();
-            String mudCode = utils.MudCodeProvider.getNextMudCode("mud");
-            voucherInput.sendKeys(mudCode);
-            Thread.sleep(1000);
+                // Đợi popup "Mã giảm giá" xuất hiện và nhập mã voucher
+                WebElement voucherInput = wait.until(ExpectedConditions.elementToBeClickable(
+                        By.xpath("//div[contains(@class,'ant-modal')]//input[@type='text'] | " +
+                                "//div[contains(@class,'ant-modal')]//input[not(@type='hidden') and not(@type='checkbox') and not(@type='radio')] | " +
+                                "//div[contains(@class,'ant-modal')]//input[contains(@class,'ant-input')] | " +
+                                "//input[contains(@placeholder,'Nhập mã') or contains(@placeholder,'voucher') or contains(@placeholder,'mã giảm') or contains(@placeholder,'Barcode')] | " +
+                                "//div[contains(@class,'modal')]//input[contains(@class,'ant-input')]")));
+                voucherInput.clear();
+                String mudCode = utils.MudCodeProvider.getNextMudCode("mud2");
+                voucherInput.sendKeys(mudCode);
+                Thread.sleep(1000);
 
-            // Click "Áp dụng" — có thể là button hoặc link text
-            WebElement btnApDung = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//div[contains(@class,'ant-modal')]//button[contains(.,'Áp dụng')] | " +
-                            "//div[contains(@class,'ant-modal')]//*[contains(text(),'Áp dụng')] | " +
-                            "//button[contains(.,'Áp dụng')] | " +
-                            "//a[contains(text(),'Áp dụng')] | " +
-                            "//span[contains(text(),'Áp dụng')]/ancestor::button | " +
-                            "//span[contains(text(),'Áp dụng')]")));
-            js.executeScript("arguments[0].click();", btnApDung);
-            Thread.sleep(3000);
+                // Click "Áp dụng"
+                WebElement btnApDung = wait.until(ExpectedConditions.elementToBeClickable(
+                        By.xpath("//div[contains(@class,'ant-modal')]//button[contains(.,'Áp dụng')] | " +
+                                "//div[contains(@class,'ant-modal')]//*[contains(text(),'Áp dụng')] | " +
+                                "//button[contains(.,'Áp dụng')] | " +
+                                "//a[contains(text(),'Áp dụng')] | " +
+                                "//span[contains(text(),'Áp dụng')]/ancestor::button | " +
+                                "//span[contains(text(),'Áp dụng')]")));
+                js.executeScript("arguments[0].click();", btnApDung);
+                Thread.sleep(3000);
 
-            // Click "Xác nhận" để đóng popup (nếu có)
-            try {
-                WebElement btnXacNhanVoucher = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(5))
-                        .until(ExpectedConditions.elementToBeClickable(
-                                By.xpath("//div[contains(@class,'ant-modal')]//button[contains(.,'Xác nhận')] | " +
-                                        "//button[contains(.,'Xác nhận')]")));
-                js.executeScript("arguments[0].click();", btnXacNhanVoucher);
-                Thread.sleep(2000);
-            } catch (TimeoutException te) {
-                // Popup có thể đã tự đóng sau khi áp dụng thành công
+                // Click "Xác nhận" để đóng popup (nếu có)
+                try {
+                    WebElement btnXacNhanVoucher = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(5))
+                            .until(ExpectedConditions.elementToBeClickable(
+                                    By.xpath("//div[contains(@class,'ant-modal')]//button[contains(.,'Xác nhận')] | " +
+                                            "//button[contains(.,'Xác nhận')]")));
+                    js.executeScript("arguments[0].click();", btnXacNhanVoucher);
+                    Thread.sleep(2000);
+                } catch (TimeoutException te) {
+                    // Popup có thể đã tự đóng sau khi áp dụng thành công
+                }
+
+                tc08c.pass("✅ Đã apply mã MUD: " + mudCode + " vào đơn");
             }
-
-            tc08c.pass("✅ Đã apply mã MUD: " + mudCode + " vào đơn");
-            } // end if nhapMaKM != null
         } catch (Exception e) {
             tc08c.fail("❌ Không apply được mã MUD: " + e.getMessage());
         }
@@ -482,25 +481,25 @@ public class TC7 extends BaseTest1 {
                 tcVerifyPrice.fail("❌ Không thấy text 'Đang dùng 01 mã' — voucher chưa apply");
             }
 
-            // Check: Tổng tiền ban đầu = 1,152,000
-            if (pageSource.contains("1,152,000") || pageSource.contains("1.152.000")) {
-                tcVerifyPrice.pass("✅ Tổng tiền ban đầu = 1,152,000 đ");
+            // Check: Tổng tiền ban đầu = 295,600
+            if (pageSource.contains("295,600") || pageSource.contains("295.600")) {
+                tcVerifyPrice.pass("✅ Tổng tiền ban đầu = 295,600 đ");
             } else {
-                tcVerifyPrice.info("⚠️ Không tìm thấy 1,152,000 — có thể giá SP thay đổi");
+                tcVerifyPrice.info("⚠️ Không tìm thấy 295,600 — có thể giá SP thay đổi");
             }
 
-            // Check: Giảm giá voucher = 130,000
-            if (pageSource.contains("130,000") || pageSource.contains("130.000")) {
-                tcVerifyPrice.pass("✅ Giảm giá voucher = 130,000 đ");
+            // Check: Giảm giá voucher = 100,000
+            if (pageSource.contains("100,000") || pageSource.contains("100.000")) {
+                tcVerifyPrice.pass("✅ Giảm giá voucher = 100,000 đ");
             } else {
-                tcVerifyPrice.fail("❌ Không tìm thấy giảm giá 130,000 trên trang");
+                tcVerifyPrice.fail("❌ Không tìm thấy giảm giá 100,000 trên trang");
             }
 
-            // Check: Tạm tính = 1,022,000
-            if (pageSource.contains("1,022,000") || pageSource.contains("1.022.000")) {
-                tcVerifyPrice.pass("✅ Tạm tính = 1,022,000 đ (đã giảm 130,000 từ MUD voucher)");
+            // Check: Tạm tính = 195,600
+            if (pageSource.contains("195,600") || pageSource.contains("195.600")) {
+                tcVerifyPrice.pass("✅ Tạm tính = 195,600 đ (đã giảm 100,000 từ MUD voucher)");
             } else {
-                tcVerifyPrice.fail("❌ Không tìm thấy tạm tính 1,022,000 trên trang");
+                tcVerifyPrice.fail("❌ Không tìm thấy tạm tính 195,600 trên trang");
             }
 
             // Check: Quà tặng PMH 130,000D xuất hiện
@@ -631,6 +630,6 @@ public class TC7 extends BaseTest1 {
         System.out.println("MÃ ĐƠN HÀNG: " + orderCode);
         System.out.println("========================================");
 
-        test.pass("✅ PASS verify MUD - loại hàng giảm giá tặng phm PMH 130,000k-KM-0626-072 SP 00503257. Mã đơn: " + orderCode);
+        test.pass("✅ PASS verify MUD - Loại hàng Chăm sóc tóc - da đầu / Tóc-KM-0626-082 SP 00038140/00018413/00033509 . Mã đơn: " + orderCode);
     }
 }

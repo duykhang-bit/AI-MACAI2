@@ -2,7 +2,7 @@
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
 
 <!-- parallel="classes" + thread-count="6" = 6 class chạy cùng lúc -->
-<suite name="RSA  CI Suite" verbose="1" parallel="classes" thread-count="5">
+<suite name="RSA  CI Suite" verbose="1" parallel="classes" thread-count="4">
 
     <listeners>
         <listener class-name="listeners.TestListener"/>
@@ -12,12 +12,11 @@
     <test name="UAT Tests">
         <classes>
             <!-- Promotion RSA Tests -->
-            <class name="testcases.PromotionRsa.TC1"/>
-            <class name="testcases.PromotionRsa.TC2"/>
-            <class name="testcases.PromotionRsa.TC3"/>
-            <class name="testcases.PromotionRsa.TC4"/>
-            <class name="testcases.PromotionRsa.TC5"/>
-            <class name="testcases.PromotionRsa.TC6"/>
+            <class name="testcases.PromotionRsa.TC7"/>
+            <class name="testcases.PromotionRsa.TC8"/>
+            <class name="testcases.PromotionRsa.TC9"/>
+            <class name="testcases.PromotionRsa.TC10"/>
+     
 
             <!-- Family Tests -->
             <!--

@@ -31,7 +31,7 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import listeners.TestListener;
 
 @Listeners(TestListener.class)
-public class TC7 extends BaseTest1 {
+public class TC9 extends BaseTest1 {
 
     // Đọc sản phẩm từ file data/products.json
     private JsonObject productsData;
@@ -57,7 +57,7 @@ public class TC7 extends BaseTest1 {
     }
 
     private String getMudCode(int index) {
-        return loadProducts().getAsJsonObject("mud").getAsJsonArray("codes").get(index).getAsString();
+        return loadProducts().getAsJsonObject("mud2").getAsJsonArray("codes").get(index).getAsString();
     }
 
     @Override
@@ -93,8 +93,8 @@ public class TC7 extends BaseTest1 {
         wait = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(30));
     }
 
-    @Test(priority = 1, description = "FLOW - MUD - loại hàng giảm giá ", invocationCount = 1)
-    public void TC07 () throws InterruptedException {
+    @Test(priority = 1, description = "FLOW -MUD - Ngành hàng & Nhóm hàng giảm giá ", invocationCount = 1)
+    public void TC09 () throws InterruptedException {
 
         JavascriptExecutor js = (JavascriptExecutor) driver;
 
@@ -396,7 +396,7 @@ public class TC7 extends BaseTest1 {
 
         Thread.sleep(2000);
 
-        // Click link "Nhập mã KM" ở panel bên phải (khu vực Mã giảm giá)
+        // Click link "Nhập mã KM" hoặc "Mã giảm giá"
         try {
             // Scroll xuống cuối panel bên phải để thấy "Nhập mã KM"
             js.executeScript("window.scrollTo(0, document.body.scrollHeight);");
@@ -421,8 +421,7 @@ public class TC7 extends BaseTest1 {
                 js.executeScript("arguments[0].click();", nhapMaKM);
                 Thread.sleep(2000);
 
-            // Nhập mã voucher vào ô input trong popup/dialog "Mã giảm giá"
-            // Ô input có thể là input text bình thường trong ant-modal hoặc trực tiếp trên panel
+            // Đợi popup "Mã giảm giá" xuất hiện và nhập mã voucher
             WebElement voucherInput = wait.until(ExpectedConditions.elementToBeClickable(
                     By.xpath("//div[contains(@class,'ant-modal')]//input[@type='text'] | " +
                             "//div[contains(@class,'ant-modal')]//input[not(@type='hidden') and not(@type='checkbox') and not(@type='radio')] | " +
@@ -430,11 +429,11 @@ public class TC7 extends BaseTest1 {
                             "//input[contains(@placeholder,'Nhập mã') or contains(@placeholder,'voucher') or contains(@placeholder,'mã giảm') or contains(@placeholder,'Barcode')] | " +
                             "//div[contains(@class,'modal')]//input[contains(@class,'ant-input')]")));
             voucherInput.clear();
-            String mudCode = utils.MudCodeProvider.getNextMudCode("mud");
+            String mudCode = utils.MudCodeProvider.getNextMudCode("mud2");
             voucherInput.sendKeys(mudCode);
             Thread.sleep(1000);
 
-            // Click "Áp dụng" — có thể là button hoặc link text
+            // Click "Áp dụng"
             WebElement btnApDung = wait.until(ExpectedConditions.elementToBeClickable(
                     By.xpath("//div[contains(@class,'ant-modal')]//button[contains(.,'Áp dụng')] | " +
                             "//div[contains(@class,'ant-modal')]//*[contains(text(),'Áp dụng')] | " +
@@ -631,6 +630,6 @@ public class TC7 extends BaseTest1 {
         System.out.println("MÃ ĐƠN HÀNG: " + orderCode);
         System.out.println("========================================");
 
-        test.pass("✅ PASS verify MUD - loại hàng giảm giá tặng phm PMH 130,000k-KM-0626-072 SP 00503257. Mã đơn: " + orderCode);
+        test.pass("✅ PASS verify MUD - ngành hàng TPCN + giá trị đơn từ 350k-KM-0626-084 SP 00048874 tpcn. Mã đơn: " + orderCode);
     }
 }

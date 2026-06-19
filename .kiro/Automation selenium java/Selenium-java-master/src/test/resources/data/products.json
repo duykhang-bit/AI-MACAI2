@@ -46,5 +46,41 @@
     "quantity": "1",
     "unit": "Bộ",
     "note": "TC6 - CTKM Combo KM-0626-034 | Giảm 600,000đ | Giá gốc 2,140,000 → Tạm tính 1,540,000 | SP combo click 'Thêm vào giỏ hàng'"
+  },
+
+  "mud": {
+    "codes": [
+      "QA0FC97YNU",
+      "OWXFCPP39N",
+      "P6QMVP74XF",
+      "U8BDA2SLRQ",
+      "WV6GU5147H",
+      "R8PJPKJKJI",
+      "729H1R89SN",
+      "ZLE6VYNW6Q",
+      "UUE2Z8Y9PH",
+      "6O11R2BM44"
+    ],
+    "note": "TC7 - MUD voucher 130k (hạn 20/06/2026). Dùng lần lượt từ index 0."
+  },
+
+  "mud2": {
+    "codes": [
+      "N6Y5MFWGA2",
+      "TF9RSW7JXP",
+      "VCAX0P8QKW",
+      "PR83OIB8MZ",
+      "XI4E32D0KD",
+      "WGR9U5FVAI",
+      "S74ZEQZW4F",
+      "UNW0TTX9MT",
+      "QHMLOX345K",
+      "66Z2X1S60U",
+      "N99LVOEX8B",
+      "X1KVM8H7LF",
+      "YJ5IF3TLTF",
+      "PLNJXC23O"
+    ],
+    "note": "TC8 - MUD 'Auto 1' voucher 100k (200 mã, hạn 15/10/2027). Dùng lần lượt từ index 0."
   }
 }
