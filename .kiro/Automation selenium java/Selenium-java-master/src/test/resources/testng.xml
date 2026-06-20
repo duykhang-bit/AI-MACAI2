@@ -12,19 +12,19 @@
     <test name="UAT Tests">
         <classes>
             <!-- Promotion RSA Tests -->
-            <class name="testcases.PromotionRsa.TC1"/>
-            <class name="testcases.PromotionRsa.TC2"/>
-            <class name="testcases.PromotionRsa.TC3"/>
-            <class name="testcases.PromotionRsa.TC4"/>
-            <class name="testcases.PromotionRsa.TC5"/>
-            <class name="testcases.PromotionRsa.TC6"/>
-            <class name="testcases.PromotionRsa.TC7"/>
-            <class name="testcases.PromotionRsa.TC8"/>
-            <class name="testcases.PromotionRsa.TC9"/>
-            <class name="testcases.PromotionRsa.TC10"/>
-            <class name="testcases.PromotionRsa.TC11"/>
-            <class name="testcases.PromotionRsa.TC12"/>
-            <class name="testcases.PromotionRsa.TC13"/>
+            <class name="testcases.uat.PromotionRsa.TC1"/>
+            <class name="testcases.uat.PromotionRsa.TC2"/>
+            <class name="testcases.uat.PromotionRsa.TC3"/>
+            <class name="testcases.uat.PromotionRsa.TC4"/>
+            <class name="testcases.uat.PromotionRsa.TC5"/>
+            <class name="testcases.uat.PromotionRsa.TC6"/>
+            <class name="testcases.uat.PromotionRsa.TC7"/>
+            <class name="testcases.uat.PromotionRsa.TC8"/>
+            <class name="testcases.uat.PromotionRsa.TC9"/>
+            <class name="testcases.uat.PromotionRsa.TC10"/>
+            <class name="testcases.uat.PromotionRsa.TC11"/>
+            <class name="testcases.uat.PromotionRsa.TC12"/>
+            <class name="testcases.uat.PromotionRsa.TC13"/>
      
 
             <!-- Family Tests -->
