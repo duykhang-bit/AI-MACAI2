@@ -499,32 +499,32 @@ public class TC7 extends BaseTest1 {
                 tcVerifyPrice.warning("❌ Không thấy text 'Đang dùng 01 mã' — voucher chưa apply");
             }
 
-            // Check: Tổng tiền ban đầu = 1,152,000
-            if (pageSource.contains("1,152,000") || pageSource.contains("1.152.000")) {
-                tcVerifyPrice.pass("✅ Tổng tiền ban đầu = 1,152,000 đ");
+            // Check: Tổng tiền ban đầu = 378,000
+            if (pageSource.contains("378,000") || pageSource.contains("378.000")) {
+                tcVerifyPrice.pass("✅ Tổng tiền ban đầu = 378,000 đ");
             } else {
-                tcVerifyPrice.info("⚠️ Không tìm thấy 1,152,000 — có thể giá SP thay đổi");
+                tcVerifyPrice.info("⚠️ Không tìm thấy 378,000 — có thể giá SP thay đổi");
             }
 
-            // Check: Giảm giá voucher = 100,000
-            if (pageSource.contains("100,000") || pageSource.contains("100.000")) {
-                tcVerifyPrice.pass("✅ Giảm giá voucher = 100,000 đ");
+            // Check: Giảm giá voucher = 130,000
+            if (pageSource.contains("130,000") || pageSource.contains("130.000")) {
+                tcVerifyPrice.pass("✅ Giảm giá voucher = 130,000 đ");
             } else {
-                tcVerifyPrice.warning("❌ Không tìm thấy giảm giá 100,000 trên trang");
+                tcVerifyPrice.warning("❌ Không tìm thấy giảm giá 130,000 trên trang");
             }
 
-            // Check: Tạm tính = 1,052,000
-            if (pageSource.contains("1,052,000") || pageSource.contains("1.052.000")) {
-                tcVerifyPrice.pass("✅ Tạm tính = 1,052,000 đ (đã giảm 100,000 từ MUD voucher)");
+            // Check: Tạm tính = 248,000
+            if (pageSource.contains("248,000") || pageSource.contains("248.000")) {
+                tcVerifyPrice.pass("✅ Tạm tính = 248,000 đ (đã giảm 130,000 từ MUD voucher)");
             } else {
-                tcVerifyPrice.warning("❌ Không tìm thấy tạm tính 1,052,000 trên trang");
+                tcVerifyPrice.warning("❌ Không tìm thấy tạm tính 248,000 trên trang");
             }
 
-            // Check: Quà tặng PMH 100K xuất hiện
-            if (pageSource.contains("PMH") && pageSource.contains("100")) {
-                tcVerifyPrice.pass("✅ Quà tặng PMH 100K hiển thị đúng");
+            // Check: Quà tặng PMH 130,000D xuất hiện
+            if (pageSource.contains("PMH") && pageSource.contains("130,000")) {
+                tcVerifyPrice.pass("✅ Quà tặng PMH 130,000D hiển thị đúng");
             } else {
-                tcVerifyPrice.info("⚠️ Không tìm thấy quà tặng PMH 100K");
+                tcVerifyPrice.info("⚠️ Không tìm thấy quà tặng PMH 130,000D");
             }
 
         } catch (Exception e) {
@@ -648,6 +648,6 @@ public class TC7 extends BaseTest1 {
         System.out.println("MÃ ĐƠN HÀNG: " + orderCode);
         System.out.println("========================================");
 
-        test.pass("✅ PASS verify MUD - loại hàng giảm giá tặng phm PMH 130,000k-KM-0626-072 SP 00503257. Mã đơn: " + orderCode);
+        test.pass("✅ PASS verify MUD - loại hàng giảm giá tặng phm PMH 130,000k-KM-0626-072 SP 00028493. Mã đơn: " + orderCode);
     }
 }

@@ -36,10 +36,10 @@
     "note": "TC4 - CTKM tặng phẩm 20k KM-0626-074 | Voucher 20,000đ | Giá gốc 2,800,000 → Tạm tính 2,780,000"
   },
   "product7": {
-    "code": "00503257",
+    "code": "00028493",
     "quantity": "1",
     "unit": "Hộp",
-    "note": "TC7 - MUD loại hàng giảm giá tặng PMH | SP 00503257 | SL: 1"
+    "note": "TC7 - VIÊN UỐNG BỔ MẮT TIM MẠCH OMEXCEL 3-6-9 EXCELIFE 100V | Hộp | SL: 1 | Giá: 378,000"
   },
   "product_tc5": {
     "code": "00503257",
@@ -86,9 +86,6 @@
 
   "mud": {
     "codes": [
-      "SDMF9O8NMG",
-      "WR76DQV03I",
-      "TS0H7MLADR",
       "Y0MXFPMXK6",
       "WP7NJJ5XWG",
       "68310X5TRZ",
@@ -193,10 +190,6 @@
 
   "mud2": {
     "codes": [
-      "UA4EANXWKW",
-      "PLNJIXC23O",
-      "58E2PQKBVS",
-      "9C6U3D6EP9",
       "5FGWF2LPNN",
       "TAZVBKHSJW",
       "SXVNUS23AC",
@@ -300,8 +293,6 @@
 
   "mud3": {
     "codes": [
-      "Q6P8O5UP0D",
-      "SY0LUVXSFV",
       "X6I95NY0G8",
       "X4GKCK2D9X",
       "8J5XG86MPE",
