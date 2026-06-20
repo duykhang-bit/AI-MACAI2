@@ -598,12 +598,11 @@ public class TC13 extends BaseTest1 {
                     tcVerifyPrice.warning("❌ Không tìm thấy serial ORCA Thuốc Kê Đơn trên trang Promotion");
                 }
 
-                // Check: Mã đơn hàng khớp + lấy serial code
+                // Lấy serial code từ dòng cuối cùng trong bảng (cột 3 - Serial)
                 String serialCode = "";
                 try {
-                    // Lấy serial code từ dòng cuối cùng trong bảng (cột Serial)
                     java.util.List<WebElement> serialCells = promoDriver.findElements(
-                            By.xpath("//table//tbody//tr[last()]//td[2] | //tr[last()]//td[contains(@class,'serial') or position()=2]"));
+                            By.xpath("//table//tbody//tr[last()]//td[3]//a | //table//tbody//tr[last()]//td[3]"));
                     if (!serialCells.isEmpty()) {
                         serialCode = serialCells.get(serialCells.size() - 1).getText().trim();
                     }
