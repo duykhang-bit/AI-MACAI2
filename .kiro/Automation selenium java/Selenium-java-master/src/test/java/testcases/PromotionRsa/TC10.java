@@ -489,7 +489,7 @@ public class TC10 extends BaseTest1 {
             unitSelect3.click();
             Thread.sleep(1000);
             WebElement hopOption3 = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//div[contains(@class,'ant-select-item-option-content') and text()='Hộp']")));
+                    By.xpath("//div[contains(@class,'ant-select-item-option-content') and text()='Viên']")));
             hopOption3.click();
             Thread.sleep(1000);
         } catch (Exception e) {}
@@ -608,11 +608,11 @@ public class TC10 extends BaseTest1 {
                 tcVerifyPrice.warning("❌ Không thấy text 'Đang dùng 01 mã' — voucher chưa apply");
             }
 
-            // Check: Tổng tiền ban đầu = 295,600
-            if (pageSource.contains("295,600") || pageSource.contains("295.600")) {
-                tcVerifyPrice.pass("✅ Tổng tiền ban đầu = 295,600 đ");
+            // Check: Tổng tiền ban đầu = 276,098
+            if (pageSource.contains("276,098") || pageSource.contains("276.098")) {
+                tcVerifyPrice.pass("✅ Tổng tiền ban đầu = 276,098 đ");
             } else {
-                tcVerifyPrice.info("⚠️ Không tìm thấy 295,600 — có thể giá SP thay đổi");
+                tcVerifyPrice.info("⚠️ Không tìm thấy 276,098 — có thể giá SP thay đổi");
             }
 
             // Check: Giảm giá voucher = 100,000
@@ -622,11 +622,11 @@ public class TC10 extends BaseTest1 {
                 tcVerifyPrice.warning("❌ Không tìm thấy giảm giá 100,000 trên trang");
             }
 
-            // Check: Tạm tính = 195,600
-            if (pageSource.contains("195,600") || pageSource.contains("195.600")) {
-                tcVerifyPrice.pass("✅ Tạm tính = 195,600 đ (đã giảm 100,000 từ MUD voucher)");
+            // Check: Tạm tính = 176,098
+            if (pageSource.contains("176,098") || pageSource.contains("176.098")) {
+                tcVerifyPrice.pass("✅ Tạm tính = 176,098 đ (đã giảm 100,000 từ MUD voucher)");
             } else {
-                tcVerifyPrice.warning("❌ Không tìm thấy tạm tính 195,600 trên trang");
+                tcVerifyPrice.warning("❌ Không tìm thấy tạm tính 176,098 trên trang");
             }
 
             // Check: Quà tặng PMH 100K xuất hiện
