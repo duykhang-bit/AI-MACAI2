@@ -30,7 +30,7 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import listeners.TestListener;
 
 @Listeners(TestListener.class)
-public class TC13 extends BaseTest1 {
+public class TC14 extends BaseTest1 {
 
     // Đọc sản phẩm từ file data/products.json
     private JsonObject productsData;
@@ -88,8 +88,8 @@ public class TC13 extends BaseTest1 {
         wait = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(30));
     }
 
-    @Test(priority = 1, description = "FLOW - Tạo đơn orca tặng 50k (LIVROAL 350 US PHARMA 3X10)", invocationCount = 1)
-    public void TC013 () throws InterruptedException {
+    @Test(priority = 1, description = "FLOW - NEGATIVE: Đơn < 500k không đủ ĐK nhận serial ORCA 50k (LIVROAL 350 US PHARMA 3X10 SL1)", invocationCount = 1)
+    public void TC014 () throws InterruptedException {
 
         JavascriptExecutor js = (JavascriptExecutor) driver;
 
@@ -337,7 +337,7 @@ public class TC13 extends BaseTest1 {
         Thread.sleep(500);
 
         // Nhập mã sản phẩm
-        String product3 = getProductCode("product_tc13");
+        String product3 = getProductCode("product_tc14");
         productInput.sendKeys(product3);
         Thread.sleep(1000);
 
@@ -390,7 +390,7 @@ public class TC13 extends BaseTest1 {
         js.executeScript(
                 "var el = arguments[0];" +
                 "var nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;" +
-                "nativeInputValueSetter.call(el, '" + getProductQuantity("product_tc13") + "');" +
+                "nativeInputValueSetter.call(el, '" + getProductQuantity("product_tc14") + "');" +
                 "el.dispatchEvent(new Event('input', { bubbles: true }));" +
                 "el.dispatchEvent(new Event('change', { bubbles: true }));" +
                 "el.blur();",
@@ -591,11 +591,12 @@ public class TC13 extends BaseTest1 {
                 // Lấy page source
                 String promoPageSource = promoDriver.getPageSource();
 
-                // Check: "ORCA Thuốc Kê Đơn - Bill 500K - 800K"
-                if (promoPageSource.contains("ORCA Thuốc Kê Đơn") || promoPageSource.contains("Bill 500K - 800K")) {
-                    tcVerifyPrice.pass("✅ Serial 'ORCA Thuốc Kê Đơn - Bill 500K - 800K - Tặng mã ưu đãi 50,000đ' tìm thấy");
+                // NEGATIVE CHECK: serial ORCA KHÔNG NÊN xuất hiện (đơn < 500k)
+                if (!orderCode.isEmpty() && promoPageSource.contains(orderCode)) {
+                    tcVerifyPrice.fail("❌ NEGATIVE FAIL: Mã đơn " + orderCode + " có serial ORCA trên Promotion — BUG! Đơn < 500k không nên có serial");
+                    throw new AssertionError("NEGATIVE FAIL: Đơn < 500k nhận được serial ORCA 50k — BUG!");
                 } else {
-                    tcVerifyPrice.warning("❌ Không tìm thấy serial ORCA Thuốc Kê Đơn trên trang Promotion");
+                    tcVerifyPrice.pass("✅ NEGATIVE PASS: Mã đơn " + orderCode + " KHÔNG có serial ORCA trên Promotion (đúng vì đơn < 500k)");
                 }
 
                 // Check: Mã đơn hàng khớp + lấy serial code
@@ -609,11 +610,7 @@ public class TC13 extends BaseTest1 {
                     }
                 } catch (Exception e) {}
 
-                if (!orderCode.isEmpty() && promoPageSource.contains(orderCode)) {
-                    tcVerifyPrice.pass("✅ Mã đơn hàng " + orderCode + " khớp với serial " + serialCode + " trên Promotion");
-                } else {
-                    tcVerifyPrice.info("⚠️ Mã đơn hàng " + orderCode + " chưa khớp — serial: " + serialCode);
-                }
+                // (đã check negative ở trên)
 
                 // Check: Ngày hôm nay
                 String today = new java.text.SimpleDateFormat("dd/MM/yyyy").format(new java.util.Date());
@@ -634,6 +631,6 @@ public class TC13 extends BaseTest1 {
             tcVerifyPrice.warning("❌ Lỗi khi verify trên Promotion: " + e.getMessage());
         }
 
-        test.pass("✅ PASS verify CDORCA Thuốc Kê Đơn - Bill 500K-800K - Tặng mã ưu đãi 50,000đ KM-0625-1172 SP 00044642 SL2. Mã đơn: " + orderCode);
+        test.pass("✅ PASS NEGATIVE: Đơn < 500k (SP 00044642 SL1 = 285,000đ) không nhận serial ORCA 50k. Mã đơn: " + orderCode);
     }
 }

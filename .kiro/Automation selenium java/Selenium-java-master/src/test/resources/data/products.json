@@ -353,5 +353,11 @@
     "quantity": "2",
     "unit": "Hộp",
     "note": "TC13 - LIVROAL 350 US PHARMA 3X10 | Đơn vị: Hộp | SL: 2 | CDORCA Thuốc Kê Đơn Bill 500K-800K tặng mã 50,000đ"
+  },
+  "product_tc14": {
+    "code": "00044642",
+    "quantity": "1",
+    "unit": "Hộp",
+    "note": "TC14 - NEGATIVE: LIVROAL 350 US PHARMA 3X10 | Đơn vị: Hộp | SL: 1 | Đơn < 500k không đủ ĐK nhận serial ORCA 50k"
   }
 }
