@@ -382,5 +382,11 @@
     "quantity": "6",
     "unit": "Hộp",
     "note": "TC16 - KAFLOVO 500 KH 10X5 | Hộp | SL: 6 | Tổng 900,000 (>800k) | Tặng SP 00030512 BAWOD CALCIUM PLUS"
+  },
+  "product_tc18": {
+    "code": "00005390",
+    "quantity": "1",
+    "unit": "Hộp",
+    "note": "TC18 - NOVOMIX 100IU/ML 5 CÂY | Hộp | SL: 1 | Tặng SP 00030512 BAWOD CALCIUM"
   }
 }

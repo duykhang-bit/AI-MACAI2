@@ -88,7 +88,7 @@ public class TC18 extends BaseTest1 {
         wait = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(30));
     }
 
-    @Test(priority = 1, description = "FLOW - HÀNG BÁO QUẢN LẠNH - TẶNG ĐÁ KHÔ tặng 00020033", invocationCount = 1)
+    @Test(priority = 1, description = "FLOW - Mua SP 00005390 (Thuốc kê toa) → Tặng SP 00030512 (BAWOD CALCIUM)", invocationCount = 1)
     public void TC018 () throws InterruptedException {
 
         JavascriptExecutor js = (JavascriptExecutor) driver;
@@ -318,7 +318,7 @@ public class TC18 extends BaseTest1 {
         Thread.sleep(500);
 
         // Nhập mã sản phẩm
-        String product3 = getProductCode("product_tc5");
+        String product3 = getProductCode("product_tc18");
         productInput.sendKeys(product3);
         Thread.sleep(1000);
 
@@ -373,7 +373,7 @@ public class TC18 extends BaseTest1 {
         js.executeScript(
                 "var el = arguments[0];" +
                 "var nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;" +
-                "nativeInputValueSetter.call(el, '" + getProductQuantity("product_tc5") + "');" +
+                "nativeInputValueSetter.call(el, '" + getProductQuantity("product_tc18") + "');" +
                 "el.dispatchEvent(new Event('input', { bubbles: true }));" +
                 "el.dispatchEvent(new Event('change', { bubbles: true }));" +
                 "el.blur();",
@@ -385,9 +385,36 @@ public class TC18 extends BaseTest1 {
         /*
         /*
          * =========================
-         * TC08-VERIFY - BỎ QUA (không verify giá)
+         * TC08-VERIFY - Verify SP tặng 00030512 xuất hiện
          * =========================
          */
+        ExtentTest tcVerifyPrice = test.createNode("TC08-VERIFY - Verify mua 00005390 → tặng SP 00030512");
+
+        Thread.sleep(3000);
+
+        try {
+            String pageSource = driver.getPageSource();
+
+            // Check: Tạm tính = 1,275,000
+            if (pageSource.contains("1,275,000") || pageSource.contains("1.275.000")) {
+                tcVerifyPrice.pass("✅ Tạm tính = 1,275,000 đ");
+            } else {
+                tcVerifyPrice.info("⚠️ Không tìm thấy 1,275,000 — có thể giá SP thay đổi");
+            }
+
+            // Check: SP tặng 00030512 (BAWOD CALCIUM PLUS) xuất hiện
+            if (pageSource.contains("00030512")) {
+                tcVerifyPrice.pass("✅ SP tặng 00030512 (BAWOD CALCIUM PLUS HDPHARMA 60V) hiển thị đúng");
+            } else {
+                tcVerifyPrice.fail("❌ Không tìm thấy SP tặng 00030512 — nên có quà tặng khi mua 00005390");
+                throw new AssertionError("SP tặng 00030512 không xuất hiện khi mua 00005390!");
+            }
+
+        } catch (AssertionError ae) {
+            throw ae;
+        } catch (Exception e) {
+            tcVerifyPrice.warning("❌ Lỗi khi verify: " + e.getMessage());
+        }
 
 
         /*
@@ -506,6 +533,6 @@ public class TC18 extends BaseTest1 {
         System.out.println("MÃ ĐƠN HÀNG: " + orderCode);
         System.out.println("========================================");
 
-        test.pass("✅ PASS verify HÀNG BÁO QUẢN LẠNH - TẶNG ĐÁ KHÔ-KM-1222-194 SP 00005390. Mã đơn: " + orderCode);
+        test.pass("✅ PASS verify mua SP 00005390 (NOVOMIX) → tặng SP 00030512 (BAWOD CALCIUM). Mã đơn: " + orderCode);
     }
 }

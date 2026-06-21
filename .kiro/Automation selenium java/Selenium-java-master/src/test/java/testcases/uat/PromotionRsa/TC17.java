@@ -94,7 +94,7 @@ public class TC17 extends BaseTest1 {
     }
 
     @Test(priority = 1, description = "FLOW - MUD - Không thoã đk mua 1/3 sản phẩm-Loại hàng Chăm sóc tóc - da đầu / Tóc  ", invocationCount = 1)
-    public void TC010 () throws InterruptedException {
+    public void TC017 () throws InterruptedException {
 
         JavascriptExecutor js = (JavascriptExecutor) driver;
 
