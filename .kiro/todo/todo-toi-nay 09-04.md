@@ -52,3 +52,33 @@ xấy dựng phòng khám tàu 20/4
 
 
 
+ <!-- <test name="UAT Tests">
+        <classes>
+            <!-- Promotion RSA Tests -->
+            <class name="testcases.uat.PromotionRsa.TC1"/>
+            <class name="testcases.uat.PromotionRsa.TC2"/>
+            <class name="testcases.uat.PromotionRsa.TC3"/>
+            <class name="testcases.uat.PromotionRsa.TC4"/>
+            <class name="testcases.uat.PromotionRsa.TC5"/>
+            <class name="testcases.uat.PromotionRsa.TC6"/>
+            <class name="testcases.uat.PromotionRsa.TC7"/>
+            <class name="testcases.uat.PromotionRsa.TC8"/>
+            <class name="testcases.uat.PromotionRsa.TC9"/>
+            <class name="testcases.uat.PromotionRsa.TC10"/>
+            <class name="testcases.uat.PromotionRsa.TC11"/>
+            <class name="testcases.uat.PromotionRsa.TC12"/>
+            <class name="testcases.uat.PromotionRsa.TC13"/>
+     
+
+            <!-- Family Tests -->
+            <!--
+            <class name="testcases.Family.WebRSAUAT"/>
+            <class name="testcases.Family.WebRSAUAT1"/>
+            <class name="testcases.Family.WebRSAUAT2"/>
+            <class name="testcases.Family.WebRSAUAT3"/>
+            <class name="testcases.Family.WebRSAUAT4"/>
+            <class name="testcases.Family.WebRSAUAT5"/>
+            <class name="testcases.Family.WebRSAUAT6"/>
+            -->
+        </classes>
+    </test> -->

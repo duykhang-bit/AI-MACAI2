@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
 
-<!-- parallel="classes" + thread-count="6" = 6 class chạy cùng lúc -->
-<suite name="RSA UAT Suite" verbose="1" parallel="classes" thread-count="4">
+<suite name="RSA UAT Suite" verbose="1" parallel="classes" thread-count="1">
 
     <listeners>
         <listener class-name="listeners.TestListener"/>
@@ -16,52 +15,3 @@
     </test>
 
 </suite>
-<!--
-=== LỆNH RUN TERMINAL ===
-
---- Run toàn bộ package PromotionRsa ---
-cd "/Users/leduykhang/Documents/Automation/AI-MACAI2/.kiro/Automation selenium java/Selenium-java-master" && mvn clean test -DsuiteXmlFile=src/test/resources/testng.xml
-
-cd "/Users/leduykhang/Documents/Automation/AI-MACAI2/.kiro/Automation selenium java/Selenium-java-master" && mvn clean test -DsuiteXmlFile=src/test/resources/testng.xml
-
-
---- Run nhiều class cùng lúc (ví dụ TC7+TC8+TC9) ---
-cd "/Users/leduykhang/Documents/Automation/AI-MACAI2/.kiro/Automation selenium java/Selenium-java-master" && mvn clean test -Dtest=testcases.uat.PromotionRsa.TC7,testcases.uat.PromotionRsa.TC8,testcases.uat.PromotionRsa.TC9
-
---- CMD (Windows) ---
-cd /d "C:\Users\khangld10\Documents\AI-MACAI2\.kiro\Automation selenium java\Selenium-java-master" & mvn clean test -Dfile.encoding=UTF-8
-
-=== ĐỔI SỐ LẦN CHẠY ===
-Mở file TC*.java, sửa invocationCount = 2 thành số lần muốn chạy
--->
-
- <test name="UAT Tests">
-        <classes>
-            <!-- Promotion RSA Tests -->
-            <class name="testcases.uat.PromotionRsa.TC1"/>
-            <class name="testcases.uat.PromotionRsa.TC2"/>
-            <class name="testcases.uat.PromotionRsa.TC3"/>
-            <class name="testcases.uat.PromotionRsa.TC4"/>
-            <class name="testcases.uat.PromotionRsa.TC5"/>
-            <class name="testcases.uat.PromotionRsa.TC6"/>
-            <class name="testcases.uat.PromotionRsa.TC7"/>
-            <class name="testcases.uat.PromotionRsa.TC8"/>
-            <class name="testcases.uat.PromotionRsa.TC9"/>
-            <class name="testcases.uat.PromotionRsa.TC10"/>
-            <class name="testcases.uat.PromotionRsa.TC11"/>
-            <class name="testcases.uat.PromotionRsa.TC12"/>
-            <class name="testcases.uat.PromotionRsa.TC13"/>
-     
-
-            <!-- Family Tests -->
-            <!--
-            <class name="testcases.Family.WebRSAUAT"/>
-            <class name="testcases.Family.WebRSAUAT1"/>
-            <class name="testcases.Family.WebRSAUAT2"/>
-            <class name="testcases.Family.WebRSAUAT3"/>
-            <class name="testcases.Family.WebRSAUAT4"/>
-            <class name="testcases.Family.WebRSAUAT5"/>
-            <class name="testcases.Family.WebRSAUAT6"/>
-            -->
-        </classes>
-    </test>
