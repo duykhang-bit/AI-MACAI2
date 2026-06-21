@@ -78,7 +78,14 @@ public class TC5 extends BaseTest1 {
         prefs.put("profile.password_manager_enabled", false);
         prefs.put("profile.password_manager_leak_detection", false);
         options.setExperimentalOption("prefs", prefs);
-        options.addArguments("--start-maximized");
+        // Headless mode from config
+ if (utils.ConfigReader.getInstance().isHeadless()) {
+ options.addArguments("--headless=new");
+ options.addArguments("--window-size=1920,1080");
+ options.addArguments("--disable-gpu");
+ options.addArguments("--no-sandbox");
+ }
+ options.addArguments("--start-maximized");
         options.addArguments("--remote-allow-origins=*");
         options.addArguments("--disable-save-password-bubble");
 
