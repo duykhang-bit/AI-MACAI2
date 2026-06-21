@@ -50,6 +50,9 @@ public class BaseTest1 {
         return globalRunCount.incrementAndGet();
     }
 
+    // Summary test — tạo trước trong @BeforeSuite, update trong @AfterSuite
+    private static com.aventstack.extentreports.ExtentTest summaryTest;
+
     /* =========================
      * REPORT
      * ========================= */
@@ -63,11 +66,14 @@ public class BaseTest1 {
         spark.config().setDocumentTitle("Automation Report");
         spark.config().setReportName("Selenium Test Results");
         spark.config().setTimelineEnabled(true);
-        // Sort test: OLDEST_FIRST để TỔNG KẾT (startTime=epoch 0) hiện đầu tiên
         spark.config().setTimeStampFormat("MMM dd, yyyy HH:mm:ss");
 
         extent = new ExtentReports();
         extent.attachReporter(spark);
+
+        // Tạo TỔNG KẾT đầu tiên (sẽ hiện đầu sidebar)
+        summaryTest = extent.createTest("📊 TỔNG KẾT (đang chạy...)");
+        summaryTest.info("⏳ Đang chạy test...");
     }
 
     /* =========================
@@ -128,7 +134,7 @@ public class BaseTest1 {
 
     @AfterSuite
     public void flushReport(org.testng.ITestContext context) {
-        // Tổng kết hiện TRÊN ĐẦU sidebar report
+        // Update TỔNG KẾT (đã tạo ở @BeforeSuite — nằm đầu sidebar)
         int total = context.getAllTestMethods().length;
         int passed = context.getPassedTests().size();
         int failed = context.getFailedTests().size();
@@ -138,18 +144,19 @@ public class BaseTest1 {
         String passIcon = failed == 0 ? "🎉" : "⚠️";
         String summaryTitle = passIcon + " TỔNG KẾT: " + total + " TC | ✅" + passed + " Pass | ❌" + failed + " Fail | " + String.format("%.0f%%", passRate);
 
-        com.aventstack.extentreports.ExtentTest summary = extent.createTest(summaryTitle);
-        summary.info("📋 Total: " + total + " | ✅ Passed: " + passed + " | ❌ Failed: " + failed + " | ⏭️ Skipped: " + skipped);
-        summary.info("📊 Pass Rate: " + String.format("%.1f%%", passRate));
-        if (failed == 0) {
-            summary.pass("🎉 ALL TESTS PASSED!");
-        } else {
-            summary.fail("⚠️ " + failed + " test(s) FAILED");
-        }
+        // Update tên test
+        summaryTest.getModel().setName(summaryTitle);
 
-        // Set startTime = epoch 0 để summary hiện ĐẦU TIÊN trên sidebar
-        summary.getModel().setStartTime(new java.util.Date(0));
-        summary.getModel().setEndTime(new java.util.Date(0));
+        // Thêm chi tiết
+        summaryTest.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+        summaryTest.info("📋 Total: " + total + " | ✅ Passed: " + passed + " | ❌ Failed: " + failed + " | ⏭️ Skipped: " + skipped);
+        summaryTest.info("📊 Pass Rate: " + String.format("%.1f%%", passRate));
+        summaryTest.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+        if (failed == 0) {
+            summaryTest.pass("🎉 ALL TESTS PASSED!");
+        } else {
+            summaryTest.warning("⚠️ " + failed + " test(s) FAILED — xem chi tiết bên dưới");
+        }
 
         extent.flush();
     }
