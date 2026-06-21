@@ -94,6 +94,13 @@ public class BaseTest1 {
         Map<String, Object> prefs = new HashMap<>();
         prefs.put("profile.default_content_setting_values.notifications", 2);
         options.setExperimentalOption("prefs", prefs);
+        // Headless mode: đổi trong config.properties (headless=true/false)
+        if (config.isHeadless()) {
+            options.addArguments("--headless=new");
+            options.addArguments("--window-size=1920,1080");
+            options.addArguments("--disable-gpu");
+            options.addArguments("--no-sandbox");
+        }
         options.addArguments("--start-maximized");
         options.addArguments("--remote-allow-origins=*");
 
@@ -128,7 +135,7 @@ public class BaseTest1 {
         }
 
         if (driver != null) {
-          // driver.quit();// bật tắt chrome
+          driver.quit();// bật tắt chrome
         }
     }
 
