@@ -365,5 +365,11 @@
     "quantity": "100",
     "unit": "Hộp",
     "note": "TC15 - NEGATIVE: KHẨU TRANG TRẺ EM DOLPHIN 10 CÁI | Hộp | SL: 100 | Tổng 2,400,000 | Chỉ thoả nhóm hàng, ngành hàng không thoả → không tặng PMH 00040816"
+  },
+  "product_tc16": {
+    "code": "00022434",
+    "quantity": "6",
+    "unit": "Hộp",
+    "note": "TC16 - KAFLOVO 500 KH 10X5 | Hộp | SL: 6 | Tổng 900,000 (>800k) | Tặng SP 00030512 BAWOD CALCIUM PLUS"
   }
 }

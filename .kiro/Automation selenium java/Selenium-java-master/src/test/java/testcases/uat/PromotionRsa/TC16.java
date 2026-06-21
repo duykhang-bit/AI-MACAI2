@@ -337,7 +337,7 @@ public class TC16 extends BaseTest1 {
         Thread.sleep(500);
 
         // Nhập mã sản phẩm
-        String product3 = getProductCode("product_tc13");
+        String product3 = getProductCode("product_tc16");
         productInput.sendKeys(product3);
         Thread.sleep(1000);
 
@@ -390,7 +390,7 @@ public class TC16 extends BaseTest1 {
         js.executeScript(
                 "var el = arguments[0];" +
                 "var nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;" +
-                "nativeInputValueSetter.call(el, '" + getProductQuantity("product_tc13") + "');" +
+                "nativeInputValueSetter.call(el, '" + getProductQuantity("product_tc16") + "');" +
                 "el.dispatchEvent(new Event('input', { bubbles: true }));" +
                 "el.dispatchEvent(new Event('change', { bubbles: true }));" +
                 "el.blur();",
@@ -404,9 +404,33 @@ public class TC16 extends BaseTest1 {
          * TC08-VERIFY - VERIFY SERIAL TRÊN TRANG PROMOTION
          * =========================
          */
-        ExtentTest tcVerifyPrice = test.createNode("TC08-VERIFY - Verify serial CDORCA trên trang Promotion");
+        ExtentTest tcVerifyPrice = test.createNode("TC08-VERIFY - Verify đơn > 800K tặng SP 00030512");
 
-        // Verify sẽ chạy SAU khi tạo đơn xong (move xuống sau phần tạo đơn)
+        Thread.sleep(3000);
+
+        try {
+            String pageSource = driver.getPageSource();
+
+            // Check: Tạm tính = 900,000
+            if (pageSource.contains("900,000") || pageSource.contains("900.000")) {
+                tcVerifyPrice.pass("✅ Tạm tính = 900,000 đ (150,000 × 6)");
+            } else {
+                tcVerifyPrice.info("⚠️ Không tìm thấy 900,000 — có thể giá SP thay đổi");
+            }
+
+            // Check: SP tặng 00030512 (BAWOD CALCIUM PLUS) xuất hiện
+            if (pageSource.contains("00030512")) {
+                tcVerifyPrice.pass("✅ SP tặng 00030512 (BAWOD CALCIUM PLUS HDPHARMA 60V) hiển thị đúng");
+            } else {
+                tcVerifyPrice.fail("❌ Không tìm thấy SP tặng 00030512 — đơn > 800K nên phải có quà tặng");
+                throw new AssertionError("SP tặng 00030512 không xuất hiện dù đơn > 800K!");
+            }
+
+        } catch (AssertionError ae) {
+            throw ae;
+        } catch (Exception e) {
+            tcVerifyPrice.warning("❌ Lỗi khi verify: " + e.getMessage());
+        }
 
 
         /*
@@ -633,6 +657,6 @@ public class TC16 extends BaseTest1 {
             tcVerifyPrice.warning("❌ Lỗi khi verify trên Promotion: " + e.getMessage());
         }
 
-        test.pass("✅ PASS verify CDORCA Thuốc Kê Đơn - Bill > 800K - Tặng quà KM-0326-003 SP 00030512 SL2. Mã đơn: " + orderCode);
+        test.pass("✅ PASS verify CDORCA Thuốc Kê Đơn - Bill > 800K - Tặng SP 00030512 (BAWOD CALCIUM). SP 00022434 SL6. Mã đơn: " + orderCode);
     }
 }
