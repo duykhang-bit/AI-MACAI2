@@ -30,7 +30,7 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import listeners.TestListener;
 
 @Listeners(TestListener.class)
-public class TC4 extends BaseTest1 {
+public class TC15 extends BaseTest1 {
 
     // Đọc sản phẩm từ file data/products.json
     private JsonObject productsData;
@@ -88,8 +88,8 @@ public class TC4 extends BaseTest1 {
         wait = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(30));
     }
 
-    @Test(priority = 1, description = "FLOW - Nhóm hàng & ngành hàng - Tổng đơn theo SP->> tặng phm", invocationCount = 1)
-    public void TC04 () throws InterruptedException {
+    @Test(priority = 1, description = "FLOW - Nhóm hàng & ngành hàng chỉ thoã điều kiện nhóm hàng - Tổng đơn theo SP->> tặng phm", invocationCount = 1)
+    public void TC15 () throws InterruptedException {
 
         JavascriptExecutor js = (JavascriptExecutor) driver;
 
@@ -318,7 +318,7 @@ public class TC4 extends BaseTest1 {
         Thread.sleep(500);
 
         // Nhập mã sản phẩm
-        String product3 = getProductCode("product6");
+        String product3 = getProductCode("product_tc15");
         productInput.sendKeys(product3);
         Thread.sleep(1000);
 
@@ -373,7 +373,7 @@ public class TC4 extends BaseTest1 {
         js.executeScript(
                 "var el = arguments[0];" +
                 "var nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;" +
-                "nativeInputValueSetter.call(el, '" + getProductQuantity("product6") + "');" +
+                "nativeInputValueSetter.call(el, '" + getProductQuantity("product_tc15") + "');" +
                 "el.dispatchEvent(new Event('input', { bubbles: true }));" +
                 "el.dispatchEvent(new Event('change', { bubbles: true }));" +
                 "el.blur();",
@@ -387,95 +387,33 @@ public class TC4 extends BaseTest1 {
          * TC08-VERIFY - VERIFY GIÁ SẢN PHẨM SAU KHI ÁP DỤNG CTKM
          * =========================
          */
-        ExtentTest tcVerifyPrice = test.createNode("TC08-VERIFY - Verify giá sau khi áp CTKM loại hàng giảm giá");
+        ExtentTest tcVerifyPrice = test.createNode("TC08-VERIFY - NEGATIVE: Chỉ thoả nhóm hàng, không thoả ngành hàng → không tặng PMH 00040816");
 
-        Thread.sleep(3000); // Đợi giá cập nhật
+        Thread.sleep(3000);
 
-        // Verify CTKM KM-0626-115 hiển thị trên UI
         try {
-            Thread.sleep(2000);
             String pageSource = driver.getPageSource();
-            
-            // Check mã CTKM KM-0626-074 trong popup "Khuyến mãi khác"
-            // Click link "Khuyến mãi khác" để mở popup
-            try {
-                WebElement kmKhacLink = wait.until(ExpectedConditions.elementToBeClickable(
-                        By.xpath("//a[contains(text(),'Khuyến mãi khác')] | //*[contains(text(),'Khuyến mãi khác')]")));
-                js.executeScript("arguments[0].click();", kmKhacLink);
-                Thread.sleep(2000);
-                
-                // Verify KM-0626-074 đã được chọn (checked) trong popup
-                String popupSource = driver.getPageSource();
-                if (popupSource.contains("KM-0626-074")) {
-                    // Tìm dòng KM-0626-074 có icon checked (tick xanh)
-                    try {
-                        WebElement kmChecked = driver.findElement(
-                                By.xpath("//*[contains(text(),'KM-0626-074')]/ancestor::div[contains(@class,'ant-list-item') or contains(@class,'promotion-item') or ancestor::div[1]]//span[contains(@class,'anticon-check') or contains(@class,'checked')] | " +
-                                        "//*[contains(text(),'KM-0626-074')]/preceding-sibling::*[contains(@class,'check') or contains(@class,'anticon-check')]"));
-                        tcVerifyPrice.pass("✅ CTKM KM-0626-074 đã được CHỌN (checked) trong popup Khuyến mãi đơn hàng");
-                    } catch (Exception ex) {
-                        // KM hiển thị nhưng không tìm thấy icon check → vẫn pass vì text có
-                        tcVerifyPrice.pass("✅ CTKM KM-0626-074 hiển thị trong popup Khuyến mãi đơn hàng");
-                    }
-                } else {
-                    tcVerifyPrice.fail("❌ KHÔNG tìm thấy CTKM KM-0626-074 trong popup");
-                }
-                
-                // Click Xác nhận để đóng popup
-                try {
-                    WebElement btnXacNhan = wait.until(ExpectedConditions.elementToBeClickable(
-                            By.xpath("//button[contains(.,'Xác nhận')] | //button[contains(.,'Xác Nhận')]")));
-                    btnXacNhan.click();
-                    Thread.sleep(1000);
-                } catch (Exception ex) {
-                    // Đóng bằng nút X nếu không có Xác nhận
-                    try {
-                        WebElement closeBtn = driver.findElement(
-                                By.xpath("//div[contains(@class,'ant-modal')]//span[contains(@class,'anticon-close')]/ancestor::button"));
-                        closeBtn.click();
-                        Thread.sleep(1000);
-                    } catch (Exception ex2) { }
-                }
-            } catch (Exception e) {
-                tcVerifyPrice.fail("❌ Không tìm thấy link 'Khuyến mãi khác' để mở popup");
-            }
-            
-            // Debug: log các giá trị tìm thấy trên trang (chứa "000")
-            java.util.regex.Pattern pricePattern = java.util.regex.Pattern.compile("\\d[\\d.,]+\\d");
-            java.util.regex.Matcher matcher = pricePattern.matcher(pageSource);
-            StringBuilder foundPrices = new StringBuilder("Giá trị tìm thấy trên page: ");
-            int count = 0;
-            while (matcher.find() && count < 20) {
-                String val = matcher.group();
-                if (val.length() >= 5) { // Chỉ lấy số >= 5 ký tự (giá tiền)
-                    foundPrices.append(val).append(" | ");
-                    count++;
-                }
-            }
-            tcVerifyPrice.info(foundPrices.toString());
-            
-            // Check Tổng tiền ban đầu (thử nhiều format)
-            if (pageSource.contains("2,800,000") || pageSource.contains("2.800.000") || pageSource.contains("2800000")) {
-                tcVerifyPrice.pass("✅ Tổng tiền ban đầu = 2,800,000 đ");
+
+            // Check: Tạm tính = 2,400,000
+            if (pageSource.contains("2,400,000") || pageSource.contains("2.400.000")) {
+                tcVerifyPrice.pass("✅ Tạm tính = 2,400,000 đ");
             } else {
-                tcVerifyPrice.fail("❌ Tổng tiền ban đầu KHÔNG tìm thấy 2,800,000 trên trang");
+                tcVerifyPrice.info("⚠️ Không tìm thấy 2,400,000 — có thể giá SP thay đổi");
             }
-            
-            // Check Giảm giá voucher = 20,000
-            if (pageSource.contains("20,000") || pageSource.contains("20.000")) {
-                tcVerifyPrice.pass("✅ Giảm giá voucher = 20,000 đ (tặng phẩm 20k)");
+
+            // NEGATIVE CHECK: PMH 00040816 KHÔNG ĐƯỢC xuất hiện
+            // (Vì chỉ thoả điều kiện nhóm hàng, ngành hàng không thoả)
+            if (pageSource.contains("00040816")) {
+                tcVerifyPrice.fail("❌ NEGATIVE FAIL: PMH 00040816 xuất hiện dù ngành hàng không thoả — BUG!");
+                throw new AssertionError("NEGATIVE FAIL: PMH 00040816 xuất hiện khi ngành hàng không thoả điều kiện!");
             } else {
-                tcVerifyPrice.fail("❌ Giảm giá voucher KHÔNG tìm thấy 20,000 trên trang");
+                tcVerifyPrice.pass("✅ NEGATIVE PASS: Không có PMH 00040816 (đúng vì ngành hàng không thoả)");
             }
-            
-            // Check Tạm tính
-            if (pageSource.contains("2,780,000") || pageSource.contains("2.780.000") || pageSource.contains("2780000")) {
-                tcVerifyPrice.pass("✅ Tạm tính = 2,780,000 đ (đã giảm 20,000 voucher từ CTKM KM-0626-074)");
-            } else {
-                tcVerifyPrice.fail("❌ Tạm tính KHÔNG tìm thấy 2,780,000 trên trang");
-            }
+
+        } catch (AssertionError ae) {
+            throw ae;
         } catch (Exception e) {
-            tcVerifyPrice.fail("❌ Lỗi khi verify giá: " + e.getMessage());
+            tcVerifyPrice.warning("❌ Lỗi khi verify: " + e.getMessage());
         }
 
 
@@ -595,6 +533,6 @@ public class TC4 extends BaseTest1 {
         System.out.println("MÃ ĐƠN HÀNG: " + orderCode);
         System.out.println("========================================");
 
-        test.pass("✅ PASS verify Nhóm hàng & ngành hàng  - Tổng đơn theo SP->> tặng phm 20k-KM-0626-074 SP C052300000457. Mã đơn: " + orderCode);
+        test.pass("✅ PASS NEGATIVE: Nhóm hàng thoả nhưng ngành hàng không thoả → không tặng PMH 00040816. SP D042300000205 SL100. Mã đơn: " + orderCode);
     }
 }

@@ -359,5 +359,11 @@
     "quantity": "1",
     "unit": "Hộp",
     "note": "TC14 - NEGATIVE: LIVROAL 350 US PHARMA 3X10 | Đơn vị: Hộp | SL: 1 | Đơn < 500k không đủ ĐK nhận serial ORCA 50k"
+  },
+  "product_tc15": {
+    "code": "D042300000205",
+    "quantity": "100",
+    "unit": "Hộp",
+    "note": "TC15 - NEGATIVE: KHẨU TRANG TRẺ EM DOLPHIN 10 CÁI | Hộp | SL: 100 | Tổng 2,400,000 | Chỉ thoả nhóm hàng, ngành hàng không thoả → không tặng PMH 00040816"
   }
 }

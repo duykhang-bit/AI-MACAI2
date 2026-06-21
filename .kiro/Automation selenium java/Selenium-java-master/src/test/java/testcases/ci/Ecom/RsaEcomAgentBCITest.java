@@ -1,4 +1,4 @@
-package testcases.Ecom;
+package testcases.ci.Ecom;
 
 import java.time.Duration;
 import java.util.HashMap;

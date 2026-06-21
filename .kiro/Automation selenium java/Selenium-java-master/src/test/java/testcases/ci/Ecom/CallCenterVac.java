@@ -1,4 +1,4 @@
-package testcases.Ecom;
+package testcases.ci.Ecom;
 // Import các thư viện cần thiết
 
 import java.time.Duration;

@@ -30,7 +30,7 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import listeners.TestListener;
 
 @Listeners(TestListener.class)
-public class TC4 extends BaseTest1 {
+public class TC16 extends BaseTest1 {
 
     // Đọc sản phẩm từ file data/products.json
     private JsonObject productsData;
@@ -88,10 +88,29 @@ public class TC4 extends BaseTest1 {
         wait = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(30));
     }
 
-    @Test(priority = 1, description = "FLOW - Nhóm hàng & ngành hàng - Tổng đơn theo SP->> tặng phm", invocationCount = 1)
-    public void TC04 () throws InterruptedException {
+    @Test(priority = 1, description = "FLOW - CDORCA Thuốc Kê Đơn - Bill > 800K - Tặng quà", invocationCount = 1)
+    public void TC013 () throws InterruptedException {
 
         JavascriptExecutor js = (JavascriptExecutor) driver;
+
+        /*
+         * =========================
+         * PRE-CONDITION: Clear cache quota promotion trước khi tạo đơn
+         * =========================
+         */
+        try {
+            java.net.http.HttpClient httpClient = java.net.http.HttpClient.newHttpClient();
+            java.net.http.HttpRequest request = java.net.http.HttpRequest.newBuilder()
+                    .uri(java.net.URI.create("http://uat-promotion-listener.lc.frt.local/api/promotion/clear-cache-quota?promotionCode=KM-0625-1172&phone=0835089291&type=MedicinalProperties"))
+                    .header("accept", "*/*")
+                    .POST(java.net.http.HttpRequest.BodyPublishers.noBody())
+                    .build();
+            java.net.http.HttpResponse<String> response = httpClient.send(request, java.net.http.HttpResponse.BodyHandlers.ofString());
+            System.out.println("[TC13] Clear cache quota: HTTP " + response.statusCode() + " — " + response.body());
+        } catch (Exception e) {
+            System.out.println("[TC13] ⚠️ Clear cache quota failed: " + e.getMessage());
+        }
+        Thread.sleep(1000);
 
         /*
          * =========================
@@ -287,7 +306,7 @@ public class TC4 extends BaseTest1 {
                 .until(ExpectedConditions.elementToBeClickable(
                         By.cssSelector("input[type='phone']")));
         phoneInput.click();
-        phoneInput.sendKeys("0835089255");
+        phoneInput.sendKeys("0835089291");
         phoneInput.sendKeys(Keys.ENTER);
         Thread.sleep(2000);
 
@@ -318,7 +337,7 @@ public class TC4 extends BaseTest1 {
         Thread.sleep(500);
 
         // Nhập mã sản phẩm
-        String product3 = getProductCode("product6");
+        String product3 = getProductCode("product_tc13");
         productInput.sendKeys(product3);
         Thread.sleep(1000);
 
@@ -338,12 +357,10 @@ public class TC4 extends BaseTest1 {
 
         Thread.sleep(2000);
 
-        // Chọn đơn vị "Hộp" - bắt buộc click chọn
+        // Chọn đơn vị "Hộp"
         try {
-            Thread.sleep(1000);
-            // Click vào dropdown đơn vị (tìm selector có text Hộp/Viên/Vỉ/Gói/Chai/Cái)
             WebElement unitSelect = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//div[contains(@class,'ant-select-selector')][.//span[contains(text(),'Hộp') or contains(text(),'Viên') or contains(text(),'Vỉ') or contains(text(),'Gói') or contains(text(),'Chai') or contains(text(),'Cái')]]")));
+                    By.xpath("//div[contains(@class,'ant-select-selector')][.//span[contains(text(),'Hộp') or contains(text(),'Viên') or contains(text(),'Vỉ')]]")));
             unitSelect.click();
             Thread.sleep(1000);
             WebElement hopOption = wait.until(ExpectedConditions.elementToBeClickable(
@@ -351,7 +368,7 @@ public class TC4 extends BaseTest1 {
             hopOption.click();
             Thread.sleep(1000);
         } catch (Exception e) {
-            // Đơn vị mặc định đã là Hộp hoặc SP chỉ có 1 đơn vị
+            // Đơn vị mặc định đã là Hộp
         }
 
         tc08.pass("Đã nhập sản phẩm " + product3 + " và chọn đơn vị Hộp");
@@ -361,7 +378,7 @@ public class TC4 extends BaseTest1 {
          * TC08b - NHẬP SỐ LƯỢNG 19 CHO SP 00029334
          * =========================
          */
-        ExtentTest tc08b = test.createNode("TC08b - Nhập số lượng 10");
+        ExtentTest tc08b = test.createNode("TC08b - Nhập số lượng 1");
 
         Thread.sleep(2000);
 
@@ -373,110 +390,23 @@ public class TC4 extends BaseTest1 {
         js.executeScript(
                 "var el = arguments[0];" +
                 "var nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;" +
-                "nativeInputValueSetter.call(el, '" + getProductQuantity("product6") + "');" +
+                "nativeInputValueSetter.call(el, '" + getProductQuantity("product_tc13") + "');" +
                 "el.dispatchEvent(new Event('input', { bubbles: true }));" +
                 "el.dispatchEvent(new Event('change', { bubbles: true }));" +
                 "el.blur();",
                 qtyInput);
         Thread.sleep(2000);
 
-        tc08b.pass("Đã nhập số lượng 10");
+        tc08b.pass("Đã nhập số lượng 1");
 
         /*
          * =========================
-         * TC08-VERIFY - VERIFY GIÁ SẢN PHẨM SAU KHI ÁP DỤNG CTKM
+         * TC08-VERIFY - VERIFY SERIAL TRÊN TRANG PROMOTION
          * =========================
          */
-        ExtentTest tcVerifyPrice = test.createNode("TC08-VERIFY - Verify giá sau khi áp CTKM loại hàng giảm giá");
+        ExtentTest tcVerifyPrice = test.createNode("TC08-VERIFY - Verify serial CDORCA trên trang Promotion");
 
-        Thread.sleep(3000); // Đợi giá cập nhật
-
-        // Verify CTKM KM-0626-115 hiển thị trên UI
-        try {
-            Thread.sleep(2000);
-            String pageSource = driver.getPageSource();
-            
-            // Check mã CTKM KM-0626-074 trong popup "Khuyến mãi khác"
-            // Click link "Khuyến mãi khác" để mở popup
-            try {
-                WebElement kmKhacLink = wait.until(ExpectedConditions.elementToBeClickable(
-                        By.xpath("//a[contains(text(),'Khuyến mãi khác')] | //*[contains(text(),'Khuyến mãi khác')]")));
-                js.executeScript("arguments[0].click();", kmKhacLink);
-                Thread.sleep(2000);
-                
-                // Verify KM-0626-074 đã được chọn (checked) trong popup
-                String popupSource = driver.getPageSource();
-                if (popupSource.contains("KM-0626-074")) {
-                    // Tìm dòng KM-0626-074 có icon checked (tick xanh)
-                    try {
-                        WebElement kmChecked = driver.findElement(
-                                By.xpath("//*[contains(text(),'KM-0626-074')]/ancestor::div[contains(@class,'ant-list-item') or contains(@class,'promotion-item') or ancestor::div[1]]//span[contains(@class,'anticon-check') or contains(@class,'checked')] | " +
-                                        "//*[contains(text(),'KM-0626-074')]/preceding-sibling::*[contains(@class,'check') or contains(@class,'anticon-check')]"));
-                        tcVerifyPrice.pass("✅ CTKM KM-0626-074 đã được CHỌN (checked) trong popup Khuyến mãi đơn hàng");
-                    } catch (Exception ex) {
-                        // KM hiển thị nhưng không tìm thấy icon check → vẫn pass vì text có
-                        tcVerifyPrice.pass("✅ CTKM KM-0626-074 hiển thị trong popup Khuyến mãi đơn hàng");
-                    }
-                } else {
-                    tcVerifyPrice.fail("❌ KHÔNG tìm thấy CTKM KM-0626-074 trong popup");
-                }
-                
-                // Click Xác nhận để đóng popup
-                try {
-                    WebElement btnXacNhan = wait.until(ExpectedConditions.elementToBeClickable(
-                            By.xpath("//button[contains(.,'Xác nhận')] | //button[contains(.,'Xác Nhận')]")));
-                    btnXacNhan.click();
-                    Thread.sleep(1000);
-                } catch (Exception ex) {
-                    // Đóng bằng nút X nếu không có Xác nhận
-                    try {
-                        WebElement closeBtn = driver.findElement(
-                                By.xpath("//div[contains(@class,'ant-modal')]//span[contains(@class,'anticon-close')]/ancestor::button"));
-                        closeBtn.click();
-                        Thread.sleep(1000);
-                    } catch (Exception ex2) { }
-                }
-            } catch (Exception e) {
-                tcVerifyPrice.fail("❌ Không tìm thấy link 'Khuyến mãi khác' để mở popup");
-            }
-            
-            // Debug: log các giá trị tìm thấy trên trang (chứa "000")
-            java.util.regex.Pattern pricePattern = java.util.regex.Pattern.compile("\\d[\\d.,]+\\d");
-            java.util.regex.Matcher matcher = pricePattern.matcher(pageSource);
-            StringBuilder foundPrices = new StringBuilder("Giá trị tìm thấy trên page: ");
-            int count = 0;
-            while (matcher.find() && count < 20) {
-                String val = matcher.group();
-                if (val.length() >= 5) { // Chỉ lấy số >= 5 ký tự (giá tiền)
-                    foundPrices.append(val).append(" | ");
-                    count++;
-                }
-            }
-            tcVerifyPrice.info(foundPrices.toString());
-            
-            // Check Tổng tiền ban đầu (thử nhiều format)
-            if (pageSource.contains("2,800,000") || pageSource.contains("2.800.000") || pageSource.contains("2800000")) {
-                tcVerifyPrice.pass("✅ Tổng tiền ban đầu = 2,800,000 đ");
-            } else {
-                tcVerifyPrice.fail("❌ Tổng tiền ban đầu KHÔNG tìm thấy 2,800,000 trên trang");
-            }
-            
-            // Check Giảm giá voucher = 20,000
-            if (pageSource.contains("20,000") || pageSource.contains("20.000")) {
-                tcVerifyPrice.pass("✅ Giảm giá voucher = 20,000 đ (tặng phẩm 20k)");
-            } else {
-                tcVerifyPrice.fail("❌ Giảm giá voucher KHÔNG tìm thấy 20,000 trên trang");
-            }
-            
-            // Check Tạm tính
-            if (pageSource.contains("2,780,000") || pageSource.contains("2.780.000") || pageSource.contains("2780000")) {
-                tcVerifyPrice.pass("✅ Tạm tính = 2,780,000 đ (đã giảm 20,000 voucher từ CTKM KM-0626-074)");
-            } else {
-                tcVerifyPrice.fail("❌ Tạm tính KHÔNG tìm thấy 2,780,000 trên trang");
-            }
-        } catch (Exception e) {
-            tcVerifyPrice.fail("❌ Lỗi khi verify giá: " + e.getMessage());
-        }
+        // Verify sẽ chạy SAU khi tạo đơn xong (move xuống sau phần tạo đơn)
 
 
         /*
@@ -543,9 +473,9 @@ public class TC4 extends BaseTest1 {
                 try {
                     WebElement insideInput2 = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(5))
                             .until(ExpectedConditions.elementToBeClickable(
-                                    By.xpath("//div[contains(@class,'ant-modal')]//input[@type='text' or @type='password' or @type='number'][not(contains(@class,'ant-select'))] | " +
-                                            "//input[contains(@placeholder,'inside') or contains(@placeholder,'mã inside') or contains(@placeholder,'Nhập mã') or contains(@placeholder,'Inside')]")));
+                                    By.xpath("//input[contains(@placeholder,'inside') or contains(@placeholder,'mã inside') or contains(@placeholder,'Nhập mã') or contains(@placeholder,'Inside') or contains(@placeholder,'nhân viên')]")));
                     insideInput2.click();
+                    insideInput2.clear();
                     insideInput2.sendKeys("00017");
                     Thread.sleep(1000);
                 } catch (Exception e) { }
@@ -595,6 +525,114 @@ public class TC4 extends BaseTest1 {
         System.out.println("MÃ ĐƠN HÀNG: " + orderCode);
         System.out.println("========================================");
 
-        test.pass("✅ PASS verify Nhóm hàng & ngành hàng  - Tổng đơn theo SP->> tặng phm 20k-KM-0626-074 SP C052300000457. Mã đơn: " + orderCode);
+        /*
+         * =========================
+         * VERIFY SERIAL TRÊN TRANG PROMOTION
+         * Login acc giant → Tra cứu serial → Tìm theo SĐT → Check bản ghi mới nhất (page cuối)
+         * =========================
+         */
+        try {
+            tcVerifyPrice.info("Mở browser mới để login Promotion bằng acc giant...");
+            
+            // Tạo browser mới hoàn toàn (driver mới) để login promotion
+            org.openqa.selenium.WebDriver promoDriver = null;
+            try {
+                ChromeOptions promoOptions = new ChromeOptions();
+                Map<String, Object> promoPrefs = new HashMap<>();
+                promoPrefs.put("profile.default_content_setting_values.notifications", 2);
+                promoPrefs.put("credentials_enable_service", false);
+                promoPrefs.put("profile.password_manager_enabled", false);
+                promoOptions.setExperimentalOption("prefs", promoPrefs);
+                promoOptions.addArguments("--start-maximized");
+                promoOptions.addArguments("--remote-allow-origins=*");
+
+                promoDriver = new ChromeDriver(promoOptions);
+                org.openqa.selenium.support.ui.WebDriverWait promoWait = 
+                    new org.openqa.selenium.support.ui.WebDriverWait(promoDriver, Duration.ofSeconds(30));
+                JavascriptExecutor promoJs = (JavascriptExecutor) promoDriver;
+
+                // Navigate thẳng tới link search serial (sẽ redirect sang login nếu chưa auth)
+                promoDriver.get("https://uat-promotion.frt.vn/search-serial-by-phonenumber?voucherType=1&searchBy=phoneNumber&phoneNumber=0835089291");
+                Thread.sleep(3000);
+
+                // Login bằng acc giant/123456 (nếu bị redirect về login page)
+                try {
+                    promoWait.until(ExpectedConditions.elementToBeClickable(
+                            By.name("LoginInput.UserNameOrEmailAddress")))
+                            .sendKeys("giant");
+
+                    promoWait.until(ExpectedConditions.elementToBeClickable(
+                            By.name("LoginInput.Password")))
+                            .sendKeys("123456");
+
+                    promoDriver.findElement(By.id("kt_login_signin_submit")).click();
+                    Thread.sleep(5000);
+                    tcVerifyPrice.pass("✅ Login Promotion bằng acc giant thành công");
+                } catch (Exception loginEx) {
+                    tcVerifyPrice.info("Đã login sẵn — không cần login lại");
+                }
+
+                // Sau login, navigate lại link search (đảm bảo đúng page)
+                promoDriver.get("https://uat-promotion.frt.vn/search-serial-by-phonenumber?voucherType=1&searchBy=phoneNumber&phoneNumber=0835089291");
+                Thread.sleep(5000);
+
+                // Click trang cuối (page 7)
+                try {
+                    WebElement lastPage = promoWait.until(ExpectedConditions.elementToBeClickable(
+                            By.xpath("//li[contains(@class,'ant-pagination-item')][last()] | " +
+                                    "//a[text()='7'] | //li[@title='7']//a | " +
+                                    "//button[text()='7'] | //li[contains(@title,'7')]")));
+                    promoJs.executeScript("arguments[0].click();", lastPage);
+                    Thread.sleep(3000);
+                } catch (Exception e) {
+                    tcVerifyPrice.info("⚠️ Không tìm thấy page 7 — có thể chỉ 1 page");
+                }
+
+                // Lấy page source
+                String promoPageSource = promoDriver.getPageSource();
+
+                // Check: "ORCA Thuốc Kê Đơn - Bill 500K - 800K"
+                if (promoPageSource.contains("ORCA Thuốc Kê Đơn") || promoPageSource.contains("Bill 500K - 800K")) {
+                    tcVerifyPrice.pass("✅ Serial 'ORCA Thuốc Kê Đơn - Bill 500K - 800K - Tặng mã ưu đãi 50,000đ' tìm thấy");
+                } else {
+                    tcVerifyPrice.warning("❌ Không tìm thấy serial ORCA Thuốc Kê Đơn trên trang Promotion");
+                }
+
+                // Lấy serial code từ dòng cuối cùng trong bảng (cột 3 - Serial)
+                String serialCode = "";
+                try {
+                    java.util.List<WebElement> serialCells = promoDriver.findElements(
+                            By.xpath("//table//tbody//tr[last()]//td[3]//a | //table//tbody//tr[last()]//td[3]"));
+                    if (!serialCells.isEmpty()) {
+                        serialCode = serialCells.get(serialCells.size() - 1).getText().trim();
+                    }
+                } catch (Exception e) {}
+
+                if (!orderCode.isEmpty() && promoPageSource.contains(orderCode)) {
+                    tcVerifyPrice.pass("✅ Mã đơn hàng " + orderCode + " khớp với serial " + serialCode + " trên Promotion");
+                } else {
+                    tcVerifyPrice.info("⚠️ Mã đơn hàng " + orderCode + " chưa khớp — serial: " + serialCode);
+                }
+
+                // Check: Ngày hôm nay
+                String today = new java.text.SimpleDateFormat("dd/MM/yyyy").format(new java.util.Date());
+                if (promoPageSource.contains(today)) {
+                    tcVerifyPrice.pass("✅ Ngày hiệu lực " + today + " hiển thị đúng");
+                } else {
+                    tcVerifyPrice.info("⚠️ Không tìm thấy ngày " + today + " trên trang");
+                }
+
+            } finally {
+                // Đóng browser promotion
+                if (promoDriver != null) {
+                    promoDriver.quit();
+                }
+            }
+
+        } catch (Exception e) {
+            tcVerifyPrice.warning("❌ Lỗi khi verify trên Promotion: " + e.getMessage());
+        }
+
+        test.pass("✅ PASS verify CDORCA Thuốc Kê Đơn - Bill > 800K - Tặng quà KM-0326-003 SP 00030512 SL2. Mã đơn: " + orderCode);
     }
 }

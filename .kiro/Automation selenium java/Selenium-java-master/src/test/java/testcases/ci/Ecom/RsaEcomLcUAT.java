@@ -1,137 +1,120 @@
-package testcases.Ecom;
-import java.time.Duration;
-import java.util.HashMap;
-import java.util.Map;
-
+package testcases.ci.Ecom;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import io.github.bonigarcia.wdm.WebDriverManager;
+import base.BaseTest1;
 
-public class RsaEcomLcTransfertoCskh {
-    WebDriver driver;
-    WebDriverWait wait;
 
-    @BeforeMethod
+public class RsaEcomLcUAT extends BaseTest1 {
+    
+    @Override
+    protected String getBaseUrl() {
+        return "https://UAT-rsa-ecom.frt.vn/";
+    }
+
+    protected long getWaitTimeout() {
+        return 50;
+    }
+
     @Test
-
-    public void runFlowLC() throws InterruptedException {
-        WebDriverManager.chromedriver().setup();
-
-        ChromeOptions options = new ChromeOptions();
-        Map<String, Object> prefs = new HashMap<>();
-        prefs.put("profile.default_content_setting_values.media_stream_mic", 1);
-        options.setExperimentalOption("prefs", prefs);
-        options.addArguments("--use-fake-ui-for-media-stream");
-
-        driver = new ChromeDriver(options);
-        driver.manage().window().maximize();
-        wait = new WebDriverWait(driver, Duration.ofSeconds(50));
-        //truy cập web RSA ECOM lc
-        driver.get("https://ci-rsa-ecom.frt.vn/");
-        // nhập user name
+    public void testLogin() {
         WebElement userNameBox = wait.until(ExpectedConditions.visibilityOfElementLocated(
                 By.name("LoginInput.UserNameOrEmailAddress")));
         userNameBox.sendKeys("tinvt4");
-        // nhập  passwword
         WebElement passwordBox = driver.findElement(By.name("LoginInput.Password"));
         passwordBox.sendKeys("********");
-        // Submit đăng nhập
         WebElement loginBtn1 = driver.findElement(By.id("kt_login_signin_submit"));
         loginBtn1.click();
         wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("kt_login_signin_submit")));
-        //Chọn menu
+        test.pass("Login successful");
+    }
+
+    @Test
+    public void testLoginAndSystemLogin() {
+        testLogin();
         WebElement menu = wait.until(ExpectedConditions.elementToBeClickable(
                 By.xpath("//div[@class='ant-menu-submenu-title']")));
         menu.click();
-        // DĂNG NHẬP HỆ THÔNG
         WebElement loginBtn2 = wait.until(ExpectedConditions.elementToBeClickable(
                 By.xpath("//button[@id='A-SIGNIN-BTN']")));
         loginBtn2.click();
-        // Nhập sdt vô để call out
+        test.pass("System login successful");
+    }
+
+    @Test
+    public void testCallFlow() throws InterruptedException {
+        testLoginAndSystemLogin();
         WebElement sdtBox = wait.until(ExpectedConditions.visibilityOfElementLocated(
                 By.xpath("//input[@placeholder='Nhập số điện thoại']")));
         sdtBox.sendKeys("0835089254");
-        // nhân button call
         WebElement call1 = wait.until(ExpectedConditions.elementToBeClickable(
                 By.xpath("//button[@id='CALL-ACTION-BTN-CALL']")));
         call1.click();
-        // nhấn button hold
         WebElement HoldOncall = wait.until(ExpectedConditions.elementToBeClickable(
                 By.xpath("//button[@id='CALL-ACTION-BTN-HOLD']")));
         HoldOncall.click();
-
-        Thread.sleep(6000); // giữ máy
-        // Chọn button tiếp tục
+        Thread.sleep(1000);
         WebElement Continuecall = wait.until(ExpectedConditions.elementToBeClickable(
                 By.xpath("//button[@id='CALL-ACTION-BTN-RETRIEVE']")));
         Continuecall.click();
-        // Chọn button transfer
+        test.pass("Call flow completed successfully");
+
+// Ghi nội dung note
+        WebElement Note = wait.until(ExpectedConditions.elementToBeClickable(
+                By.xpath("//button[@id='C2-NOTE-BTN']")));
+        Note.click();
+
+// Sửa lại để tìm đúng phần tử textarea thay vì input
+        WebElement Ghichu = wait.until(ExpectedConditions.elementToBeClickable(
+                By.xpath("//textarea[@placeholder='Nhập ghi chú']")));
+        Ghichu.click();
+        Ghichu.sendKeys("Automation");
+
+
+
+// Lưu ghi chú
+        WebElement Luunote = wait.until(ExpectedConditions.elementToBeClickable(
+                By.xpath("//button[.//span[text()='Xong']]")));
+        Luunote.click();
+
+
+
+    }
+
+    @Test
+    public void testTransferFlow1() throws InterruptedException {
+        testCallFlow();
         WebElement TransferAgentB = wait.until(ExpectedConditions.elementToBeClickable(
                 By.xpath("//button[@id='CALL-ACTION-BTN-TRANSFER']")));
         TransferAgentB.click();
-        // nhập mã dể transfer tới RSA ECOM 30009
         WebElement nhapsdtBox = wait.until(ExpectedConditions.visibilityOfElementLocated(
                 By.xpath("//input[@id='TRANSFERTO']")));
-        nhapsdtBox.sendKeys("30009");
-        // chọn button tham vấn
-        WebElement thamvan = wait.until(ExpectedConditions.visibilityOfElementLocated(
+        nhapsdtBox.sendKeys("30007");
+        WebElement thamvan = wait.until(ExpectedConditions.elementToBeClickable(
                 By.xpath("//button[@id='transferBtn']")));
         thamvan.click();
 
-        System.out.println("Đang gọi Agent B nhận cuộc gọi...");
+        // Gọi agent B xử lý cuộc gọi
+        RsaEcomAgentBUAT agentB = new RsaEcomAgentBUAT();
+        agentB.runFlowUAT();
 
 
-        // GỌI QUA CallCenterVac:
-// Tạo object từ class CallCenterVac, class này chứa luồng xử lý Agent B nhận cuộc gọi ở hệ thống khác (VD: CSKH Vaccine)
-// Gọi hàm runFlow() để chạy quy trình Agent B login + trả lời cuộc gọi
-// Sau đó gọi teardown() để đóng trình duyệt sau khi hoàn tất
-//        CallCenterVac VAC = new CallCenterVac();
-//        VAC.runFlowVAC();   // Agent B answer
-//        VAC.teardown();
-//
-
-        // GỌI QUA CSKH
-        CallCenterCSKH CSKH = new CallCenterCSKH();
-        CSKH.runFlowCSKH();   // Agent B answer
-        CSKH.teardown();
 
 
-        // gọi qua class GetTransferCall để mở tab mới trả lời cuộc gọi AgenT b
-//        RsaEcomAgentB agentB = new RsaEcomAgentB();
-//        agentB.runFlow();   // Agent B answer
-//        agentB.teardown();
-
-
-        System.out.println("Tiếp tục chuyển cuộc gọi cho Agent B...");
-        // Chuyển cuộc gọi cho Agent B hẳn
         WebElement transferB = wait.until(ExpectedConditions.elementToBeClickable(
                 By.xpath("//button[@id='transferBtn']")));
         transferB.click();
-        //End CALL  AgentB
         WebElement endcallAgentB = wait.until(ExpectedConditions.elementToBeClickable(
                 By.xpath("//button[@id='CALL-ACTION-BTN-DROP']")));
         endcallAgentB.click();
-
-
-    }
-
-    @AfterMethod
-
-    public void teardown() {
-        if (driver != null) {
-            driver.quit();
-        }
+        test.pass("Transfer flow completed successfully");
     }
 }
+
+
+//test
 
 //    public static void main(String[] args) {
 //        RsaEcomLc app = new RsaEcomLc();
@@ -166,5 +149,32 @@ public class RsaEcomLcTransfertoCskh {
 //        }
 //else{
 //    System.out.println("Yếu");
-//                }
-
+//
+//
+//
+//name: Run Selenium Tests
+//
+//on:
+//  push:
+//    branches:
+//      - master
+//  pull_request:
+//    branches:
+//      - master
+//
+//jobs:
+//  build:
+//    runs-on: ubuntu-latest
+//
+//    steps:
+//    - name: Checkout code
+//      uses: actions/checkout@v3
+//
+//    - name: Set up Java
+//      uses: actions/setup-java@v3
+//      with:
+//        java-version: '17'
+//        distribution: 'temurin'
+//
+//    - name: Build with Maven
+//      run: mvn clean test -DsuiteXmlFile=src/test/resources/testng.xml}

@@ -1,4 +1,4 @@
-package testcases.Ecom;
+package testcases.ci.Ecom;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;

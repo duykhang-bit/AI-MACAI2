@@ -1,4 +1,4 @@
-package testcases.Ecom;// Import các thư viện cần thiết
+package testcases.ci.Ecom;// Import các thư viện cần thiết
 import java.time.Duration; // Quản lý driver cho trình duyệt
 import java.util.HashMap;                     // Dùng để tìm element theo các loại locator
 import java.util.Map;             // Interface chính để điều khiển trình duyệt

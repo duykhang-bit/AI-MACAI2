@@ -1,4 +1,4 @@
-package testcases.Ecom;
+package testcases.ci.Ecom;
 import java.time.Duration;
 
 import org.openqa.selenium.By;
