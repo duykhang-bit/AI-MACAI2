@@ -62,6 +62,9 @@ public class BaseTest1 {
 
         spark.config().setDocumentTitle("Automation Report");
         spark.config().setReportName("Selenium Test Results");
+        spark.config().setTimelineEnabled(true);
+        // Sort test: OLDEST_FIRST để TỔNG KẾT (startTime=epoch 0) hiện đầu tiên
+        spark.config().setTimeStampFormat("MMM dd, yyyy HH:mm:ss");
 
         extent = new ExtentReports();
         extent.attachReporter(spark);
@@ -119,21 +122,23 @@ public class BaseTest1 {
         }
 
         if (driver != null) {
-           driver.quit();// bật tắt chrome
+          // driver.quit();// bật tắt chrome
         }
     }
 
     @AfterSuite
     public void flushReport(org.testng.ITestContext context) {
-        // Tổng kết hiện trên sidebar report
+        // Tổng kết hiện TRÊN ĐẦU sidebar report
         int total = context.getAllTestMethods().length;
         int passed = context.getPassedTests().size();
         int failed = context.getFailedTests().size();
         int skipped = context.getSkippedTests().size();
         double passRate = total > 0 ? (passed * 100.0 / total) : 0;
 
-        com.aventstack.extentreports.ExtentTest summary = extent.createTest(
-                "📊 TỔNG KẾT: " + total + " TC | ✅" + passed + " Pass | ❌" + failed + " Fail | " + String.format("%.0f%%", passRate));
+        String passIcon = failed == 0 ? "🎉" : "⚠️";
+        String summaryTitle = passIcon + " TỔNG KẾT: " + total + " TC | ✅" + passed + " Pass | ❌" + failed + " Fail | " + String.format("%.0f%%", passRate);
+
+        com.aventstack.extentreports.ExtentTest summary = extent.createTest(summaryTitle);
         summary.info("📋 Total: " + total + " | ✅ Passed: " + passed + " | ❌ Failed: " + failed + " | ⏭️ Skipped: " + skipped);
         summary.info("📊 Pass Rate: " + String.format("%.1f%%", passRate));
         if (failed == 0) {
@@ -141,6 +146,10 @@ public class BaseTest1 {
         } else {
             summary.fail("⚠️ " + failed + " test(s) FAILED");
         }
+
+        // Set startTime = epoch 0 để summary hiện ĐẦU TIÊN trên sidebar
+        summary.getModel().setStartTime(new java.util.Date(0));
+        summary.getModel().setEndTime(new java.util.Date(0));
 
         extent.flush();
     }

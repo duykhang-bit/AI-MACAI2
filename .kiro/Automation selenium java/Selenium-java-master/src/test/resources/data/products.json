@@ -83,7 +83,6 @@
     "unit": "Viên",
     "note": "TC10 - CLORPHENIRAMIN 4MG KHÁNH HÒA 10X20 | Đơn vị: Viên | SL: 1"
   },
-
   "mud": {
     "codes": [
       "Y0MXFPMXK6",
@@ -187,7 +186,6 @@
     ],
     "note": "TC7 - MUD voucher 130k (hạn 08/07/2027). 100 mã chưa sử dụng."
   },
-
   "mud2": {
     "codes": [
       "5FGWF2LPNN",
@@ -290,13 +288,8 @@
     ],
     "note": "TC8/9/10 - MUD 'Auto 1' voucher 100k (hạn 15/10/2027). 100 mã chưa sử dụng."
   },
-
   "mud3": {
     "codes": [
-      "X6I95NY0G8",
-      "X4GKCK2D9X",
-      "8J5XG86MPE",
-      "816HGE42NK",
       "XVTFIKV3BN",
       "URFNEZ4WCE",
       "TMZQ7YCBUG",
@@ -307,11 +300,29 @@
       "5IAWAMGHAO",
       "6LRUCIKTV0",
       "9WMVOM1YFD",
-      "XBHTA0YETK"
+      "XBHTA0YETK",
+      "YJBUPSXZ79",
+      "O2ENT6R3Z4",
+      "9QEABWCY9T",
+      "SELV5JN9N8",
+      "QXJKCB2SX4",
+      "R6Q5BDUVD6",
+      "NXU5DJ32HE",
+      "X2ZTW3JUOO",
+      "TYMILO7JTW",
+      "U2HFFR2ZO1",
+      "728YJC53TN",
+      "S4I7W1P321",
+      "TE4M14KSBH",
+      "8WQRRPDMEG",
+      "WYWZ4POBIF",
+      "9CW00SLPHG",
+      "OLAORUOZK8",
+      "NS50DN3SIY",
+      "72CCN1BTXN"
     ],
-    "note": "TC11 - MUD TK Gia Đình Đảo 2 voucher 100k (hạn 18/08/2026). Dùng lần lượt từ index 0."
+    "note": "TC11/12 - MUD TK Gia Dinh Dao 2 voucher 100k (han 18/08/2026). 30 ma chua su dung."
   },
-
   "product_tc11_1": {
     "code": "00016600",
     "quantity": "2",
