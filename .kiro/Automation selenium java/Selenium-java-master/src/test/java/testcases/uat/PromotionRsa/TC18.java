@@ -341,9 +341,9 @@ public class TC18 extends BaseTest1 {
         // Chọn đơn vị "Hộp" - bắt buộc click chọn
         try {
             Thread.sleep(1000);
-            // Click vào dropdown đơn vị (tìm selector có text Hộp/Viên/Vỉ/Gói/Chai/Cái)
+            // Click vào dropdown đơn vị (tìm selector có text bất kỳ đơn vị)
             WebElement unitSelect = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//div[contains(@class,'ant-select-selector')][.//span[contains(text(),'Hộp') or contains(text(),'Viên') or contains(text(),'Vỉ') or contains(text(),'Gói') or contains(text(),'Chai') or contains(text(),'Cái')]]")));
+                    By.xpath("//div[contains(@class,'ant-select-selector')][.//span[contains(text(),'Hộp') or contains(text(),'Viên') or contains(text(),'Vỉ') or contains(text(),'Gói') or contains(text(),'Chai') or contains(text(),'Cái') or contains(text(),'Cây') or contains(text(),'Tuýp')]]")));
             unitSelect.click();
             Thread.sleep(1000);
             WebElement hopOption = wait.until(ExpectedConditions.elementToBeClickable(
@@ -479,9 +479,9 @@ public class TC18 extends BaseTest1 {
                 try {
                     WebElement insideInput2 = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(5))
                             .until(ExpectedConditions.elementToBeClickable(
-                                    By.xpath("//div[contains(@class,'ant-modal')]//input[@type='text' or @type='password' or @type='number'][not(contains(@class,'ant-select'))] | " +
-                                            "//input[contains(@placeholder,'inside') or contains(@placeholder,'mã inside') or contains(@placeholder,'Nhập mã') or contains(@placeholder,'Inside')]")));
+                                    By.xpath("//input[contains(@placeholder,'inside') or contains(@placeholder,'mã inside') or contains(@placeholder,'Nhập mã') or contains(@placeholder,'Inside') or contains(@placeholder,'nhân viên')]")));
                     insideInput2.click();
+                    insideInput2.clear();
                     insideInput2.sendKeys("00017");
                     Thread.sleep(1000);
                 } catch (Exception e) { }
