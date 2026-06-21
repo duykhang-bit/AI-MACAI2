@@ -31,7 +31,7 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import listeners.TestListener;
 
 @Listeners(TestListener.class)
-public class TC10 extends BaseTest1 {
+public class TC17 extends BaseTest1 {
 
     // Đọc sản phẩm từ file data/products.json
     private JsonObject productsData;
@@ -93,7 +93,7 @@ public class TC10 extends BaseTest1 {
         wait = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(30));
     }
 
-    @Test(priority = 1, description = "FLOW - MUD - Loại hàng Chăm sóc tóc - da đầu / Tóc  ", invocationCount = 1)
+    @Test(priority = 1, description = "FLOW - MUD - Không thoã đk mua 1/3 sản phẩm-Loại hàng Chăm sóc tóc - da đầu / Tóc  ", invocationCount = 1)
     public void TC010 () throws InterruptedException {
 
         JavascriptExecutor js = (JavascriptExecutor) driver;
@@ -757,6 +757,7 @@ public class TC10 extends BaseTest1 {
         System.out.println("MÃ ĐƠN HÀNG: " + orderCode);
         System.out.println("========================================");
 
-        test.pass("✅ PASS verify MUD - Loại hàng Chăm sóc tóc - da đầu / Tóc-KM-0626-082 SP 00038140/00018413/00033509 . Mã đơn: " + orderCode);
+        test.pass("✅ PASS verify MUD - Không thoã đk mua 1/3 sản phẩm- Loại hàng Chăm sóc tóc - da đầu / Tóc-KM-0626-082 SP 00038140 . Mã đơn: " + orderCode);
     }
 }
+    

@@ -88,8 +88,8 @@ public class TC16 extends BaseTest1 {
         wait = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(30));
     }
 
-    @Test(priority = 1, description = "FLOW - CDORCA Thuốc Kê Đơn - Bill > 800K - Tặng quà", invocationCount = 1)
-    public void TC013 () throws InterruptedException {
+    @Test(priority = 1, description = "FLOW - CDORCA Thuốc Kê Đơn - Bill > 800K - Tặng quà 00030512", invocationCount = 1)
+    public void TC016 () throws InterruptedException {
 
         JavascriptExecutor js = (JavascriptExecutor) driver;
 
@@ -550,112 +550,8 @@ public class TC16 extends BaseTest1 {
         System.out.println("========================================");
 
         /*
-         * =========================
-         * VERIFY SERIAL TRÊN TRANG PROMOTION
-         * Login acc giant → Tra cứu serial → Tìm theo SĐT → Check bản ghi mới nhất (page cuối)
-         * =========================
+         * TC16 không cần verify trên Promotion — chỉ verify SP tặng 00030512 trên RSA
          */
-        try {
-            tcVerifyPrice.info("Mở browser mới để login Promotion bằng acc giant...");
-            
-            // Tạo browser mới hoàn toàn (driver mới) để login promotion
-            org.openqa.selenium.WebDriver promoDriver = null;
-            try {
-                ChromeOptions promoOptions = new ChromeOptions();
-                Map<String, Object> promoPrefs = new HashMap<>();
-                promoPrefs.put("profile.default_content_setting_values.notifications", 2);
-                promoPrefs.put("credentials_enable_service", false);
-                promoPrefs.put("profile.password_manager_enabled", false);
-                promoOptions.setExperimentalOption("prefs", promoPrefs);
-                promoOptions.addArguments("--start-maximized");
-                promoOptions.addArguments("--remote-allow-origins=*");
-
-                promoDriver = new ChromeDriver(promoOptions);
-                org.openqa.selenium.support.ui.WebDriverWait promoWait = 
-                    new org.openqa.selenium.support.ui.WebDriverWait(promoDriver, Duration.ofSeconds(30));
-                JavascriptExecutor promoJs = (JavascriptExecutor) promoDriver;
-
-                // Navigate thẳng tới link search serial (sẽ redirect sang login nếu chưa auth)
-                promoDriver.get("https://uat-promotion.frt.vn/search-serial-by-phonenumber?voucherType=1&searchBy=phoneNumber&phoneNumber=0835089291");
-                Thread.sleep(3000);
-
-                // Login bằng acc giant/123456 (nếu bị redirect về login page)
-                try {
-                    promoWait.until(ExpectedConditions.elementToBeClickable(
-                            By.name("LoginInput.UserNameOrEmailAddress")))
-                            .sendKeys("giant");
-
-                    promoWait.until(ExpectedConditions.elementToBeClickable(
-                            By.name("LoginInput.Password")))
-                            .sendKeys("123456");
-
-                    promoDriver.findElement(By.id("kt_login_signin_submit")).click();
-                    Thread.sleep(5000);
-                    tcVerifyPrice.pass("✅ Login Promotion bằng acc giant thành công");
-                } catch (Exception loginEx) {
-                    tcVerifyPrice.info("Đã login sẵn — không cần login lại");
-                }
-
-                // Sau login, navigate lại link search (đảm bảo đúng page)
-                promoDriver.get("https://uat-promotion.frt.vn/search-serial-by-phonenumber?voucherType=1&searchBy=phoneNumber&phoneNumber=0835089291");
-                Thread.sleep(5000);
-
-                // Click trang cuối (page 7)
-                try {
-                    WebElement lastPage = promoWait.until(ExpectedConditions.elementToBeClickable(
-                            By.xpath("//li[contains(@class,'ant-pagination-item')][last()] | " +
-                                    "//a[text()='7'] | //li[@title='7']//a | " +
-                                    "//button[text()='7'] | //li[contains(@title,'7')]")));
-                    promoJs.executeScript("arguments[0].click();", lastPage);
-                    Thread.sleep(3000);
-                } catch (Exception e) {
-                    tcVerifyPrice.info("⚠️ Không tìm thấy page 7 — có thể chỉ 1 page");
-                }
-
-                // Lấy page source
-                String promoPageSource = promoDriver.getPageSource();
-
-                // Check: "ORCA Thuốc Kê Đơn - Bill 500K - 800K"
-                if (promoPageSource.contains("ORCA Thuốc Kê Đơn") || promoPageSource.contains("Bill 500K - 800K")) {
-                    tcVerifyPrice.pass("✅ Serial 'ORCA Thuốc Kê Đơn - Bill 500K - 800K - Tặng mã ưu đãi 50,000đ' tìm thấy");
-                } else {
-                    tcVerifyPrice.warning("❌ Không tìm thấy serial ORCA Thuốc Kê Đơn trên trang Promotion");
-                }
-
-                // Lấy serial code từ dòng cuối cùng trong bảng (cột 3 - Serial)
-                String serialCode = "";
-                try {
-                    java.util.List<WebElement> serialCells = promoDriver.findElements(
-                            By.xpath("//table//tbody//tr[last()]//td[3]//a | //table//tbody//tr[last()]//td[3]"));
-                    if (!serialCells.isEmpty()) {
-                        serialCode = serialCells.get(serialCells.size() - 1).getText().trim();
-                    }
-                } catch (Exception e) {}
-
-                if (!orderCode.isEmpty() && promoPageSource.contains(orderCode)) {
-                    tcVerifyPrice.pass("✅ Mã đơn hàng " + orderCode + " khớp với serial " + serialCode + " trên Promotion");
-                } else {
-                    tcVerifyPrice.info("⚠️ Mã đơn hàng " + orderCode + " chưa khớp — serial: " + serialCode);
-                }
-
-                // Check: Ngày hôm nay
-                String today = new java.text.SimpleDateFormat("dd/MM/yyyy").format(new java.util.Date());
-                if (promoPageSource.contains(today)) {
-                    tcVerifyPrice.pass("✅ Ngày hiệu lực " + today + " hiển thị đúng");
-                } else {
-                    tcVerifyPrice.info("⚠️ Không tìm thấy ngày " + today + " trên trang");
-                }
-
-            } finally {
-                // Đóng browser promotion
-                if (promoDriver != null) {
-                    promoDriver.quit();
-                }
-            }
-
-        } catch (Exception e) {
-            tcVerifyPrice.warning("❌ Lỗi khi verify trên Promotion: " + e.getMessage());
-        }
 
         test.pass("✅ PASS verify CDORCA Thuốc Kê Đơn - Bill > 800K - Tặng SP 00030512 (BAWOD CALCIUM). SP 00022434 SL6. Mã đơn: " + orderCode);
     }
