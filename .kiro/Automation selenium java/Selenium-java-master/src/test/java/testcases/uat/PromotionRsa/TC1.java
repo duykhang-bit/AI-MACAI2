@@ -221,6 +221,26 @@ public class TC1 extends BaseTest1 {
 
         /*
          * =========================
+         * TC04b - TẮT POPUP QUẢNG CÁO "Flex thành tựu" (nếu có)
+         * =========================
+         */
+        try {
+            // Tìm nút X đóng popup quảng cáo (thường là icon close ở góc trên phải popup)
+            WebElement closeAdPopup = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(5))
+                    .until(ExpectedConditions.elementToBeClickable(
+                            By.xpath("//div[contains(@class,'ant-modal') or contains(@class,'popup') or contains(@class,'modal')]" +
+                                    "//button[contains(@class,'close') or @aria-label='Close'] | " +
+                                    "//span[contains(@class,'anticon-close')]/ancestor::button | " +
+                                    "//div[contains(@class,'ant-modal-close')] | " +
+                                    "//*[contains(@class,'close-btn') or contains(@class,'closeBtn')]")));
+            closeAdPopup.click();
+            Thread.sleep(500);
+        } catch (Exception e) {
+            // Không có popup quảng cáo → bỏ qua
+        }
+
+        /*
+         * =========================
          * TC05 - CHỌN MỤC BÁN HÀNGF
          * =========================
          */
