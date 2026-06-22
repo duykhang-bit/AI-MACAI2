@@ -95,7 +95,7 @@ public class TC15 extends BaseTest1 {
         wait = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(30));
     }
 
-    @Test(priority = 1, description = "FLOW - Nhóm hàng & ngành hàng chỉ thoã điều kiện nhóm hàng - Tổng đơn theo SP->> tặng phm", invocationCount = 1)
+    @Test(priority = 1, description = "FLOW - Nhóm hàng & ngành hàng chỉ thoã điều kiện nhóm hàng - Tổng đơn theo SP->> không tặng phm", invocationCount = 1)
     public void TC15 () throws InterruptedException {
 
         JavascriptExecutor js = (JavascriptExecutor) driver;

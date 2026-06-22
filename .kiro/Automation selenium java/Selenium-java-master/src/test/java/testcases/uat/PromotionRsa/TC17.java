@@ -100,7 +100,7 @@ public class TC17 extends BaseTest1 {
         wait = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(30));
     }
 
-    @Test(priority = 1, description = "FLOW - MUD - Không thoã đk mua 1/3 sản phẩm-Loại hàng Chăm sóc tóc - da đầu / Tóc  ", invocationCount = 1)
+    @Test(priority = 1, description = "FLOW - MUD - Vẫn thoã đk mua 1/3 sản phẩm-Loại hàng Chăm sóc tóc - da đầu / Tóc  ", invocationCount = 1)
     public void TC017 () throws InterruptedException {
 
         JavascriptExecutor js = (JavascriptExecutor) driver;
@@ -670,7 +670,7 @@ public class TC17 extends BaseTest1 {
         System.out.println("MÃ ĐƠN HÀNG: " + orderCode);
         System.out.println("========================================");
 
-        test.pass("✅ PASS verify MUD - Không thoã đk mua 1/3 sản phẩm- Loại hàng Chăm sóc tóc - da đầu / Tóc-KM-0626-082 SP 00038140 . Mã đơn: " + orderCode);
+        test.pass("✅ PASS verify MUD - Vẫn thoã đk mua 1/3 sản phẩm- Loại hàng Chăm sóc tóc - da đầu / Tóc-KM-0626-082 SP 00038140 . Mã đơn: " + orderCode);
     }
 }
     
