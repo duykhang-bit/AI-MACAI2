@@ -351,5 +351,11 @@
     "quantity": "1",
     "unit": "Hộp",
     "note": "TC18 - NOVOMIX 100IU/ML 5 CÂY | Hộp | SL: 1 | Tặng SP 00030512 BAWOD CALCIUM"
+  },
+  "product_tc20": {
+    "code": "00031188",
+    "quantity": "1",
+    "unit": "Hộp",
+    "note": "TC20 - Tổng tiền đơn hàng theo sp → số tiền giảm | KM-0626-118 | Giảm 10,000đ | Giá gốc 50,000 → Tạm tính 40,000"
   }
 }
