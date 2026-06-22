@@ -363,6 +363,21 @@ public class TC1 extends BaseTest1 {
         js.executeScript("arguments[0].click();", productItem);
         Thread.sleep(3000);
 
+        // Đóng popup "Chi tiết sản phẩm" nếu xuất hiện (click X)
+        try {
+            WebElement closeProductDetail = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(3))
+                    .until(ExpectedConditions.elementToBeClickable(
+                            By.xpath("//div[contains(@class,'ant-modal') or contains(@class,'modal')]" +
+                                    "[.//*[contains(text(),'Chi tiết sản phẩm') or contains(text(),'chi tiết')]]" +
+                                    "//button[contains(@class,'close') or @aria-label='Close'] | " +
+                                    "//div[contains(@class,'ant-modal')][.//*[contains(text(),'Chi tiết')]]//span[contains(@class,'anticon-close')]/ancestor::button | " +
+                                    "//div[contains(@class,'ant-modal-close')]")));
+            closeProductDetail.click();
+            Thread.sleep(1000);
+        } catch (Exception e) {
+            // Không có popup chi tiết SP → SP đã thêm vào giỏ trực tiếp
+        }
+
         Thread.sleep(2000);
 
         // Chọn đơn vị "Hộp"

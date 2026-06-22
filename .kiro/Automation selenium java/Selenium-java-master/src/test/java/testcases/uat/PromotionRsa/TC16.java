@@ -344,7 +344,7 @@ public class TC16 extends BaseTest1 {
          * TC08 - NHẬP SẢN PHẨM 00029334
          * =========================
          */
-        ExtentTest tc08 = test.createNode("TC08 - Nhập sản phẩm 00029334");
+        ExtentTest tc08 = test.createNode("TC08 - Nhập sản phẩm 00022434");
 
         Thread.sleep(1000);
 
