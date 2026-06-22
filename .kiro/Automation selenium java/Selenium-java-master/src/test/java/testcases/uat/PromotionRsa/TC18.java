@@ -95,7 +95,7 @@ public class TC18 extends BaseTest1 {
         wait = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(30));
     }
 
-    @Test(priority = 1, description = "FLOW - Mua SP 00005390 (Thuốc kê toa) → Tặng SP 00030512 (BAWOD CALCIUM)", invocationCount = 1)
+    @Test(priority = 1, description = "FLOW - Mua SP 00005390 HÀNG BÁO QUẢN LẠNH - TẶNG ĐÁ KHÔ → Tặng SP 00030512 (BAWOD CALCIUM)", invocationCount = 1)
     public void TC018 () throws InterruptedException {
 
         JavascriptExecutor js = (JavascriptExecutor) driver;
@@ -558,6 +558,6 @@ public class TC18 extends BaseTest1 {
         System.out.println("MÃ ĐƠN HÀNG: " + orderCode);
         System.out.println("========================================");
 
-        test.pass("✅ PASS verify mua SP 00005390 (NOVOMIX) → tặng SP 00030512 (BAWOD CALCIUM). Mã đơn: " + orderCode);
+        test.pass("✅ PASS verify mua SP 00005390 HÀNG BÁO QUẢN LẠNH - TẶNG ĐÁ KHÔ → tặng SP 00030512 (BAWOD CALCIUM). Mã đơn: " + orderCode);
     }
 }

@@ -24,8 +24,8 @@ public class TC2 extends BaseTest1 {
         return "https://uat-promotion.frt.vn/manager-promotion-list";
     }
 
-    @Test(priority = 1, description = "FLOW - Tạo Voucher CI")
-    public void testCreatePMHFlowCI() {
+    @Test(priority = 1, description = "FLOW - Tạo PHM uat")
+    public void testCreatePMHFlowUAT() {
 
         /* =========================
          * TC01 - LOGIN

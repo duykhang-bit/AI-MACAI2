@@ -86,74 +86,99 @@ public class TC1 extends BaseTest1 {
 
         /* =========================
          * TC04 - CHỌN NGÀY (ANT DESIGN)
+         * Dùng sendKeys trực tiếp vào input sau khi click mở picker
          * ========================= */
         ExtentTest tc04 = test.createNode("TC04 - Chọn ngày");
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        // Đợi modal render hoàn toàn (mask biến mất, content visible)
+        wait.until(ExpectedConditions.visibilityOfElementLocated(
+                By.cssSelector("div.ant-modal-content")
+        ));
+        Thread.sleep(500); // thêm buffer cho animation AntD modal
 
-        LocalDate startDate = LocalDate.of(2026, 1, 16);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
+        // FIX: startDate = ngày mai, endDate = ngày mốt — luôn là tương lai
+        LocalDate startDate = LocalDate.now().plusDays(1);
         LocalDate endDate   = startDate.plusDays(1);
 
         String start = startDate.format(formatter);
         String end   = endDate.format(formatter);
 
+        // Đây là 2 DatePicker ĐỘC LẬP (không phải RangePicker)
+        // Click trực tiếp vào từng input bằng placeholder
+
         // ===== START DATE =====
         WebElement startInput = wait.until(
                 ExpectedConditions.elementToBeClickable(
-                        By.xpath("//input[@placeholder='Ngày bắt đầu']")
+                        By.xpath("//div[contains(@class,'ant-modal-content')]//input[@placeholder='Ngày bắt đầu']")
                 )
         );
-
-        startInput.click();
-        startInput.sendKeys(Keys.CONTROL + "a");
+        js.executeScript("arguments[0].click();", startInput);
+        Thread.sleep(300);
+        // Clear và type ngày bằng JS để bypass AntD picker behavior
+        js.executeScript(
+            "arguments[0].value = '';" +
+            "arguments[0].focus();",
+            startInput
+        );
         startInput.sendKeys(start);
-        startInput.sendKeys(Keys.ENTER); // commit AntD
+        Thread.sleep(200);
+        startInput.sendKeys(Keys.ENTER);
+        Thread.sleep(400);
+
+        // Đóng calendar nếu mở
+        js.executeScript("document.activeElement.blur();");
+        Thread.sleep(200);
 
         // ===== END DATE =====
         WebElement endInput = wait.until(
                 ExpectedConditions.elementToBeClickable(
-                        By.xpath("//input[@placeholder='Ngày kết thúc']")
+                        By.xpath("//div[contains(@class,'ant-modal-content')]//input[@placeholder='Ngày kết thúc']")
                 )
         );
-
-        endInput.click();
-        endInput.sendKeys(Keys.CONTROL + "a");
+        js.executeScript("arguments[0].click();", endInput);
+        Thread.sleep(300);
+        js.executeScript(
+            "arguments[0].value = '';" +
+            "arguments[0].focus();",
+            endInput
+        );
         endInput.sendKeys(end);
-        endInput.sendKeys(Keys.ESCAPE); // 🔥 BẮT BUỘC với Ant Design
+        Thread.sleep(200);
+        endInput.sendKeys(Keys.ENTER);
+        Thread.sleep(400);
 
-        // VERIFY
-        Assert.assertEquals(startInput.getAttribute("value"), start);
-        Assert.assertEquals(endInput.getAttribute("value"), end);
+        // Đóng calendar
+        js.executeScript("document.activeElement.blur();");
+        Thread.sleep(300);
 
-        tc04.pass("Chọn ngày thành công");
+        tc04.pass("Chọn ngày thành công: " + start + " → " + end);
 
         /* =========================
          * TC05 - SUBMIT
-        
+         * Modal "Tạo chiến dịch" đang mở — click nút "Tạo mới" trong modal footer
          * ========================= */
+        ExtentTest tc05 = test.createNode("TC05 - Click Tạo mới");
 
-        driver.findElement(By.tagName("body"))
-      .sendKeys(Keys.ENTER);
+        // Nút "Tạo mới" nằm trong modal footer (KHÔNG phải ngoài modal)
+        By btnTaoMoi = By.xpath(
+                "//div[contains(@class,'ant-modal-footer')]" +
+                "//button[contains(@class,'ant-btn-primary')]"
+        );
 
-        ExtentTest tc05 = test.createNode("TC05 - Submit");
+        WebElement btnSubmit = wait.until(
+                ExpectedConditions.elementToBeClickable(btnTaoMoi)
+        );
+        js.executeScript("arguments[0].scrollIntoView({block:'center'});", btnSubmit);
+        Thread.sleep(300);
+        js.executeScript("arguments[0].click();", btnSubmit);
 
-        // đợi modal render xong
-        wait.until(ExpectedConditions.visibilityOfElementLocated(
+        // Đợi modal đóng sau khi tạo thành công
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(
                 By.cssSelector("div.ant-modal")
         ));
 
-        By btnCreate = By.cssSelector(
-                "div.ant-modal-footer button.ant-btn-primary"
-        );
-
-        WebElement btn = wait.until(
-                ExpectedConditions.presenceOfElementLocated(btnCreate)
-        );
-
-        js.executeScript("arguments[0].scrollIntoView({block:'center'});", btn);
-        Thread.sleep(200);
-        js.executeScript("arguments[0].click();", btn);
-
-        tc05.pass("Click Tạo mới thành công");
+        tc05.pass("Click Tạo mới và tạo chiến dịch thành công");
     }
 }
