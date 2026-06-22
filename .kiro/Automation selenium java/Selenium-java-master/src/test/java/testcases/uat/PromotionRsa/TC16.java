@@ -580,6 +580,6 @@ public class TC16 extends BaseTest1 {
          * TC16 không cần verify trên Promotion — chỉ verify SP tặng 00030512 trên RSA
          */
 
-        test.pass("✅ PASS verify CDORCA Thuốc Kê Đơn - Bill > 800K - Tặng SP 00030512 (BAWOD CALCIUM). SP 00022434 SL6. Mã đơn: " + orderCode);
+        test.pass("✅ PASS verify CDORCA Thuốc Kê Đơn - Bill > 800K -KM-0326-003- Tặng SP 00030512 (BAWOD CALCIUM). SP 00022434 SL6. Mã đơn: " + orderCode);
     }
 }
