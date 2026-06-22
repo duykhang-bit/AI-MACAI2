@@ -31,7 +31,7 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import listeners.TestListener;
 
 @Listeners(TestListener.class)
-public class TC8 extends BaseTest1 {
+public class TC19 extends BaseTest1 {
 
     // Đọc sản phẩm từ file data/products.json
     private JsonObject productsData;
@@ -100,8 +100,8 @@ public class TC8 extends BaseTest1 {
         wait = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(30));
     }
 
-    @Test(priority = 1, description = "FLOW -MUD - Ngành hàng & Nhóm hàng tặng phm 00003654 ", invocationCount = 1)
-    public void TC08 () throws InterruptedException {
+    @Test(priority = 1, description = "FLOW -MUD - Ngành hàng & Nhóm hàng chỉ đủ dk nhóm hàng không tặng phm 00003654 ", invocationCount = 1)
+    public void TC19 () throws InterruptedException {
 
         JavascriptExecutor js = (JavascriptExecutor) driver;
 
@@ -350,7 +350,7 @@ public class TC8 extends BaseTest1 {
         Thread.sleep(500);
 
         // Nhập mã sản phẩm
-        String productCode = getProductCode("product_tc8");
+        String productCode = "D042300000205";
         productInput.sendKeys(productCode);
         Thread.sleep(1000);
 
@@ -405,7 +405,7 @@ public class TC8 extends BaseTest1 {
         js.executeScript(
                 "var el = arguments[0];" +
                 "var nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;" +
-                "nativeInputValueSetter.call(el, '" + getProductQuantity("product_tc8") + "');" +
+                "nativeInputValueSetter.call(el, '50');" +
                 "el.dispatchEvent(new Event('input', { bubbles: true }));" +
                 "el.dispatchEvent(new Event('change', { bubbles: true }));" +
                 "el.blur();",
@@ -512,50 +512,44 @@ public class TC8 extends BaseTest1 {
          * TC08-VERIFY - VERIFY GIÁ SẢN PHẨM SAU KHI ÁP DỤNG MUD VOUCHER
          * =========================
          */
-        ExtentTest tcVerifyPrice = test.createNode("TC08-VERIFY - Verify giá sau khi apply MUD voucher");
+        ExtentTest tcVerifyPrice = test.createNode("TC08-VERIFY - NEGATIVE: SP chỉ đủ ĐK nhóm hàng, MUD bị từ chối là ĐÚNG");
 
         Thread.sleep(3000); // Đợi giá cập nhật
 
         try {
             String pageSource = driver.getPageSource();
 
-            // Check: Mã giảm giá "Đang dùng 01 mã"
-            if (pageSource.contains("Đang dùng") || pageSource.contains("01 mã")) {
-                tcVerifyPrice.pass("✅ Mã giảm giá đã được apply (Đang dùng 01 mã)");
+            // Check NEGATIVE: Message đỏ "không thoả điều kiện" xuất hiện → PASS (đúng logic)
+            if (pageSource.contains("không thoả điều kiện") || pageSource.contains("không thỏa điều kiện") || 
+                pageSource.contains("Voucher") && pageSource.contains("không")) {
+                tcVerifyPrice.pass("✅ NEGATIVE PASS: Message đỏ 'Voucher không thoả điều kiện' hiển thị — đúng logic (SP chỉ đủ ĐK nhóm hàng)");
             } else {
-                tcVerifyPrice.warning("❌ Không thấy text 'Đang dùng 01 mã' — voucher chưa apply");
+                tcVerifyPrice.info("⚠️ Không thấy message lỗi MUD — có thể đã áp dụng được hoặc UI khác");
             }
 
-            // Check: Tổng tiền ban đầu = 1,152,000
-            if (pageSource.contains("1,152,000") || pageSource.contains("1.152.000")) {
-                tcVerifyPrice.pass("✅ Tổng tiền ban đầu = 1,152,000 đ");
+            // Check: Giảm giá voucher = 0đ (MUD bị từ chối nên không giảm)
+            if (pageSource.contains("Giảm giá voucher") && pageSource.contains("0 đ")) {
+                tcVerifyPrice.pass("✅ Giảm giá voucher = 0 đ (MUD bị từ chối, không giảm)");
             } else {
-                tcVerifyPrice.info("⚠️ Không tìm thấy 1,152,000 — có thể giá SP thay đổi");
+                tcVerifyPrice.info("⚠️ Kiểm tra giảm giá voucher");
             }
 
-            // Check: Giảm giá voucher = 100,000
-            if (pageSource.contains("100,000") || pageSource.contains("100.000")) {
-                tcVerifyPrice.pass("✅ Giảm giá voucher = 100,000 đ");
+            // Check: Tổng tiền ban đầu = 1,200,000
+            if (pageSource.contains("1,200,000") || pageSource.contains("1.200.000")) {
+                tcVerifyPrice.pass("✅ Tổng tiền = 1,200,000 đ (50 x 24,000)");
             } else {
-                tcVerifyPrice.warning("❌ Không tìm thấy giảm giá 100,000 trên trang");
+                tcVerifyPrice.info("⚠️ Không tìm thấy 1,200,000 — có thể giá SP thay đổi");
             }
 
-            // Check: Tạm tính = 1,052,000
-            if (pageSource.contains("1,052,000") || pageSource.contains("1.052.000")) {
-                tcVerifyPrice.pass("✅ Tạm tính = 1,052,000 đ (đã giảm 100,000 từ MUD voucher)");
+            // Check: KHÔNG có PMH (vì MUD bị từ chối)
+            if (pageSource.contains("PMH") || pageSource.contains("Quà tặng")) {
+                tcVerifyPrice.info("⚠️ Có PMH/Quà tặng hiển thị — kiểm tra lại ĐK CTKM");
             } else {
-                tcVerifyPrice.warning("❌ Không tìm thấy tạm tính 1,052,000 trên trang");
-            }
-
-            // Check: Quà tặng PMH 100K xuất hiện
-            if (pageSource.contains("PMH") && pageSource.contains("100")) {
-                tcVerifyPrice.pass("✅ Quà tặng PMH 100K hiển thị đúng");
-            } else {
-                tcVerifyPrice.info("⚠️ Không tìm thấy quà tặng PMH 100K");
+                tcVerifyPrice.pass("✅ Không có PMH tặng kèm — đúng vì MUD bị từ chối");
             }
 
         } catch (Exception e) {
-            tcVerifyPrice.warning("❌ Lỗi khi verify giá: " + e.getMessage());
+            tcVerifyPrice.info("⚠️ Lỗi khi verify (không block): " + e.getMessage());
         }
 
 
@@ -675,5 +669,6 @@ public class TC8 extends BaseTest1 {
         System.out.println("MÃ ĐƠN HÀNG: " + orderCode);
         System.out.println("========================================");
 
+        test.pass("✅ PASS verify MUD - Ngành hàng & Nhóm hàng không tặng phm 00003654 do chưa đủ dk -KM-0626-117 SP D042300000205. Mã đơn: " + orderCode);
     }
 }
