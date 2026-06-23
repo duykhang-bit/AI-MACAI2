@@ -114,18 +114,18 @@ public class TC22 extends BaseTest1 {
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Chọn địa chỉ đăng nhập') or contains(text(),'Chọn Shop')]")));
         tc01.pass("Login thanh cong");
 
-        // TC02 - CHON SHOP 80046
-        ExtentTest tc02 = test.createNode("TC02 - Chon shop 80046");
+        // TC02 - CHON SHOP 80007
+        ExtentTest tc02 = test.createNode("TC02 - Chon shop 80007");
         WebElement shopDropdown = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[contains(@class,'ant-select')]//div[contains(@class,'ant-select-selector')]")));
         shopDropdown.click();
         Thread.sleep(500);
         WebElement shopSearch = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[contains(@class,'ant-select-dropdown')]//input | //input[contains(@class,'ant-select-selection-search-input')]")));
-        shopSearch.sendKeys("80046");
+        shopSearch.sendKeys("80007");
         Thread.sleep(1500);
-        WebElement shopOption = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[contains(@class,'ant-select-item-option') and contains(.,'80046')]")));
+        WebElement shopOption = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[contains(@class,'ant-select-item-option') and contains(.,'80007')]")));
         shopOption.click();
         Thread.sleep(1000);
-        tc02.pass("Da chon shop 80046");
+        tc02.pass("Da chon shop 80007");
 
         // TC03 - HOAN TAT
         ExtentTest tc03 = test.createNode("TC03 - Hoan tat");
