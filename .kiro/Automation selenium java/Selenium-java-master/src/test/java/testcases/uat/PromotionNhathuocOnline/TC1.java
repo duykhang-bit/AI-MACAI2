@@ -1,4 +1,4 @@
-﻿package testcases.uat.PromotionNhathuocOnline;
+package testcases.uat.PromotionNhathuocOnline;
 
 import java.time.Duration;
 import java.util.HashMap;
