@@ -25,7 +25,7 @@ public class TC1 extends BaseTest1 {
                 return "https://ci-promotion.frt.vn/manager-promotion-list";
         }
 
-        @Test(priority = 1, description = "FLOW - Tạo Định nghĩa phiếu mua hàng")
+        @Test(priority = 1, description = "FLOW - Tạo Chiến dịch")
         public void testCreateCampaignFlow() throws InterruptedException {
 
                 JavascriptExecutor js = (JavascriptExecutor) driver;
