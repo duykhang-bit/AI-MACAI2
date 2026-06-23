@@ -92,7 +92,7 @@ public class TC22 extends BaseTest1 {
         wait = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(30));
     }
 
-    @Test(priority = 1, description = "FLOW - Verify 2 KM don hang KM-0626-133 va KM-0626-132 voi SP 00045242", invocationCount = 1)
+    @Test(priority = 1, description = "FLOW - KHAI TRƯƠNG KM-0626-133 va KM-0626-132 voi SP 00045242", invocationCount = 1)
     public void TC022() throws InterruptedException {
 
         JavascriptExecutor js = (JavascriptExecutor) driver;
