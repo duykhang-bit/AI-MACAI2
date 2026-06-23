@@ -80,7 +80,7 @@ public class TC4 extends BaseTest1 {
 
                 tc02.info("Nhập tên CTKM");
 
-                String promoName = "Automation test 25052026_115716";
+                String promoName = "AT_25052026_115716";
 
                 wait.until(ExpectedConditions.visibilityOfElementLocated(
                                 By.id("promotiongeneralinfor_name"))).sendKeys(promoName);

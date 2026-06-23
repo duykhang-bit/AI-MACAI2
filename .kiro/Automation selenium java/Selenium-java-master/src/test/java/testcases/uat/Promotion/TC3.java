@@ -83,7 +83,7 @@ public class TC3 extends BaseTest1 {
                                 By.xpath("//div[contains(@class,'actionHeader')]"))).click();
 
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMyyyy_HHmmss");
-                String voucherName = "Automation Test_" + LocalDateTime.now().format(formatter);
+                String voucherName = "AT_" + LocalDateTime.now().format(formatter);
 
                 wait.until(ExpectedConditions.visibilityOfElementLocated(
                                 By.id("inputID"))).sendKeys(voucherName);

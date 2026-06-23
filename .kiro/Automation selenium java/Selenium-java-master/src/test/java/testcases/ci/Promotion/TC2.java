@@ -24,7 +24,7 @@ public class TC2 extends BaseTest1 {
         return "https://ci-promotion.frt.vn/manager-promotion-list";
     }
 
-    @Test(priority = 1, description = "FLOW - Tạo Voucher CI")
+    @Test(priority = 1, description = "FLOW - Tạo PHM CI")
     public void testCreatePMHFlowCI() {
 
         /* =========================
@@ -68,7 +68,7 @@ public class TC2 extends BaseTest1 {
         wait.until(ExpectedConditions.elementToBeClickable(
                 By.xpath("//div[contains(@class,'actionHeader')]"))).click();
 
-        String voucherName = "Automation test_" +
+        String voucherName = "AT_" +
                 LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy_HHmmss"));
 
         wait.until(ExpectedConditions.visibilityOfElementLocated(

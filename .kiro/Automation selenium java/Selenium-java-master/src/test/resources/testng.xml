@@ -10,7 +10,8 @@
 
     <test name="UAT PromotionRsa Tests">
         <packages>
-            <package name="testcases.uat.PromotionRsa"/>
+            <package name="testcases.uat.PromotionRsaOffline"/>
+            <package name="testcases.uat.PromotionRsaOnline"/>
         </packages>
     </test>
 

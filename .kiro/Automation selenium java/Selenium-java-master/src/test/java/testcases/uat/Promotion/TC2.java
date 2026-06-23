@@ -68,7 +68,7 @@ public class TC2 extends BaseTest1 {
         wait.until(ExpectedConditions.elementToBeClickable(
                 By.xpath("//div[contains(@class,'actionHeader')]"))).click();
 
-        String voucherName = "Automation test_" +
+        String voucherName = "AT_" +
                 LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy_HHmmss"));
 
         wait.until(ExpectedConditions.visibilityOfElementLocated(

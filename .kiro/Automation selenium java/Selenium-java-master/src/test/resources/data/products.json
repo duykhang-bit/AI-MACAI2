@@ -262,7 +262,6 @@
       "NKB3ZC7SIG",
       "5IAWAMGHAO",
       "6LRUCIKTV0",
-    
       "XBHTA0YETK",
       "YJBUPSXZ79",
       "O2ENT6R3Z4",
@@ -357,5 +356,17 @@
     "quantity": "1",
     "unit": "Hộp",
     "note": "TC20 - Tổng tiền đơn hàng theo sp → số tiền giảm | KM-0626-118 | Giảm 10,000đ | Giá gốc 50,000 → Tạm tính 40,000"
+  },
+  "product_tc21": {
+    "code": "00002643",
+    "quantity": "1",
+    "unit": "Hộp",
+    "note": "TC21 - EQUAL CLASSIC 100 GÓI - ĐƯỜNG | Hộp | SL: 1 | KM-0626-128 | Tổng ban đầu 129,000 | Giảm trực tiếp 6,450 | Tạm tính 122,550"
+  },
+  "product_tc22_offline": {
+    "code": "00045242",
+    "quantity": "5",
+    "unit": "Hộp",
+    "note": "TC22 - BAO CAO SU OKAMOTO HYDRO PU HOP 2 CAI | Hộp | SL: 5 | KM-0626-133 + KM-0626-132 | Tổng 710,000 | Giảm 142,000"
   }
 }
