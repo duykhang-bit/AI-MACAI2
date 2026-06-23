@@ -1,4 +1,4 @@
-package testcases.uat.PromotionRsaOffline;
+﻿package testcases.uat.PromotionRsaOffline;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -330,7 +330,7 @@ public class TC8 extends BaseTest1 {
          * TC08 - NHẬP SẢN PHẨM 00029334
          * =========================
          */
-        ExtentTest tc08 = test.createNode("TC08 - Nhập sản phẩm 00029334");
+        ExtentTest tc08 = test.createNode("TC08 - Nhập sản phẩm 00503255");
 
         Thread.sleep(1000);
 
@@ -390,7 +390,7 @@ public class TC8 extends BaseTest1 {
 
         /*
          * =========================
-         * TC08b - NHẬP SỐ LƯỢNG 19 CHO SP 00029334
+         * TC08b - NHẬP SỐ LƯỢNG 19 CHO SP 00503255
          * =========================
          */
         ExtentTest tc08b = test.createNode("TC08b - Nhập số lượng 1");
@@ -675,5 +675,6 @@ public class TC8 extends BaseTest1 {
         System.out.println("MÃ ĐƠN HÀNG: " + orderCode);
         System.out.println("========================================");
 
+        test.pass("✅ PASS verify MUD-Ngành hàng & Nhóm hàng tặng phm 100K 00003654-KM-0626-073 SP 00503255. Mã đơn: " + orderCode);
     }
 }
