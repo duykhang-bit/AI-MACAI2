@@ -192,7 +192,7 @@ public class TC22 extends BaseTest1 {
         }
 
         // TC07 - NHAP SDT
-        ExtentTest tc07 = test.createNode("TC07 - Nhap SDT 0835089254");
+        ExtentTest tc07 = test.createNode("TC07 - Nhap SDT 0835089255");
         Thread.sleep(1000);
         WebElement phoneInput = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(10))
                 .until(ExpectedConditions.elementToBeClickable(
@@ -200,10 +200,10 @@ public class TC22 extends BaseTest1 {
                                 "//input[contains(@placeholder,'Số điện thoại') or contains(@placeholder,'SĐT') or contains(@placeholder,'điện thoại')] | " +
                                 "//input[contains(@id,'phone') or contains(@name,'phone')]")));
         phoneInput.click();
-        phoneInput.sendKeys("0835089254");
+        phoneInput.sendKeys("0835089255");
         phoneInput.sendKeys(Keys.ENTER);
         Thread.sleep(2000);
-        tc07.pass("Da nhap SDT 0835089254");
+        tc07.pass("Da nhap SDT 0835089255");
 
         // TC08 - NHAP SP 00045242
         ExtentTest tc08 = test.createNode("TC08 - Nhap SP 00045242");

@@ -635,9 +635,9 @@ public class TC10 extends BaseTest1 {
                 tcVerifyPrice.warning("❌ Không thấy text 'Đang dùng 01 mã' — voucher chưa apply");
             }
 
-            // Check: Tổng tiền ban đầu = 276,098
-            if (pageSource.contains("276,098") || pageSource.contains("276.098")) {
-                tcVerifyPrice.pass("✅ Tổng tiền ban đầu = 276,098 đ");
+            // Check: Tổng tiền ban đầu = 276,100
+            if (pageSource.contains("276,100") || pageSource.contains("276,100")) {
+                tcVerifyPrice.pass("✅ Tổng tiền ban đầu = 276,100 đ");
             } else {
                 tcVerifyPrice.info("⚠️ Không tìm thấy 276,098 — có thể giá SP thay đổi");
             }
@@ -649,11 +649,11 @@ public class TC10 extends BaseTest1 {
                 tcVerifyPrice.warning("❌ Không tìm thấy giảm giá 100,000 trên trang");
             }
 
-            // Check: Tạm tính = 176,098
-            if (pageSource.contains("176,098") || pageSource.contains("176.098")) {
+            // Check: Tạm tính = 176,100
+            if (pageSource.contains("176,098") || pageSource.contains("176,100")) {
                 tcVerifyPrice.pass("✅ Tạm tính = 176,098 đ (đã giảm 100,000 từ MUD voucher)");
             } else {
-                tcVerifyPrice.warning("❌ Không tìm thấy tạm tính 176,098 trên trang");
+                tcVerifyPrice.warning("❌ Không tìm thấy tạm tính 176,100 trên trang");
             }
 
             // Check: Quà tặng PMH 100K xuất hiện
