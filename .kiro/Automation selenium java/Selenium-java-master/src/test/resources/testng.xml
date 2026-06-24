@@ -1,16 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
 
-<suite name="RSA UAT Suite" verbose="1" parallel="classes" thread-count="4">
+<suite name="RSA UAT Suite" verbose="1" parallel="classes" thread-count="5">
 
     <listeners>
         <listener class-name="listeners.TestListener"/>
         <listener class-name="utils.DashboardReportGenerator"/>
     </listeners>
 
-    <test name="UAT PromotionRsa Tests">
+    <test name="UAT PromotionRsaOffline Tests">
         <packages>
             <package name="testcases.uat.PromotionRsaOffline"/>
+        </packages>
+    </test>
+
+    <test name="UAT Promotion Tests">
+        <packages>
+            <package name="testcases.uat.Promotion"/>
         </packages>
     </test>
 
@@ -18,11 +24,4 @@
 <!--
 === LỆNH RUN ===
 cd ".kiro\Automation selenium java\Selenium-java-master"; mvn clean test
-
-
-
-cd ".kiro\Automation selenium java\Selenium-java-master"; mvn clean test
-
-
-cd "/Users/leduykhang/Documents/Automation/AI-MACAI2/.kiro/Automation selenium java/Selenium-java-master" && mvn clean test -Dtest=testcases.uat.PromotionRsa.TC18
 -->
