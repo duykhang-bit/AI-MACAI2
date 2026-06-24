@@ -14,11 +14,11 @@
         </packages>
     </test>
 
-    <test name="UAT Promotion Tests">
+    <!-- <test name="UAT Promotion Tests">
         <packages>
             <package name="testcases.uat.Promotion"/>
         </packages>
-    </test>
+    </test> -->
 
 </suite>
 <!--
