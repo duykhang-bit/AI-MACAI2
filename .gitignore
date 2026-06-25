@@ -5,3 +5,5 @@ reports/*
 .DS_Store
 *.log
 .env
+allure-results/
+.idea/workspace.xml
