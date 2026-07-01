@@ -7,3 +7,4 @@ reports/*
 .env
 allure-results/
 .idea/workspace.xml
+.kiro/settings/mcp.json
