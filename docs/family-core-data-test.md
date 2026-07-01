@@ -156,3 +156,24 @@ note nagfy 23/03 còn 2 tiếng
 
  tạo flow session trên RAI Portal ở phase Verify cho các tickets, rồi chuyển Done với cac ticket này: 
 
+
+https://ptt-public.frt.vn/app/process-closing-shop#/dev
+13:42
+messsage-status
+https://ptt.frt.vn/builder/auth/login
+13:44
+messsage-status
+MT TEST PTT https://ptt-public.frt.vn/builder/apps
+13:53
+messsage-status
+mt test prod PTT https://ptt-public.frt.vn/builder/auth/login
+13:56
+messsage-status
+https://ptt.frt.vn/builder/apps
+14:04
+messsage-status
+Khang Le Duy
+
+https://ptt.frt.vn/builder/apps
+
+https://bapp.frt.vn/builder/auth/login

@@ -42,10 +42,7 @@ luồng chặn add tv đã tạo và chặn k hiện pop_up nhận vc  https://w
 
 
 Tàu 15/4
-- PTT ĐÓNG SHOP https://reqs.frt.vn/browse/FSS-3097
-- Tàu family  https://reqs.frt.vn/issues/?jql=project%20%3D%20FP%20AND%20fixVersion%20in%20(%22release%2F20260415%22%2C%20%22release%2F20260415-v8.17.4-lc%22)%20ORDER%20BY%20priority%20DESC%2C%20updated%20DESC 
-- [Promotion Service] Loại trừ thuộc tính thuốc và sản phẩm 
-https://reqs.frt.vn/browse/FSS-3102 
+ 
 
 
 xấy dựng phòng khám tàu 20/4
