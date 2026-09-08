@@ -25,7 +25,9 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import listeners.TestListener;
 
 @Listeners(TestListener.class)
-public class TC2 extends BaseTest1 {
+public class TC4 extends BaseTest1 {
+
+    
 
     @Override
     protected String getBaseUrl() {
@@ -175,6 +177,7 @@ public class TC2 extends BaseTest1 {
                         .until(ExpectedConditions.invisibilityOfElementLocated(
                                 By.xpath("//div[contains(@class,'ant-modal-wrap') and not(contains(@style,'display: none'))]")));
             } catch (Exception ignored) {}
+
         }
 
         Thread.sleep(500);

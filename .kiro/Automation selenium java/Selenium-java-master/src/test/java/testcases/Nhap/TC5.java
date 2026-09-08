@@ -158,27 +158,41 @@ public class TC5 extends BaseTest1 {
         ExtentTest tc04 = test.createNode("TC04 - Tắt popup Danh sách sản phẩm sai đối tượng");
 
         try {
-            // Đợi popup xuất hiện (nếu có)
             WebElement closePopup = wait.until(
-                    ExpectedConditions.elementToBeClickable(
-                            By.xpath("//div[contains(@class,'modal') or contains(@class,'popup') or contains(@class,'dialog')]" +
-                                    "[.//*[contains(text(),'Danh sách sản phẩm sai đối tượng')]]" +
-                                    "//button[contains(@class,'close') or contains(@aria-label,'Close')] | " +
-                                    "//div[contains(@class,'modal') or contains(@class,'popup')]" +
-                                    "[.//*[contains(text(),'Danh sách sản phẩm sai đối tượng')]]" +
-                                    "//*[contains(@class,'close') or @aria-label='Close' or contains(@class,'btn-close')]")));
-            closePopup.click();
+                    ExpectedConditions.visibilityOfElementLocated(
+                            By.xpath("//button[@aria-label='Close' and contains(@class,'ant-modal-close')]")));
+            Thread.sleep(500);
+            js.executeScript("arguments[0].click();", closePopup);
+            wait.until(ExpectedConditions.invisibilityOfElementLocated(
+                    By.xpath("//div[contains(@class,'ant-modal-wrap') and not(contains(@style,'display: none'))]")));
             tc04.pass("Đã tắt popup Danh sách sản phẩm sai đối tượng");
         } catch (TimeoutException e) {
-            // Thử click dấu X bất kỳ trên popup
+            tc04.info("Không có popup sản phẩm sai đối tượng xuất hiện");
             try {
-                WebElement xButton = driver.findElement(
-                        By.xpath("//button[@aria-label='Close'] | //span[contains(@class,'close')] | //i[contains(@class,'close')]"));
-                xButton.click();
-                tc04.pass("Đã tắt popup bằng nút X");
-            } catch (NoSuchElementException ex) {
-                tc04.info("Không có popup sản phẩm sai đối tượng xuất hiện");
-            }
+                new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(5))
+                        .until(ExpectedConditions.invisibilityOfElementLocated(
+                                By.xpath("//div[contains(@class,'ant-modal-wrap') and not(contains(@style,'display: none'))]")));
+            } catch (Exception ignored) {}
+        }
+
+        Thread.sleep(500);
+
+        /*
+         * =========================
+         * TC04b - TẮT POPUP "Cảnh báo có sp thay đổi giá"
+         * =========================
+         */
+        ExtentTest tc04b = test.createNode("TC04b - Tắt popup Cảnh báo thay đổi giá");
+        try {
+            WebElement btnDeSau = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(5))
+                    .until(ExpectedConditions.elementToBeClickable(
+                            By.xpath("//button[contains(.,'Để sau') or .//span[contains(text(),'Để sau')]]")));
+            js.executeScript("arguments[0].click();", btnDeSau);
+            wait.until(ExpectedConditions.invisibilityOfElementLocated(
+                    By.xpath("//div[contains(@class,'ant-modal-wrap') and not(contains(@style,'display: none'))]")));
+            tc04b.pass("Đã bấm Để sau trên popup cảnh báo thay đổi giá");
+        } catch (TimeoutException e) {
+            tc04b.info("Không có popup cảnh báo thay đổi giá");
         }
 
         Thread.sleep(1000);
@@ -192,14 +206,15 @@ public class TC5 extends BaseTest1 {
 
         // Mục "Bán hàng (n)" trên trang chủ - class ant-typography feature_home
         WebElement menuBanHang = wait.until(
-                ExpectedConditions.elementToBeClickable(
+                ExpectedConditions.visibilityOfElementLocated(
                         By.xpath("//p[contains(@class,'feature_home') and contains(text(),'Bán hàng')] | " +
                                 "//a[.//p[contains(text(),'Bán hàng')]] | " +
                                 "//div[contains(@class,'feature')]//p[contains(text(),'Bán hàng')]/ancestor::a | " +
                                 "//p[contains(text(),'Bán hàng (')]")));
         js.executeScript("arguments[0].scrollIntoView({block:'center'});", menuBanHang);
-        Thread.sleep(300);
-        menuBanHang.click();
+        Thread.sleep(500);
+        // Dùng JS click để bypass mọi overlay còn sót lại
+        js.executeScript("arguments[0].click();", menuBanHang);
 
         // Đợi trang bán hàng load xong
         Thread.sleep(3000);
