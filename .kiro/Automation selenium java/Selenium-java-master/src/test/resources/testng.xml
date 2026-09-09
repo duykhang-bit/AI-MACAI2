@@ -12,7 +12,7 @@
     <!-- ===== UAT Tests ===== -->
     <test name="UAT - Family Tests">
         <packages>
-            <package name="testcases.uat.Family"/>
+            <package name="testcases.uat.Promotion"/>
         </packages>
     </test>
 
@@ -21,8 +21,14 @@
 === LỆNH RUN TẤT CẢ ===
 cd ".kiro/Automation selenium java/Selenium-java-master" && mvn clean test
 
+cd "c:\Users\khangld10\Documents\AI-MACAI2\.kiro\Automation selenium java\Selenium-java-master"; mvn test "-Dsurefire.suiteXmlFiles=src/test/resources/testng.xml"
+
+
+
+
 === RUN TỪNG NHÓM ===
 cd "C:\Users\khangld10\Documents\AI-MACAI2\.kiro\Automation selenium java\Selenium-java-master"
 mvn clean test
 
 -->
+
