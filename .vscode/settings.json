@@ -2,14 +2,16 @@
     "java.debug.settings.onBuildFailureProceed": true,
     "java.configuration.updateBuildConfiguration": "automatic",
     "java.compile.nullAnalysis.mode": "automatic",
-    "testing.showAllMessages": true,
-    "explorer.fileNesting.enabled": true,
-    "java.project.explorer.showNonJavaResources": true,
-    "java.project.explorer.packagePresentation": "hierarchical",
+    "java.import.maven.enabled": true,
+    "java.import.gradle.enabled": false,
+    "java.import.maven.projectPomXml": ".kiro/Automation selenium java/Selenium-java-master/pom.xml",
+    "java.project.sourcePaths": [
+        ".kiro/Automation selenium java/Selenium-java-master/src/main/java",
+        ".kiro/Automation selenium java/Selenium-java-master/src/test/java"
+    ],
     "java.test.config": {
-        "workingDirectory": "${workspaceFolder}"
+        "workingDirectory": "${workspaceFolder}/.kiro/Automation selenium java/Selenium-java-master"
     },
-    "testing.automaticallyOpenPeekView": "never",
-    "java.test.message.showRunStatus": true,
-    "java.showBuildStatusOnStart.enabled": "notification"
+    "maven.terminal.useJavaHome": true,
+    "java.jdt.ls.lombokSupport.enabled": false
 }

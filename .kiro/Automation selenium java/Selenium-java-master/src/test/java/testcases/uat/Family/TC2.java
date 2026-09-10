@@ -244,10 +244,10 @@ public class TC2 extends BaseTest1 {
 
         /*
          * =========================
-         * TC07 - NHẬP SĐT KHÁCH HÀNG 0835089290
+         * TC07 - NHẬP SĐT KHÁCH HÀNG 0835089291
          * =========================
          */
-        ExtentTest tc07 = test.createNode("TC07 - Nhập SĐT khách hàng 0835089290");
+        ExtentTest tc07 = test.createNode("TC07 - Nhập SĐT khách hàng 0835089291");
 
         Thread.sleep(1000);
 
@@ -256,11 +256,11 @@ public class TC2 extends BaseTest1 {
                 .until(ExpectedConditions.elementToBeClickable(
                         By.cssSelector("input[type='phone']")));
         phoneInput.click();
-        phoneInput.sendKeys("0835089290");
+        phoneInput.sendKeys("0835089254");
         phoneInput.sendKeys(Keys.ENTER);
         Thread.sleep(2000);
 
-        tc07.pass("Đã nhập SĐT khách hàng 0835089290");
+        tc07.pass("Đã nhập SĐT khách hàng 0835089291");
 
         /*
          * =========================
@@ -275,16 +275,12 @@ public class TC2 extends BaseTest1 {
         WebElement productInput = wait.until(ExpectedConditions.visibilityOfElementLocated(
                 By.xpath("//input[starts-with(@id,'search-product-input_session')]")));
 
-        // Click focus bằng JS
+        // Triple click để select all text → BACKSPACE xóa sạch → nhập mã mới
         js.executeScript("arguments[0].click(); arguments[0].focus();", productInput);
-        Thread.sleep(500);
-
-        // Clear ô search (Windows: JS clear + CTRL+A + DELETE)
-        js.executeScript("arguments[0].value = ''", productInput);
-        productInput.sendKeys(Keys.chord(Keys.CONTROL, "a"));
-        Thread.sleep(200);
-        productInput.sendKeys(Keys.DELETE);
-        Thread.sleep(500);
+        Thread.sleep(300);
+        productInput.sendKeys(Keys.chord(Keys.COMMAND, "a"));
+        productInput.sendKeys(Keys.BACK_SPACE);
+        Thread.sleep(300);
 
         // Nhập mã sản phẩm
         productInput.sendKeys("00029334");
@@ -361,16 +357,12 @@ public class TC2 extends BaseTest1 {
         WebElement productInput2 = wait.until(ExpectedConditions.visibilityOfElementLocated(
                 By.xpath("//input[starts-with(@id,'search-product-input_session')]")));
 
-        // Click focus bằng JS
+        // Triple click để select all text → BACKSPACE xóa sạch → nhập mã mới
         js.executeScript("arguments[0].click(); arguments[0].focus();", productInput2);
-        Thread.sleep(500);
-
-        // Clear ô search (Windows: JS clear + CTRL+A + DELETE)
-        js.executeScript("arguments[0].value = ''", productInput2);
-        productInput2.sendKeys(Keys.chord(Keys.CONTROL, "a"));
-        Thread.sleep(200);
-        productInput2.sendKeys(Keys.DELETE);
-        Thread.sleep(500);
+        Thread.sleep(300);
+        productInput2.sendKeys(Keys.chord(Keys.COMMAND, "a"));
+        productInput2.sendKeys(Keys.BACK_SPACE);
+        Thread.sleep(300);
 
         // Nhập mã sản phẩm mới
         productInput2.sendKeys("00017891");

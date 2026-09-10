@@ -1,0 +1,4 @@
+.spaceContainer {
+  display: flex;
+  word-break: break-word;
+}
