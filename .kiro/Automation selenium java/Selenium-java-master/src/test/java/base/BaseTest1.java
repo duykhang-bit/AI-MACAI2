@@ -81,6 +81,11 @@ public class BaseTest1 {
      * ========================= */
     @BeforeMethod
     public void setup(ITestResult result) {
+        // Đảm bảo config luôn có giá trị dù @BeforeSuite chưa chạy (parallel race condition)
+        if (config == null) {
+            config = ConfigReader.getInstance();
+        }
+
         String testName = result.getMethod().getMethodName();
         String desc = result.getMethod().getDescription();
         if (desc != null && !desc.isEmpty()) {

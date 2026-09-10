@@ -1,4 +1,4 @@
-package testcases.uat.Nhap;
+package testcases.uat.Family;
 
 import java.time.Duration;
 import java.util.HashMap;
@@ -25,7 +25,7 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import listeners.TestListener;
 
 @Listeners(TestListener.class)
-public class TC7 extends BaseTest1 {
+public class TC4 extends BaseTest1 {
 
     
 
@@ -158,21 +158,26 @@ public class TC7 extends BaseTest1 {
         ExtentTest tc04 = test.createNode("TC04 - Tắt popup Danh sách sản phẩm sai đối tượng");
 
         try {
+            // Đợi popup xuất hiện (nếu có) — dùng visibility thay vì clickable để tránh timeout sớm
             WebElement closePopup = wait.until(
                     ExpectedConditions.visibilityOfElementLocated(
                             By.xpath("//button[@aria-label='Close' and contains(@class,'ant-modal-close')]")));
-            Thread.sleep(500);
+            Thread.sleep(500); // đợi modal fully rendered
+            // Dùng JS click để bypass ant-modal-wrap overlay che chắn
             js.executeScript("arguments[0].click();", closePopup);
+            // Đợi overlay ant-modal-wrap biến mất hoàn toàn trước khi tiếp tục
             wait.until(ExpectedConditions.invisibilityOfElementLocated(
                     By.xpath("//div[contains(@class,'ant-modal-wrap') and not(contains(@style,'display: none'))]")));
             tc04.pass("Đã tắt popup Danh sách sản phẩm sai đối tượng");
         } catch (TimeoutException e) {
             tc04.info("Không có popup sản phẩm sai đối tượng xuất hiện");
+            // Đảm bảo không còn overlay nào trước khi tiếp tục
             try {
                 new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(5))
                         .until(ExpectedConditions.invisibilityOfElementLocated(
                                 By.xpath("//div[contains(@class,'ant-modal-wrap') and not(contains(@style,'display: none'))]")));
             } catch (Exception ignored) {}
+
         }
 
         Thread.sleep(500);
@@ -273,7 +278,7 @@ public class TC7 extends BaseTest1 {
                 .until(ExpectedConditions.elementToBeClickable(
                         By.cssSelector("input[type='phone']")));
         phoneInput.click();
-        phoneInput.sendKeys("0835089290");
+        phoneInput.sendKeys("0835089254");
         phoneInput.sendKeys(Keys.ENTER);
         Thread.sleep(2000);
 

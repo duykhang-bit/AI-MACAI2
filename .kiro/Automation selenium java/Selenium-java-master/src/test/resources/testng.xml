@@ -5,13 +5,23 @@
         <listener class-name="listeners.TestListener"/>
         <listener class-name="utils.DashboardReportGenerator"/>
     </listeners>
-
     <test name="UAT - Family Tests">
         <classes>
             <class name="testcases.uat.Family.TC1"/>
             <class name="testcases.uat.Family.TC2"/>
-          
         </classes>
     </test>
-
+    <test name="UAT - Promotion Tests">
+        <packages>
+            <package name="testcases.uat.Promotion"/>
+        </packages>
+    </test>
 </suite>
+<!--
+=== LỆNH RUN TẤT CẢ ===
+cd ".kiro/Automation selenium java/Selenium-java-master" && mvn clean test
+cd "c:\Users\khangld10\Documents\AI-MACAI2\.kiro\Automation selenium java\Selenium-java-master"; mvn test "-Dsurefire.suiteXmlFiles=src/test/resources/testng.xml"
+=== RUN TỪNG NHÓM ===
+cd "C:\Users\khangld10\Documents\AI-MACAI2\.kiro\Automation selenium java\Selenium-java-master"
+mvn clean test
+-->
