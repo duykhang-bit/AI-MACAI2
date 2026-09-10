@@ -268,18 +268,22 @@ public class TC3 extends BaseTest1 {
          */
         ExtentTest tc07 = test.createNode("TC07 - Nhập SĐT khách hàng 0835089290");
 
-        Thread.sleep(1000);
-
-        // Tìm ô SĐT - dùng type="phone" (nhanh nhất)
+        // Tìm ô SĐT - dùng type="phone"
         WebElement phoneInput = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(10))
                 .until(ExpectedConditions.elementToBeClickable(
                         By.cssSelector("input[type='phone']")));
-        phoneInput.click();
-        phoneInput.sendKeys("0835089254");
+        // Dùng JS set value thay vì sendKeys để tránh trigger search API mỗi ký tự
+        js.executeScript(
+                "var el = arguments[0];" +
+                "var nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;" +
+                "nativeInputValueSetter.call(el, '0835089254');" +
+                "el.dispatchEvent(new Event('input', { bubbles: true }));" +
+                "el.dispatchEvent(new Event('change', { bubbles: true }));",
+                phoneInput);
         phoneInput.sendKeys(Keys.ENTER);
-        Thread.sleep(2000);
+        Thread.sleep(1500);
 
-        tc07.pass("Đã nhập SĐT khách hàng 0835089290");
+        tc07.pass("Đã nhập SĐT khách hàng 0835089254");
 
         /*
          * =========================

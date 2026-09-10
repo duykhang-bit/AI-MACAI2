@@ -1,4 +1,4 @@
-package testcases.uat.PromotionRsaOffline;
+﻿package testcases.uat.PromotionRsaOffline;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -212,28 +212,31 @@ public class TC14 extends BaseTest1 {
          */
         ExtentTest tc04 = test.createNode("TC04 - Tắt popup Danh sách sản phẩm sai đối tượng");
 
+                // Popup 1: Danh sach san pham sai doi tuong (timeout 5s)
         try {
-            // Đợi popup xuất hiện (nếu có)
-            WebElement closePopup = wait.until(
-                    ExpectedConditions.elementToBeClickable(
-                            By.xpath("//div[contains(@class,'modal') or contains(@class,'popup') or contains(@class,'dialog')]" +
-                                    "[.//*[contains(text(),'Danh sách sản phẩm sai đối tượng')]]" +
-                                    "//button[contains(@class,'close') or contains(@aria-label,'Close')] | " +
-                                    "//div[contains(@class,'modal') or contains(@class,'popup')]" +
-                                    "[.//*[contains(text(),'Danh sách sản phẩm sai đối tượng')]]" +
-                                    "//*[contains(@class,'close') or @aria-label='Close' or contains(@class,'btn-close')]")));
-            closePopup.click();
+            WebElement closePopup = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(5))
+                    .until(ExpectedConditions.elementToBeClickable(
+                            By.xpath("//*[contains(@class,'ant-modal') and .//*[contains(text(),'Danh sách sản phẩm sai đối tượng')]]//button[@aria-label='Close' or contains(@class,'ant-modal-close')]")));
+            js.executeScript("arguments[0].click();", closePopup);
+            new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(5))
+                    .until(ExpectedConditions.invisibilityOfElementLocated(
+                            By.xpath("//*[contains(@class,'ant-modal') and .//*[contains(text(),'Danh sách sản phẩm sai đối tượng')]]")));
             tc04.pass("Đã tắt popup Danh sách sản phẩm sai đối tượng");
         } catch (TimeoutException e) {
-            // Thử click dấu X bất kỳ trên popup
-            try {
-                WebElement xButton = driver.findElement(
-                        By.xpath("//button[@aria-label='Close'] | //span[contains(@class,'close')] | //i[contains(@class,'close')]"));
-                xButton.click();
-                tc04.pass("Đã tắt popup bằng nút X");
-            } catch (NoSuchElementException ex) {
-                tc04.info("Không có popup sản phẩm sai đối tượng xuất hiện");
-            }
+            tc04.info("Không có popup sản phẩm sai đối tượng");
+        }
+
+        // Popup 2: Cảnh báo có sp thay đổi giá (timeout 5s)
+        try {
+            WebElement btnDeSau2 = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(5))
+                    .until(ExpectedConditions.elementToBeClickable(
+                            By.xpath("//*[contains(@class,'ant-modal') and .//*[contains(text(),'Cảnh báo có sp thay đổi giá')]]//button[contains(.,'Để sau') or .//span[contains(text(),'Để sau')]]")));
+            js.executeScript("arguments[0].click();", btnDeSau2);
+            new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(5))
+                    .until(ExpectedConditions.invisibilityOfElementLocated(
+                            By.xpath("//*[contains(@class,'ant-modal') and .//*[contains(text(),'Cảnh báo có sp thay đổi giá')]]")));
+        } catch (TimeoutException e) {
+            // không có popup
         }
 
         Thread.sleep(1000);
@@ -257,6 +260,24 @@ public class TC14 extends BaseTest1 {
         } catch (Exception e) {
             // Không có popup quảng cáo → bỏ qua
         }
+        /*
+         * =========================
+         * TC04c - TẮT POPUP "Cảnh báo có sp thay đổi giá"
+         * =========================
+         */
+        try {
+            WebElement btnDeSau = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(5))
+                    .until(ExpectedConditions.elementToBeClickable(
+                            By.xpath("//button[contains(.,'Để sau') or .//span[contains(text(),'Để sau')]]")));
+            js.executeScript("arguments[0].click();", btnDeSau);
+            wait.until(ExpectedConditions.invisibilityOfElementLocated(
+                    By.xpath("//div[contains(@class,'ant-modal-wrap') and not(contains(@style,'display: none'))]")));
+        } catch (TimeoutException e) {
+            // Không có popup cảnh báo thay đổi giá → bỏ qua
+        }
+
+        Thread.sleep(500);
+
 
         /*
          * =========================

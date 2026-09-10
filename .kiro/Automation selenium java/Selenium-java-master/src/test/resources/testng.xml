@@ -13,7 +13,7 @@
     </test>
     <test name="UAT - Promotion Tests">
         <packages>
-            <package name="testcases.uat.Promotion"/>
+            <package name="testcases.uat.PromotionRsaOffline"/>
         </packages>
     </test>
 </suite>
