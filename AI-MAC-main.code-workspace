@@ -3,14 +3,11 @@
     {
       "name": "AI-MACAI2",
       "path": "."
-    },
-    {
-      "name": "Selenium Java",
-      "path": ".kiro/Automation selenium java/Selenium-java-master"
     }
   ],
   "settings": {
     "java.test.defaultConfig": "",
-    "java.configuration.updateBuildConfiguration": "automatic"
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "java.compile.nullAnalysis.mode": "automatic"
   }
 }

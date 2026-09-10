@@ -161,8 +161,8 @@ public class TC2 extends BaseTest1 {
          );
          input.click();
          
-         /* 2️⃣ Gõ mã sản phẩm */
-         input.sendKeys("14579413");
+         /* 2️⃣ Gõ MÃ. PHM */
+         input.sendKeys("1341343");
          
          /* 3️⃣ Đợi dropdown render option rồi click */
          By option = By.xpath(
@@ -176,7 +176,7 @@ public class TC2 extends BaseTest1 {
          
          optionEl.click();
          
-         tc09.pass("Chọn mã sản phẩm 14579413");
+         tc09.pass("Chọn mã sản phẩm 1341343");
          
  
          /* =========================
