@@ -614,6 +614,6 @@ public class TC21 extends BaseTest1 {
         System.out.println("MÃ ĐƠN HÀNG: " + orderCode);
         System.out.println("========================================");
 
-        test.pass("✅ PASS verify Giảm giá sản phẩm thuộc tích HotItem  KM-0626-128 với SP 00002643 - Giảm 6,450đ từ 129,000 → 122,550đ. Mã đơn: " + orderCode);
+        test.pass("✅ PASS verify Giảm giá sản phẩm thuộc tích HotItem  KM-0926-052 với SP 00002643 - Giảm 6,450đ từ 129,000 → 122,550đ. Mã đơn: " + orderCode);
     }
 }

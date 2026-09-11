@@ -645,6 +645,6 @@ public class TC1 extends BaseTest1 {
         System.out.println("MÃ ĐƠN HÀNG: " + orderCode);
         System.out.println("========================================");
 
-        test.pass("✅ PASS verify nhóm hàng giảm giá 5000k-ctkm KM-0626-070. Mã đơn: " + orderCode);
+        test.pass("✅ PASS verify nhóm hàng giảm giá 5000k-ctkm KM-0926-055. Mã đơn: " + orderCode);
     }
 }

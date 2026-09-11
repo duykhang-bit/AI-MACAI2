@@ -645,6 +645,6 @@ public class TC4 extends BaseTest1 {
         System.out.println("MÃ ĐƠN HÀNG: " + orderCode);
         System.out.println("========================================");
 
-        test.pass("✅ PASS verify Nhóm hàng & ngành hàng  - Tổng đơn theo SP->> tặng phm 20k-KM-0626-074 SP C052300000457. Mã đơn: " + orderCode);
+        test.pass("✅ PASS verify Nhóm hàng & ngành hàng  - Tổng đơn theo SP->> tặng phm 20k-KM-0926-053 SP C052300000457. Mã đơn: " + orderCode);
     }
 }

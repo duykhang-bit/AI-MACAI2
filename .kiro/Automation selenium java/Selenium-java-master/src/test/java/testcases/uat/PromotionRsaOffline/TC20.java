@@ -680,6 +680,6 @@ public class TC20 extends BaseTest1 {
         System.out.println("MÃ ĐƠN HÀNG: " + orderCode);
         System.out.println("========================================");
 
-        test.pass("✅ PASS verify Tổng tiền đơn hàng theo sp --> số tiền giảm KM-0626-118 sp 00031188 giảm 10k. Mã đơn: " + orderCode);
+        test.pass("✅ PASS verify Tổng tiền đơn hàng theo sp --> số tiền giảm KM-0926-054 sp 00031188 giảm 10k. Mã đơn: " + orderCode);
     }
 }
