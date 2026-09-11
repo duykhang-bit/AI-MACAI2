@@ -295,8 +295,11 @@ public class TC1 extends BaseTest1 {
         // Triple click để select all text → BACKSPACE xóa sạch → nhập mã mới
         js.executeScript("arguments[0].click(); arguments[0].focus();", productInput);
         Thread.sleep(300);
-        productInput.sendKeys(Keys.chord(Keys.COMMAND, "a"));
-        productInput.sendKeys(Keys.BACK_SPACE);
+        // Clear ô search trước khi nhập mới
+        js.executeScript("arguments[0].value = '';", productInput);
+        productInput.sendKeys(Keys.chord(Keys.CONTROL, "a"));
+        Thread.sleep(200);
+        productInput.sendKeys(Keys.DELETE);
         Thread.sleep(300);
 
         // Nhập mã sản phẩm
@@ -377,8 +380,11 @@ public class TC1 extends BaseTest1 {
         // Triple click để select all text → BACKSPACE xóa sạch → nhập mã mới
         js.executeScript("arguments[0].click(); arguments[0].focus();", productInput2);
         Thread.sleep(300);
-        productInput2.sendKeys(Keys.chord(Keys.COMMAND, "a"));
-        productInput2.sendKeys(Keys.BACK_SPACE);
+        // Clear ô search trước khi nhập mới
+        js.executeScript("arguments[0].value = '';", productInput2);
+        productInput2.sendKeys(Keys.chord(Keys.CONTROL, "a"));
+        Thread.sleep(200);
+        productInput2.sendKeys(Keys.DELETE);
         Thread.sleep(300);
 
         // Nhập mã sản phẩm mới

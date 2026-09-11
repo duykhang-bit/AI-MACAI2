@@ -458,9 +458,11 @@ public class TC10 extends BaseTest1 {
         Thread.sleep(500);
         js.executeScript("arguments[0].click(); arguments[0].focus();", productInput2);
         Thread.sleep(300);
-        productInput2.sendKeys(Keys.chord(Keys.COMMAND, "a"));
+        // Clear ô search trước khi nhập mới
+        js.executeScript("arguments[0].value = '';", productInput2);
+        productInput2.sendKeys(Keys.chord(Keys.CONTROL, "a"));
         Thread.sleep(200);
-        productInput2.sendKeys(Keys.BACK_SPACE);
+        productInput2.sendKeys(Keys.DELETE);
         Thread.sleep(500);
         productInput2.sendKeys(getProductCode("product_tc10_2"));
         Thread.sleep(1000);
@@ -512,9 +514,11 @@ public class TC10 extends BaseTest1 {
         Thread.sleep(500);
         js.executeScript("arguments[0].click(); arguments[0].focus();", productInput3);
         Thread.sleep(300);
-        productInput3.sendKeys(Keys.chord(Keys.COMMAND, "a"));
+        // Clear ô search trước khi nhập mới
+        js.executeScript("arguments[0].value = '';", productInput3);
+        productInput3.sendKeys(Keys.chord(Keys.CONTROL, "a"));
         Thread.sleep(200);
-        productInput3.sendKeys(Keys.BACK_SPACE);
+        productInput3.sendKeys(Keys.DELETE);
         Thread.sleep(500);
         productInput3.sendKeys(getProductCode("product_tc10_3"));
         Thread.sleep(1000);

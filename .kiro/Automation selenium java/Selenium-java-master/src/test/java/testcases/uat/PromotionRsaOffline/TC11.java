@@ -358,9 +358,11 @@ public class TC11 extends BaseTest1 {
         Thread.sleep(500);
         js.executeScript("arguments[0].click(); arguments[0].focus();", productInput1);
         Thread.sleep(300);
-        productInput1.sendKeys(Keys.chord(Keys.COMMAND, "a"));
+        // Clear ô search trước khi nhập mới
+        js.executeScript("arguments[0].value = '';", productInput1);
+        productInput1.sendKeys(Keys.chord(Keys.CONTROL, "a"));
         Thread.sleep(200);
-        productInput1.sendKeys(Keys.BACK_SPACE);
+        productInput1.sendKeys(Keys.DELETE);
         Thread.sleep(500);
 
         productInput1.sendKeys(getProductCode("product_tc11_1"));
@@ -438,9 +440,11 @@ public class TC11 extends BaseTest1 {
         Thread.sleep(500);
         js.executeScript("arguments[0].click(); arguments[0].focus();", productInput2);
         Thread.sleep(300);
-        productInput2.sendKeys(Keys.chord(Keys.COMMAND, "a"));
+        // Clear ô search trước khi nhập mới
+        js.executeScript("arguments[0].value = '';", productInput2);
+        productInput2.sendKeys(Keys.chord(Keys.CONTROL, "a"));
         Thread.sleep(200);
-        productInput2.sendKeys(Keys.BACK_SPACE);
+        productInput2.sendKeys(Keys.DELETE);
         Thread.sleep(500);
         productInput2.sendKeys(getProductCode("product_tc11_2"));
         Thread.sleep(1000);
@@ -492,9 +496,11 @@ public class TC11 extends BaseTest1 {
         Thread.sleep(500);
         js.executeScript("arguments[0].click(); arguments[0].focus();", productInput3);
         Thread.sleep(300);
-        productInput3.sendKeys(Keys.chord(Keys.COMMAND, "a"));
+        // Clear ô search trước khi nhập mới
+        js.executeScript("arguments[0].value = '';", productInput3);
+        productInput3.sendKeys(Keys.chord(Keys.CONTROL, "a"));
         Thread.sleep(200);
-        productInput3.sendKeys(Keys.BACK_SPACE);
+        productInput3.sendKeys(Keys.DELETE);
         Thread.sleep(500);
         productInput3.sendKeys(getProductCode("product_tc11_3"));
         Thread.sleep(1000);
@@ -546,9 +552,11 @@ public class TC11 extends BaseTest1 {
         Thread.sleep(500);
         js.executeScript("arguments[0].click(); arguments[0].focus();", productInput4);
         Thread.sleep(300);
-        productInput4.sendKeys(Keys.chord(Keys.COMMAND, "a"));
+        // Clear ô search trước khi nhập mới
+        js.executeScript("arguments[0].value = '';", productInput4);
+        productInput4.sendKeys(Keys.chord(Keys.CONTROL, "a"));
         Thread.sleep(200);
-        productInput4.sendKeys(Keys.BACK_SPACE);
+        productInput4.sendKeys(Keys.DELETE);
         Thread.sleep(500);
         productInput4.sendKeys(getProductCode("product_tc11_4"));
         Thread.sleep(1000);
@@ -600,9 +608,11 @@ public class TC11 extends BaseTest1 {
         Thread.sleep(500);
         js.executeScript("arguments[0].click(); arguments[0].focus();", productInput5);
         Thread.sleep(300);
-        productInput5.sendKeys(Keys.chord(Keys.COMMAND, "a"));
+        // Clear ô search trước khi nhập mới
+        js.executeScript("arguments[0].value = '';", productInput5);
+        productInput5.sendKeys(Keys.chord(Keys.CONTROL, "a"));
         Thread.sleep(200);
-        productInput5.sendKeys(Keys.BACK_SPACE);
+        productInput5.sendKeys(Keys.DELETE);
         Thread.sleep(500);
         productInput5.sendKeys(getProductCode("product_tc11_5"));
         Thread.sleep(1000);
@@ -654,9 +664,11 @@ public class TC11 extends BaseTest1 {
         Thread.sleep(500);
         js.executeScript("arguments[0].click(); arguments[0].focus();", productInput6);
         Thread.sleep(300);
-        productInput6.sendKeys(Keys.chord(Keys.COMMAND, "a"));
+        // Clear ô search trước khi nhập mới
+        js.executeScript("arguments[0].value = '';", productInput6);
+        productInput6.sendKeys(Keys.chord(Keys.CONTROL, "a"));
         Thread.sleep(200);
-        productInput6.sendKeys(Keys.BACK_SPACE);
+        productInput6.sendKeys(Keys.DELETE);
         Thread.sleep(500);
         productInput6.sendKeys(getProductCode("product_tc11_6"));
         Thread.sleep(1000);
