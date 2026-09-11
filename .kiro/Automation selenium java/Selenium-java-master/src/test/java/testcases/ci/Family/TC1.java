@@ -256,7 +256,7 @@ public class TC1 extends BaseTest1 {
                 .until(ExpectedConditions.elementToBeClickable(
                         By.cssSelector("input[type='phone']")));
         phoneInput.click();
-        phoneInput.sendKeys("0835089254");
+        phoneInput.sendKeys("0835089290");
         phoneInput.sendKeys(Keys.ENTER);
         Thread.sleep(2000);
 
