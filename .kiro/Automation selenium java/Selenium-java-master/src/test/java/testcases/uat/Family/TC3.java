@@ -302,7 +302,13 @@ public class TC3 extends BaseTest1 {
         Thread.sleep(500);
 
         // Clear ô search (Windows: JS clear + CTRL+A + DELETE)
-        js.executeScript("arguments[0].value = ''", productInput);
+        js.executeScript(
+            "var el = arguments[0];"
+            + "var nativeSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;"
+            + "nativeSetter.call(el, '');"
+            + "el.dispatchEvent(new Event('input', { bubbles: true }));"
+            + "el.dispatchEvent(new Event('change', { bubbles: true }));", productInput);
+        Thread.sleep(300);
         productInput.sendKeys(Keys.chord(Keys.CONTROL, "a"));
         Thread.sleep(200);
         productInput.sendKeys(Keys.DELETE);
@@ -388,7 +394,13 @@ public class TC3 extends BaseTest1 {
         Thread.sleep(500);
 
         // Clear ô search (Windows: JS clear + CTRL+A + DELETE)
-        js.executeScript("arguments[0].value = ''", productInput2);
+        js.executeScript(
+            "var el = arguments[0];"
+            + "var nativeSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;"
+            + "nativeSetter.call(el, '');"
+            + "el.dispatchEvent(new Event('input', { bubbles: true }));"
+            + "el.dispatchEvent(new Event('change', { bubbles: true }));", productInput2);
+        Thread.sleep(300);
         productInput2.sendKeys(Keys.chord(Keys.CONTROL, "a"));
         Thread.sleep(200);
         productInput2.sendKeys(Keys.DELETE);
