@@ -1,4 +1,4 @@
-﻿package testcases.uat.PromotionRsaOffline;
+package testcases.uat.PromotionRsaOffline;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
