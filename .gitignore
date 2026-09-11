@@ -8,3 +8,4 @@ reports/*
 allure-results/
 .idea/workspace.xml
 .kiro/settings/mcp.json
+.kiro/settings/mcp.json.bak
