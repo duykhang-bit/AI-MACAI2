@@ -358,13 +358,11 @@ public class TC18 extends BaseTest1 {
         js.executeScript("arguments[0].click(); arguments[0].focus();", productInput);
         Thread.sleep(500);
 
-        // Clear ô search (Windows: CTRL+A rồi DELETE)
-        js.executeScript(
-                "var el = arguments[0];" +
-                "var nativeSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;" +
-                "nativeSetter.call(el, '');" +
-                "el.dispatchEvent(new Event('input', { bubbles: true }));" +
-                "el.dispatchEvent(new Event('change', { bubbles: true }));", productInput);
+        // Clear ô search trước khi nhập mới
+        js.executeScript("arguments[0].value = '';", productInput);
+        productInput.sendKeys(Keys.chord(Keys.CONTROL, "a"));
+        Thread.sleep(200);
+        productInput.sendKeys(Keys.DELETE);
         Thread.sleep(300);
 
         // Nhập mã sản phẩm
