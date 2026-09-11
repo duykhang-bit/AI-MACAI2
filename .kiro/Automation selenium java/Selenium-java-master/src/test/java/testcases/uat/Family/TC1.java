@@ -272,14 +272,8 @@ public class TC1 extends BaseTest1 {
         WebElement phoneInput = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(10))
                 .until(ExpectedConditions.elementToBeClickable(
                         By.cssSelector("input[type='phone']")));
-        // Dùng JS set value thay vì sendKeys để tránh trigger search API mỗi ký tự
-        js.executeScript(
-                "var el = arguments[0];" +
-                "var nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;" +
-                "nativeInputValueSetter.call(el, '0373850884');" +
-                "el.dispatchEvent(new Event('input', { bubbles: true }));" +
-                "el.dispatchEvent(new Event('change', { bubbles: true }));",
-                phoneInput);
+        phoneInput.click();
+        phoneInput.sendKeys("0373850884");
         phoneInput.sendKeys(Keys.ENTER);
         Thread.sleep(1500);
 

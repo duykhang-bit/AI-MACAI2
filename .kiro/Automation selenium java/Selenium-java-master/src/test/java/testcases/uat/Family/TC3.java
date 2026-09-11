@@ -272,18 +272,12 @@ public class TC3 extends BaseTest1 {
         WebElement phoneInput = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(10))
                 .until(ExpectedConditions.elementToBeClickable(
                         By.cssSelector("input[type='phone']")));
-        // Dùng JS set value thay vì sendKeys để tránh trigger search API mỗi ký tự
-        js.executeScript(
-                "var el = arguments[0];" +
-                "var nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;" +
-                "nativeInputValueSetter.call(el, '0835089254');" +
-                "el.dispatchEvent(new Event('input', { bubbles: true }));" +
-                "el.dispatchEvent(new Event('change', { bubbles: true }));",
-                phoneInput);
+        phoneInput.click();
+        phoneInput.sendKeys("0835089290");
         phoneInput.sendKeys(Keys.ENTER);
         Thread.sleep(1500);
 
-        tc07.pass("Đã nhập SĐT khách hàng 0835089254");
+        tc07.pass("Đã nhập SĐT khách hàng 0835089290");
 
         /*
          * =========================
