@@ -19,6 +19,11 @@
 </suite>
 <!--
 === LỆNH RUN TẤT CẢ ===
+cd "/Users/leduykhang/Documents/Automation/AI-MACAI2/.kiro/Automation selenium java/Selenium-java-master" && mvn test -Dsurefire.suiteXmlFiles=src/test/resources/testng.xml
+
+
+
+
 cd ".kiro/Automation selenium java/Selenium-java-master" && mvn clean test
 cd "c:\Users\khangld10\Documents\AI-MACAI2\.kiro\Automation selenium java\Selenium-java-master"; mvn test "-Dsurefire.suiteXmlFiles=src/test/resources/testng.xml"
 === RUN TỪNG NHÓM ===
