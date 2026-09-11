@@ -102,4 +102,59 @@ public class MudCodeProvider {
     public static void resetCounter(String mudKey) {
         writeCounter(mudKey, 0);
     }
+
+    /**
+     * Sau khi run xong: log các mã đã dùng rồi reset counter về 0.
+     * Gọi từ TestListener.onFinish() để tự động clear sau mỗi lần chạy suite.
+     *
+     * @param mudKey key trong products.json (ví dụ: "mud", "mud2", "mud3")
+     */
+    public static void clearAfterRun(String mudKey) {
+        try {
+            JsonArray codes = loadMudCodes(mudKey);
+            int counter = readCounter(mudKey);
+            int total = codes.size();
+
+            if (counter == 0) {
+                System.out.println("[MudCodeProvider] " + mudKey + " → chưa dùng mã nào trong lần chạy này.");
+                return;
+            }
+
+            // Log các mã đã dùng
+            System.out.println("[MudCodeProvider] === CLEAR AFTER RUN: " + mudKey + " ===");
+            System.out.println("[MudCodeProvider] Đã dùng " + counter + " lần, gồm các mã:");
+            for (int i = 0; i < counter; i++) {
+                int idx = i % total;
+                System.out.println("  [" + (i + 1) + "] index=" + idx + " → " + codes.get(idx).getAsString());
+            }
+            System.out.println("[MudCodeProvider] → Reset counter về 0 để lần chạy sau bắt đầu từ đầu.");
+
+            // Reset về 0
+            resetCounter(mudKey);
+
+        } catch (Exception e) {
+            System.err.println("[MudCodeProvider] clearAfterRun lỗi: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Clear tất cả mud keys sau khi run xong.
+     * Keys được lấy tự động từ tên file counter trong thư mục mud-counters/.
+     */
+    public static void clearAllAfterRun() {
+        Path dir = Paths.get("src", "test", "resources", "data", "mud-counters");
+        if (!Files.exists(dir)) return;
+
+        try {
+            Files.list(dir)
+                .filter(p -> p.getFileName().toString().startsWith("mud-counter-") && p.getFileName().toString().endsWith(".txt"))
+                .forEach(p -> {
+                    String fileName = p.getFileName().toString(); // mud-counter-mud2.txt
+                    String mudKey = fileName.replace("mud-counter-", "").replace(".txt", ""); // mud2
+                    clearAfterRun(mudKey);
+                });
+        } catch (Exception e) {
+            System.err.println("[MudCodeProvider] clearAllAfterRun lỗi: " + e.getMessage());
+        }
+    }
 }

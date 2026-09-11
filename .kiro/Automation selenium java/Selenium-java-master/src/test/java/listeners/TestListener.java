@@ -74,5 +74,8 @@ public class TestListener implements ITestListener {
         extent.setSystemInfo("Pass Rate", String.format("%.1f%%", passRate));
         
         extent.flush();
+
+        // Clear mud counters sau khi suite chạy xong — reset về 0 để lần sau bắt đầu lại từ đầu
+        utils.MudCodeProvider.clearAllAfterRun();
     }
 }
