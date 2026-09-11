@@ -35,7 +35,12 @@ public class TC3 extends BaseTest1 {
     @Override
     @BeforeMethod
     public void setup(ITestResult result) {
-        test = extent.createTest(result.getMethod().getMethodName() + "_" + getNextRunNumber());
+        String _testName = result.getMethod().getMethodName();
+        String _desc = result.getMethod().getDescription();
+        if (_desc != null && !_desc.isEmpty()) {
+            _testName = _testName + " - " + _desc;
+        }
+        test = extent.createTest(_testName);
 
         WebDriverManager.chromedriver().setup();
 
