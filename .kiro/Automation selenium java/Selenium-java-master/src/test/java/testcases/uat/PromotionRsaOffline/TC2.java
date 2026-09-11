@@ -354,16 +354,18 @@ public class TC2 extends BaseTest1 {
         WebElement productInput = wait.until(ExpectedConditions.visibilityOfElementLocated(
                 By.xpath("//input[starts-with(@id,'search-product-input_session')]")));
 
-        // Click focus bằng JS
+        // Click focus + clear React state trước khi nhập SKU mới
         js.executeScript("arguments[0].click(); arguments[0].focus();", productInput);
-        Thread.sleep(500);
-
-        // Clear ô search (Windows: CTRL+A rồi DELETE)
-        js.executeScript("arguments[0].value = '';", productInput);
-        productInput.sendKeys(Keys.chord(Keys.CONTROL, "a"));
-        Thread.sleep(200);
-        productInput.sendKeys(Keys.DELETE);
-        Thread.sleep(500);
+        Thread.sleep(300);
+        // Dùng native React setter để clear hoàn toàn (tránh SKU cũ bị append)
+        js.executeScript(
+                "var el = arguments[0];" +
+                "var nativeSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;" +
+                "nativeSetter.call(el, '');" +
+                "el.dispatchEvent(new Event('input', { bubbles: true }));" +
+                "el.dispatchEvent(new Event('change', { bubbles: true }));",
+                productInput);
+        Thread.sleep(300);
 
         // Nhập mã sản phẩm
         String product3 = getProductCode("product4");

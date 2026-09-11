@@ -212,11 +212,13 @@ public class TC22 extends BaseTest1 {
         WebElement productInput = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[starts-with(@id,'search-product-input_session')]")));
         js.executeScript("arguments[0].click(); arguments[0].focus();", productInput);
         Thread.sleep(500);
-        js.executeScript("arguments[0].value = '';", productInput);
-        productInput.sendKeys(Keys.chord(Keys.CONTROL, "a"));
-        Thread.sleep(200);
-        productInput.sendKeys(Keys.DELETE);
-        Thread.sleep(500);
+        js.executeScript(
+                "var el = arguments[0];" +
+                "var nativeSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;" +
+                "nativeSetter.call(el, '');" +
+                "el.dispatchEvent(new Event('input', { bubbles: true }));" +
+                "el.dispatchEvent(new Event('change', { bubbles: true }));", productInput);
+        Thread.sleep(300);
         productInput.sendKeys(productCode);
         Thread.sleep(1000);
         WebElement searchBtn = driver.findElement(By.xpath(
