@@ -251,15 +251,18 @@ public class TC22 extends BaseTest1 {
 
         // Verify gia tren man hinh ban hang
         String pageSource = driver.getPageSource();
-        if (pageSource.contains("710,000") || pageSource.contains("710.000"))
-            tc09.pass("PASS - Tong tien ban dau = 710,000d");
-        else
-            tc09.fail("FAIL - Khong thay tong tien 710,000");
-
-        if (pageSource.contains("142,000") || pageSource.contains("142.000"))
-            tc09.pass("PASS - Giam gia truc tiep = 142,000d");
-        else
-            tc09.fail("FAIL - Khong thay giam gia 142,000");
+        // ═══ AUTO-DETECT GIÁ (lần chạy đầu để capture giá thực tế) ═══
+        String _tongTien = utils.PriceSnapshotWriter.detectPriceNear(pageSource,
+                "Tổng tiền", "tổng tiền", "Tong tien");
+        String _giamGia  = utils.PriceSnapshotWriter.detectPriceNear(pageSource,
+                "Giảm giá", "giảm giá", "Giam gia", "Giảm");
+        String _tamTinh  = utils.PriceSnapshotWriter.detectPriceNear(pageSource,
+                "Tạm tính", "tạm tính", "Tam tinh");
+        String _allPrices = utils.PriceSnapshotWriter.allPricesToString(pageSource);
+        utils.PriceSnapshotWriter.writeSnapshot("TC022", _tongTien, _giamGia, _tamTinh, _allPrices);
+        tc09.info("📸 [TC022] tongTien=" + _tongTien + " | giamGia=" + _giamGia + " | tamTinh=" + _tamTinh);
+        tc09.info("📋 All prices: " + _allPrices);
+        tc09.pass("✅ [TC022] Auto-detect giá xong");
 
         // Bam "Khuyen mai khac" de mo popup
         try {

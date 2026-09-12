@@ -378,8 +378,10 @@ public class TC13 extends BaseTest1 {
         Thread.sleep(500);
 
         // Clear ô search trước khi nhập mới
-        js.executeScript("arguments[0].value = '';", productInput);
+        js.executeScript("arguments[0].value = '';" , productInput);
         productInput.sendKeys(Keys.chord(Keys.CONTROL, "a"));
+        Thread.sleep(200);
+        productInput.sendKeys(Keys.DELETE);
         Thread.sleep(200);
         productInput.sendKeys(Keys.DELETE);
         Thread.sleep(300);
