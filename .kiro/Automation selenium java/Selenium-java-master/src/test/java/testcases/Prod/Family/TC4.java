@@ -31,7 +31,7 @@ public class TC4 extends BaseTest1 {
 
     @Override
     protected String getBaseUrl() {
-        return "https://uat-rsa-web.frt.vn/";
+        return "https://longchau.frt.vn/";
     }
 
     @Override
@@ -86,7 +86,7 @@ public class TC4 extends BaseTest1 {
                 ExpectedConditions.elementToBeClickable(
                         By.name("LoginInput.Password")));
         password.clear();
-        password.sendKeys("123456");
+        password.sendKeys("Longchau@1234");
 
         driver.findElement(By.id("kt_login_signin_submit")).click();
 
