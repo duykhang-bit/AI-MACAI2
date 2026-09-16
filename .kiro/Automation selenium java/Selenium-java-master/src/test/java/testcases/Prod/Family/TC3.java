@@ -62,7 +62,7 @@ public class TC3 extends BaseTest1 {
         wait = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(30));
     }
 
-    @Test(priority = 1, description = "FLOW - Tạo đơn bán hàng RSA Web", invocationCount = 2)
+    @Test(priority = 1, description = "FLOW - Tạo đơn bán hàng RSA Web", invocationCount = 1)
     public void testCreateOrderFlow() throws InterruptedException {
 
         JavascriptExecutor js = (JavascriptExecutor) driver;
@@ -111,7 +111,7 @@ public class TC3 extends BaseTest1 {
          * TC02 - CHỌN SHOP 80006
          * =========================
          */
-        ExtentTest tc02 = test.createNode("TC02 - Nhập 80006 và chọn shop");
+        ExtentTest tc02 = test.createNode("TC02 - Nhập 80046 và chọn shop");
 
         // Ô "Chọn Shop" là Ant Design Select → click vào dropdown trước
         WebElement shopDropdown = wait.until(
@@ -120,23 +120,23 @@ public class TC3 extends BaseTest1 {
         shopDropdown.click();
         Thread.sleep(500);
 
-        // Nhập 80006 vào ô search trong dropdown
+        // Nhập 80046 vào ô search trong dropdown
         WebElement shopSearchInput = wait.until(
                 ExpectedConditions.elementToBeClickable(
                         By.xpath("//div[contains(@class,'ant-select-dropdown')]//input | " +
                                 "//input[contains(@class,'ant-select-selection-search-input')]")));
-        shopSearchInput.sendKeys("80006");
+        shopSearchInput.sendKeys("80046");
         Thread.sleep(1500);
 
-        // Chọn shop 80006 từ danh sách dropdown
+        // Chọn shop 80046 từ danh sách dropdown
         WebElement shopOption = wait.until(
                 ExpectedConditions.elementToBeClickable(
-                        By.xpath("//div[contains(@class,'ant-select-item-option') and contains(.,'80006')] | " +
-                                "//div[contains(@class,'ant-select-item-option-content') and contains(text(),'80006')]")));
+                        By.xpath("//div[contains(@class,'ant-select-item-option') and contains(.,'80046')] | " +
+                                "//div[contains(@class,'ant-select-item-option-content') and contains(text(),'80046')]")));
         shopOption.click();
 
         Thread.sleep(1000);
-        tc02.pass("Đã chọn shop 80006");
+        tc02.pass("Đã chọn shop 80046");
 
         /*
          * =========================
