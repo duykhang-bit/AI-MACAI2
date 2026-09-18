@@ -281,7 +281,7 @@ public class TC4 extends BaseTest1 {
                 .until(ExpectedConditions.elementToBeClickable(
                         By.cssSelector("input[type='phone']")));
         phoneInput.click();
-        phoneInput.sendKeys("0835089254");
+        phoneInput.sendKeys("0389839161");
         phoneInput.sendKeys(Keys.ENTER);
         Thread.sleep(1500);
 
@@ -289,10 +289,10 @@ public class TC4 extends BaseTest1 {
 
         /*
          * =========================
-         * TC08 - NHẬP SẢN PHẨM 00029334
+         * TC08 - NHẬP SẢN PHẨM 00042994
          * =========================
          */
-        ExtentTest tc08 = test.createNode("TC08 - Nhập sản phẩm 00029334");
+        ExtentTest tc08 = test.createNode("TC08 - Nhập sản phẩm 00042994");
 
         Thread.sleep(1000);
 
@@ -318,7 +318,7 @@ public class TC4 extends BaseTest1 {
         Thread.sleep(500);
 
         // Nhập mã sản phẩm
-        productInput.sendKeys("00029334");
+        productInput.sendKeys("00042994");
         Thread.sleep(1000);
 
         // Click nút search (icon kính lúp) để trigger tìm kiếm
@@ -355,10 +355,10 @@ public class TC4 extends BaseTest1 {
 
         /*
          * =========================
-         * TC08b - NHẬP SỐ LƯỢNG 19 CHO SP 00029334
+         * TC08b - NHẬP SỐ LƯỢNG 10 CHO SP 00042994
          * =========================
          */
-        ExtentTest tc08b = test.createNode("TC08b - Nhập số lượng 19");
+        ExtentTest tc08b = test.createNode("TC08b - Nhập số lượng 10");
 
         Thread.sleep(2000);
 
@@ -370,21 +370,21 @@ public class TC4 extends BaseTest1 {
         js.executeScript(
                 "var el = arguments[0];" +
                 "var nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;" +
-                "nativeInputValueSetter.call(el, '19');" +
+                "nativeInputValueSetter.call(el, '10');" +
                 "el.dispatchEvent(new Event('input', { bubbles: true }));" +
                 "el.dispatchEvent(new Event('change', { bubbles: true }));" +
                 "el.blur();",
                 qtyInput);
         Thread.sleep(2000);
 
-        tc08b.pass("Đã nhập số lượng 19");
+        tc08b.pass("Đã nhập số lượng 10");
 
         /*
          * =========================
-         * TC08c - NHẬP SẢN PHẨM 00017891
+         * TC08c - NHẬP SẢN PHẨM 00016559
          * =========================
          */
-        ExtentTest tc08c = test.createNode("TC08c - Nhập sản phẩm 00017891");
+        ExtentTest tc08c = test.createNode("TC08c - Nhập sản phẩm 00002293");
 
         Thread.sleep(1000);
 
@@ -410,7 +410,7 @@ public class TC4 extends BaseTest1 {
         Thread.sleep(500);
 
         // Nhập mã sản phẩm mới
-        productInput2.sendKeys("00017891");
+        productInput2.sendKeys("00002293");
         Thread.sleep(1000);
 
         // Click nút search (icon kính lúp) để trigger tìm kiếm
@@ -443,7 +443,7 @@ public class TC4 extends BaseTest1 {
             // Đơn vị mặc định đã là Hộp
         }
 
-        tc08c.pass("Đã nhập sản phẩm 00017891 và chọn đơn vị Hộp");
+        tc08c.pass("Đã nhập sản phẩm 00016559 và chọn đơn vị Hộp");
 
         /*
          * =========================
@@ -565,3 +565,4 @@ public class TC4 extends BaseTest1 {
     }
 }
 
+//
