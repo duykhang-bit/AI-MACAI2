@@ -16,8 +16,17 @@ import com.google.gson.JsonParser;
  */
 public class MudCodeProvider {
 
-    private static final String COUNTER_FILE = "data/mud-counter.txt";
-    private static final String DATA_FILE = "data/products.json";
+    private static final String COUNTER_FILE = "uatdata/mud-counter.txt";
+    // Ưu tiên uatdata/products.json (UAT), fallback về data/products.json (CI/local)
+    private static final String DATA_FILE = resolveDataFile();
+
+    private static String resolveDataFile() {
+        String uatFile = "uatdata/products.json";
+        if (MudCodeProvider.class.getClassLoader().getResourceAsStream(uatFile) != null) {
+            return uatFile;
+        }
+        return "data/products.json";
+    }
 
     /**
      * Lấy mã MUD tiếp theo từ danh sách (auto-rotate).
@@ -92,8 +101,9 @@ public class MudCodeProvider {
     }
 
     private static Path getCounterPath(String fileName) {
-        // Lưu counter ở src/test/resources/data/mud-counters/ (KHÔNG bị mvn clean xóa)
-        return Paths.get("src", "test", "resources", "data", "mud-counters", fileName);
+        // Lưu counter ở uatdata/mud-counters/ nếu đang dùng uatdata, ngược lại dùng data/mud-counters/
+        String subDir = DATA_FILE.startsWith("uatdata") ? "uatdata" : "data";
+        return Paths.get("src", "test", "resources", subDir, "mud-counters", fileName);
     }
 
     /**
