@@ -103,8 +103,8 @@ public class MudCodeProvider {
     }
 
     /**
-     * Sau khi run xong: log các mã đã dùng rồi reset counter về 0.
-     * Gọi từ TestListener.onFinish() để tự động clear sau mỗi lần chạy suite.
+     * Sau khi run xong: log các mã đã dùng. KHÔNG reset counter để lần sau tiếp tục từ chỗ đã dùng.
+     * Gọi từ TestListener.onFinish() để tự động log sau mỗi lần chạy suite.
      *
      * @param mudKey key trong products.json (ví dụ: "mud", "mud2", "mud3")
      */
@@ -120,16 +120,9 @@ public class MudCodeProvider {
             }
 
             // Log các mã đã dùng
-            System.out.println("[MudCodeProvider] === CLEAR AFTER RUN: " + mudKey + " ===");
-            System.out.println("[MudCodeProvider] Đã dùng " + counter + " lần, gồm các mã:");
-            for (int i = 0; i < counter; i++) {
-                int idx = i % total;
-                System.out.println("  [" + (i + 1) + "] index=" + idx + " → " + codes.get(idx).getAsString());
-            }
-            System.out.println("[MudCodeProvider] → Reset counter về 0 để lần chạy sau bắt đầu từ đầu.");
-
-            // Reset về 0
-            resetCounter(mudKey);
+            System.out.println("[MudCodeProvider] === LOG AFTER RUN: " + mudKey + " ===");
+            System.out.println("[MudCodeProvider] Đã dùng " + counter + " lần tổng cộng, mã tiếp theo sẽ là index=" + (counter % total));
+            System.out.println("[MudCodeProvider] → GIỮ NGUYÊN counter để lần sau dùng mã tiếp theo.");
 
         } catch (Exception e) {
             System.err.println("[MudCodeProvider] clearAfterRun lỗi: " + e.getMessage());
