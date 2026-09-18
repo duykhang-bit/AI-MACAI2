@@ -526,6 +526,19 @@ public class TC3 extends BaseTest1 {
             Thread.sleep(3000);
             tc09.pass("Đã click Tạo đơn (F4)");
 
+            // Dismiss popup "LƯU Ý - KHÔNG NHẬN THƯỞNG" nếu xuất hiện
+            try {
+                WebElement btnDongLuuY = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(5))
+                        .until(ExpectedConditions.elementToBeClickable(
+                                By.xpath("//*[contains(@class,'ant-modal') and .//*[contains(text(),'KHÔNG NHẬN THƯỞNG') or contains(text(),'LƯU Ý')]]//button[contains(.,'Đóng') or .//span[contains(text(),'Đóng')]] | " +
+                                        "//div[contains(@class,'ant-modal') and .//*[contains(text(),'LƯU Ý')]]//button[contains(@class,'ant-modal-close') or @aria-label='Close']")));
+                js.executeScript("arguments[0].click();", btnDongLuuY);
+                Thread.sleep(1000);
+                tc09.info("Đã dismiss popup LƯU Ý - KHÔNG NHẬN THƯỞNG");
+            } catch (TimeoutException e) {
+                // Không có popup → bỏ qua
+            }
+
             ExtentTest tc10 = test.createNode("TC10 - Click Tổng tiền");
 
             WebElement btnTongTien = wait.until(
