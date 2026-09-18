@@ -468,10 +468,10 @@ public class TC1 extends BaseTest1 {
                 Thread.sleep(2000);
                 
                 String popupSource = driver.getPageSource();
-                if (popupSource.contains("KM-0626-070")) {
-                    tcVerifyPrice.pass("✅ CTKM KM-0626-070 đã được CHỌN trong popup Khuyến mãi");
+                if (popupSource.contains("KM-0926-055")) {
+                    tcVerifyPrice.pass("✅ CTKM  KM-0926-055 đã được CHỌN trong popup Khuyến mãi");
                 } else {
-                    tcVerifyPrice.fail("❌ KHÔNG tìm thấy CTKM KM-0626-070 trong popup");
+                    tcVerifyPrice.fail("❌ KHÔNG tìm thấy CTKM  KM-0926-055 trong popup");
                 }
                 
                 // Click Xác nhận để đóng popup
