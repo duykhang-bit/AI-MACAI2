@@ -141,19 +141,24 @@ public class MudCodeProvider {
      * Keys được lấy tự động từ tên file counter trong thư mục mud-counters/.
      */
     public static void clearAllAfterRun() {
-        Path dir = Paths.get("src", "test", "resources", "uatdata", "mud-counters");
-        if (!Files.exists(dir)) return;
-
-        try {
-            Files.list(dir)
-                .filter(p -> p.getFileName().toString().startsWith("mud-counter-") && p.getFileName().toString().endsWith(".txt"))
-                .forEach(p -> {
-                    String fileName = p.getFileName().toString(); // mud-counter-mud2.txt
-                    String mudKey = fileName.replace("mud-counter-", "").replace(".txt", ""); // mud2
-                    clearAfterRun(mudKey);
-                });
-        } catch (Exception e) {
-            System.err.println("[MudCodeProvider] clearAllAfterRun lỗi: " + e.getMessage());
+        // Scan cả uatdata và proddata mud-counters
+        Path[] dirs = {
+            Paths.get("src", "test", "resources", "uatdata", "mud-counters"),
+            Paths.get("src", "test", "resources", "proddata", "mud-counters")
+        };
+        for (Path dir : dirs) {
+            if (!Files.exists(dir)) continue;
+            try {
+                Files.list(dir)
+                    .filter(p -> p.getFileName().toString().startsWith("mud-counter-") && p.getFileName().toString().endsWith(".txt"))
+                    .forEach(p -> {
+                        String fileName = p.getFileName().toString();
+                        String mudKey = fileName.replace("mud-counter-", "").replace(".txt", "");
+                        clearAfterRun(mudKey);
+                    });
+            } catch (Exception e) {
+                System.err.println("[MudCodeProvider] clearAllAfterRun lỗi: " + e.getMessage());
+            }
         }
     }
 }
