@@ -25,7 +25,9 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import listeners.TestListener;
 
 @Listeners(TestListener.class)
-public class TC2 extends BaseTest1 {
+public class TC5 extends BaseTest1 {
+
+    
 
     @Override
     protected String getBaseUrl() {
@@ -180,6 +182,7 @@ public class TC2 extends BaseTest1 {
                         .until(ExpectedConditions.invisibilityOfElementLocated(
                                 By.xpath("//div[contains(@class,'ant-modal-wrap') and not(contains(@style,'display: none'))]")));
             } catch (Exception ignored) {}
+
         }
 
         Thread.sleep(500);
@@ -278,18 +281,18 @@ public class TC2 extends BaseTest1 {
                 .until(ExpectedConditions.elementToBeClickable(
                         By.cssSelector("input[type='phone']")));
         phoneInput.click();
-        phoneInput.sendKeys("0835089254");
+        phoneInput.sendKeys("0389839161");
         phoneInput.sendKeys(Keys.ENTER);
         Thread.sleep(1500);
 
-        tc07.pass("Đã nhập SĐT khách hàng 0835089254");
+        tc07.pass("Đã nhập SĐT khách hàng 0835089290");
 
         /*
          * =========================
-         * TC08 - NHẬP SẢN PHẨM 00029334
+         * TC08 - NHẬP SẢN PHẨM 00042994
          * =========================
          */
-        ExtentTest tc08 = test.createNode("TC08 - Nhập sản phẩm 00021932");
+        ExtentTest tc08 = test.createNode("TC08 - Nhập sản phẩm 00041967");
 
         Thread.sleep(1000);
 
@@ -315,7 +318,7 @@ public class TC2 extends BaseTest1 {
         Thread.sleep(500);
 
         // Nhập mã sản phẩm
-        productInput.sendKeys("00021932");
+        productInput.sendKeys("00041967");
         Thread.sleep(1000);
 
         // Click nút search (icon kính lúp) để trigger tìm kiếm
@@ -348,11 +351,11 @@ public class TC2 extends BaseTest1 {
             // Đơn vị mặc định đã là Hộp
         }
 
-        tc08.pass("Đã nhập sản phẩm 00021932 và chọn đơn vị Hộp");
+        tc08.pass("Đã nhập sản phẩm 00029334 và chọn đơn vị Hộp");
 
         /*
          * =========================
-         * TC08b - NHẬP SỐ LƯỢNG 19 CHO SP 00029334
+         * TC08b - NHẬP SỐ LƯỢNG 10 CHO SP 00042994
          * =========================
          */
         ExtentTest tc08b = test.createNode("TC08b - Nhập số lượng 19");
@@ -367,21 +370,21 @@ public class TC2 extends BaseTest1 {
         js.executeScript(
                 "var el = arguments[0];" +
                 "var nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;" +
-                "nativeInputValueSetter.call(el, '3');" +
+                "nativeInputValueSetter.call(el, '19');" +
                 "el.dispatchEvent(new Event('input', { bubbles: true }));" +
                 "el.dispatchEvent(new Event('change', { bubbles: true }));" +
                 "el.blur();",
                 qtyInput);
         Thread.sleep(2000);
 
-        tc08b.pass("Đã nhập số lượng 3");
+        tc08b.pass("Đã nhập số lượng 19");
 
         /*
          * =========================
-         * TC08c - NHẬP SẢN PHẨM 00017891
+         * TC08c - NHẬP SẢN PHẨM 00016559
          * =========================
          */
-        ExtentTest tc08c = test.createNode("TC08c - Nhập sản phẩm 00017891");
+        ExtentTest tc08c = test.createNode("TC08c - Nhập sản phẩm 00051572");
 
         Thread.sleep(1000);
 
@@ -407,7 +410,7 @@ public class TC2 extends BaseTest1 {
         Thread.sleep(500);
 
         // Nhập mã sản phẩm mới
-        productInput2.sendKeys("00017891");
+        productInput2.sendKeys("00051572");
         Thread.sleep(1000);
 
         // Click nút search (icon kính lúp) để trigger tìm kiếm
@@ -440,7 +443,7 @@ public class TC2 extends BaseTest1 {
             // Đơn vị mặc định đã là Hộp
         }
 
-        tc08c.pass("Đã nhập sản phẩm 00017891 và chọn đơn vị Hộp");
+        tc08c.pass("Đã nhập sản phẩm 00051572 và chọn đơn vị Hộp");
 
         /*
          * =========================
@@ -562,3 +565,4 @@ public class TC2 extends BaseTest1 {
     }
 }
 
+//
