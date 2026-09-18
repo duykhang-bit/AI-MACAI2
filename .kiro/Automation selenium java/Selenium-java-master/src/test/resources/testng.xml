@@ -5,9 +5,9 @@
         <listener class-name="listeners.TestListener"/>
         <listener class-name="utils.DashboardReportGenerator"/>
     </listeners>
-    <test name="UAT - Promotion Tests">
+    <test name="CI - Promotion Tests">
         <packages>
-            <package name="testcases.uat.PromotionRsaOffline"/>
+            <package name="testcases.ci.Promotion"/>
         </packages>
     </test>
 </suite>
