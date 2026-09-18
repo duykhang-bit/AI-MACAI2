@@ -7,13 +7,14 @@
     </listeners>
     <test name="CI - Promotion Tests">
         <packages>
-            <package name="testcases.Prod.Family"/>
+            <package name="testcases.uat.PromotionRsaOffline"/>
         </packages>
     </test>
 </suite>
 <!--
 === LỆNH RUN TẤT CẢ ===
-cd "c:\Users\khangld10\Documents\AI-MACAI2\.kiro\Automation selenium java\Selenium-java-master"; mvn test "-Dsurefire.suiteXmlFiles=src/test/resources/testng.xml"
+cd "c:\Users\khangld10\Documents\AI-MACAI2\.kiro\Automation selenium java\Selenium-java-master" && mvn test "-Dsurefire.suiteXmlFiles=src/test/resources/testng.xml"
+
 
 
 

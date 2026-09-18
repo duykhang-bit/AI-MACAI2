@@ -331,7 +331,7 @@ public class TC8 extends BaseTest1 {
          * TC07 - NHẬP SĐT KHÁCH HÀNG 0835089255
          * =========================
          */
-        ExtentTest tc07 = test.createNode("TC07 - Nhập SĐT khách hàng 0835089254");
+        ExtentTest tc07 = test.createNode("TC07 - Nhập SĐT khách hàng 0835089255");
 
         Thread.sleep(1000);
 
