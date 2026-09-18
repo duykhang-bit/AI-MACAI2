@@ -7,7 +7,7 @@
     </listeners>
     <test name="CI - Promotion Tests">
         <packages>
-            <package name="testcases.uat.PromotionRsaOffline"/>
+            <package name="testcases.Prod.Family"/>
         </packages>
     </test>
 </suite>
