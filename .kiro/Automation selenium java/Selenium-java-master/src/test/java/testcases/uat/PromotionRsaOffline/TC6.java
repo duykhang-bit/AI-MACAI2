@@ -387,7 +387,7 @@ public class TC6 extends BaseTest1 {
             "if (items.length > 0) { items[0].click(); return; }" +
             "var allDivs = document.querySelectorAll('div[class*=\"flex\"]');" +
             "for (var i = 0; i < allDivs.length; i++) {" +
-            "  if (allDivs[i].textContent.indexOf('00051710') > -1 || allDivs[i].textContent.indexOf('TEST COMBO') > -1) {" +
+            "  if (allDivs[i].textContent.indexOf('00053326') > -1 || allDivs[i].textContent.indexOf('TEST COMBO') > -1) {" +
             "    allDivs[i].click(); break;" +
             "  }" +
             "}"
@@ -420,7 +420,7 @@ public class TC6 extends BaseTest1 {
             Thread.sleep(2000);
             String pageSource = driver.getPageSource();
             
-            // Check mã CTKM KM-0626-034 trong popup "Khuyến mãi khác"
+            // Check mã CTKM KM-0626-039 trong popup "Khuyến mãi khác"
             // Click link "Khuyến mãi khác" để mở popup
             try {
                 WebElement kmKhacLink = wait.until(ExpectedConditions.elementToBeClickable(
@@ -428,21 +428,21 @@ public class TC6 extends BaseTest1 {
                 js.executeScript("arguments[0].click();", kmKhacLink);
                 Thread.sleep(2000);
                 
-                // Verify KM-0626-034 đã được chọn (checked) trong popup
+                // Verify KM-0626-039 đã được chọn (checked) trong popup
                 String popupSource = driver.getPageSource();
-                if (popupSource.contains("KM-0626-034")) {
-                    // Tìm dòng KM-0626-034 có icon checked (tick xanh)
+                if (popupSource.contains("KM-0626-039")) {
+                    // Tìm dòng KM-0626-039 có icon checked (tick xanh)
                     try {
                         WebElement kmChecked = driver.findElement(
-                                By.xpath("//*[contains(text(),'KM-0626-034')]/ancestor::div[contains(@class,'ant-list-item') or contains(@class,'promotion-item') or ancestor::div[1]]//span[contains(@class,'anticon-check') or contains(@class,'checked')] | " +
-                                        "//*[contains(text(),'KM-0626-034')]/preceding-sibling::*[contains(@class,'check') or contains(@class,'anticon-check')]"));
-                        tcVerifyPrice.pass("✅ CTKM KM-0626-034 đã được CHỌN (checked) trong popup Khuyến mãi đơn hàng");
+                                By.xpath("//*[contains(text(),'KM-0626-039')]/ancestor::div[contains(@class,'ant-list-item') or contains(@class,'promotion-item') or ancestor::div[1]]//span[contains(@class,'anticon-check') or contains(@class,'checked')] | " +
+                                        "//*[contains(text(),'KM-0626-039')]/preceding-sibling::*[contains(@class,'check') or contains(@class,'anticon-check')]"));
+                        tcVerifyPrice.pass("✅ CTKM KM-0626-039 đã được CHỌN (checked) trong popup Khuyến mãi đơn hàng");
                     } catch (Exception ex) {
                         // KM hiển thị nhưng không tìm thấy icon check → vẫn pass vì text có
-                        tcVerifyPrice.pass("✅ CTKM KM-0626-034 hiển thị trong popup Khuyến mãi đơn hàng");
+                        tcVerifyPrice.pass("✅ CTKM KM-0626-039 hiển thị trong popup Khuyến mãi đơn hàng");
                     }
                 } else {
-                    tcVerifyPrice.fail("❌ KHÔNG tìm thấy CTKM KM-0626-034 trong popup");
+                    tcVerifyPrice.fail("❌ KHÔNG tìm thấy CTKM KM-0626-039 trong popup");
                 }
                 
                 // Click Xác nhận để đóng popup
@@ -612,6 +612,6 @@ public class TC6 extends BaseTest1 {
         System.out.println("MÃ ĐƠN HÀNG: " + orderCode);
         System.out.println("========================================");
 
-        test.pass("✅ PASS verify Mua combo giảm giá sản phẩm 600k-KM-0626-034 SP 00051710 COMBO. Mã đơn: " + orderCode);
+        test.pass("✅ PASS verify Mua combo giảm giá sản phẩm 600k-KM-0626-039 SP 00053326 COMBO. Mã đơn: " + orderCode);
     }
 }

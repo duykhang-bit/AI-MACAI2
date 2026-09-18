@@ -446,7 +446,7 @@ public class TC4 extends BaseTest1 {
             Thread.sleep(2000);
             String pageSource = driver.getPageSource();
             
-            // Check mã CTKM KM-0626-074 trong popup "Khuyến mãi khác"
+            // Check mã CTKM KM-0926-053 trong popup "Khuyến mãi khác"
             // Click link "Khuyến mãi khác" để mở popup
             try {
                 WebElement kmKhacLink = wait.until(ExpectedConditions.elementToBeClickable(
@@ -454,21 +454,21 @@ public class TC4 extends BaseTest1 {
                 js.executeScript("arguments[0].click();", kmKhacLink);
                 Thread.sleep(2000);
                 
-                // Verify KM-0626-074 đã được chọn (checked) trong popup
+                // Verify KM-0926-053 đã được chọn (checked) trong popup
                 String popupSource = driver.getPageSource();
-                if (popupSource.contains("KM-0626-074")) {
-                    // Tìm dòng KM-0626-074 có icon checked (tick xanh)
+                if (popupSource.contains("KM-0926-053")) {
+                    // Tìm dòng KM-0926-053 có icon checked (tick xanh)
                     try {
                         WebElement kmChecked = driver.findElement(
-                                By.xpath("//*[contains(text(),'KM-0626-074')]/ancestor::div[contains(@class,'ant-list-item') or contains(@class,'promotion-item') or ancestor::div[1]]//span[contains(@class,'anticon-check') or contains(@class,'checked')] | " +
-                                        "//*[contains(text(),'KM-0626-074')]/preceding-sibling::*[contains(@class,'check') or contains(@class,'anticon-check')]"));
-                        tcVerifyPrice.pass("✅ CTKM KM-0626-074 đã được CHỌN (checked) trong popup Khuyến mãi đơn hàng");
+                                By.xpath("//*[contains(text(),'KM-0926-053')]/ancestor::div[contains(@class,'ant-list-item') or contains(@class,'promotion-item') or ancestor::div[1]]//span[contains(@class,'anticon-check') or contains(@class,'checked')] | " +
+                                        "//*[contains(text(),'KM-0926-053')]/preceding-sibling::*[contains(@class,'check') or contains(@class,'anticon-check')]"));
+                        tcVerifyPrice.pass("✅ CTKM KM-0926-053 đã được CHỌN (checked) trong popup Khuyến mãi đơn hàng");
                     } catch (Exception ex) {
                         // KM hiển thị nhưng không tìm thấy icon check → vẫn pass vì text có
-                        tcVerifyPrice.pass("✅ CTKM KM-0626-074 hiển thị trong popup Khuyến mãi đơn hàng");
+                        tcVerifyPrice.pass("✅ CTKM KM-0926-053 hiển thị trong popup Khuyến mãi đơn hàng");
                     }
                 } else {
-                    tcVerifyPrice.fail("❌ KHÔNG tìm thấy CTKM KM-0626-074 trong popup");
+                    tcVerifyPrice.fail("❌ KHÔNG tìm thấy CTKM KM-0926-053 trong popup");
                 }
                 
                 // Click Xác nhận để đóng popup

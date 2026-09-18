@@ -488,7 +488,7 @@ public class TC20 extends BaseTest1 {
 
             // -------------------------------------------------------
             // STEP QUAN TRỌNG: Click vào "Khuyến mãi khác" để mở popup
-            // rồi verify mã KM-0626-118 đang được CHỌN (có dấu tick ✅)
+            // rồi verify mã KM-0926-054 đang được CHỌN (có dấu tick ✅)
             // -------------------------------------------------------
             try {
                 WebElement kmKhacLink = wait.until(ExpectedConditions.elementToBeClickable(
@@ -502,31 +502,31 @@ public class TC20 extends BaseTest1 {
 
                 String popupSource = driver.getPageSource();
 
-                // Kiểm tra mã KM-0626-118 có trong popup không
-                if (popupSource.contains("KM-0626-118")) {
-                    tcVerifyPrice.pass("✅ Tìm thấy CTKM KM-0626-118 trong popup Danh sách khuyến mãi");
+                // Kiểm tra mã KM-0926-054 có trong popup không
+                if (popupSource.contains("KM-0926-054")) {
+                    tcVerifyPrice.pass("✅ Tìm thấy CTKM KM-0926-054 trong popup Danh sách khuyến mãi");
                 } else {
-                    tcVerifyPrice.fail("❌ KHÔNG tìm thấy CTKM KM-0626-118 trong popup");
+                    tcVerifyPrice.fail("❌ KHÔNG tìm thấy CTKM KM-0926-054 trong popup");
                 }
 
-                // Kiểm tra KM-0626-118 đang được CHỌN (có class checked / selected / tick)
+                // Kiểm tra KM-0926-054 đang được CHỌN (có class checked / selected / tick)
                 try {
                     WebElement kmChecked = driver.findElement(
                             By.xpath(
-                                // Dòng chứa KM-0626-118 có icon tick (ant-checkbox-checked hoặc svg tick)
-                                "//*[contains(text(),'KM-0626-118')]/ancestor::*[contains(@class,'ant-checkbox-checked') or contains(@class,'checked') or contains(@class,'selected')] | " +
-                                "//div[contains(@class,'ant-checkbox-checked')]/following-sibling::*//*[contains(text(),'KM-0626-118')] | " +
-                                "//div[contains(@class,'ant-checkbox-checked')]/ancestor::*[.//*[contains(text(),'KM-0626-118')]]"
+                                // Dòng chứa KM-0926-054 có icon tick (ant-checkbox-checked hoặc svg tick)
+                                "//*[contains(text(),'KM-0926-054')]/ancestor::*[contains(@class,'ant-checkbox-checked') or contains(@class,'checked') or contains(@class,'selected')] | " +
+                                "//div[contains(@class,'ant-checkbox-checked')]/following-sibling::*//*[contains(text(),'KM-0926-054')] | " +
+                                "//div[contains(@class,'ant-checkbox-checked')]/ancestor::*[.//*[contains(text(),'KM-0926-054')]]"
                             ));
-                    tcVerifyPrice.pass("✅ CTKM KM-0626-118 đang được CHỌN (có dấu tick) trong popup");
+                    tcVerifyPrice.pass("✅ CTKM KM-0926-054 đang được CHỌN (có dấu tick) trong popup");
                 } catch (NoSuchElementException ex) {
-                    // Thử cách khác: kiểm tra row chứa KM-0626-118 có class active/selected
+                    // Thử cách khác: kiểm tra row chứa KM-0926-054 có class active/selected
                     try {
                         WebElement kmRow = driver.findElement(
-                                By.xpath("//*[contains(text(),'KM-0626-118')]/ancestor::div[contains(@class,'ant-select-item-option-selected') or contains(@class,'active') or contains(@class,'selected')]"));
-                        tcVerifyPrice.pass("✅ CTKM KM-0626-118 đang được CHỌN trong popup");
+                                By.xpath("//*[contains(text(),'KM-0926-054')]/ancestor::div[contains(@class,'ant-select-item-option-selected') or contains(@class,'active') or contains(@class,'selected')]"));
+                        tcVerifyPrice.pass("✅ CTKM KM-0926-054 đang được CHỌN trong popup");
                     } catch (NoSuchElementException ex2) {
-                        tcVerifyPrice.info("⚠️ Không thể xác định trạng thái CHỌN của KM-0626-118 (kiểm tra manual)");
+                        tcVerifyPrice.info("⚠️ Không thể xác định trạng thái CHỌN của KM-0926-054 (kiểm tra manual)");
                     }
                 }
 

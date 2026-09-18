@@ -435,7 +435,7 @@ public class TC21 extends BaseTest1 {
          * TC08-VERIFY - VERIFY GIÁ SẢN PHẨM SAU KHI ÁP DỤNG CTKM
          * =========================
          */
-        ExtentTest tcVerifyPrice = test.createNode("TC08-VERIFY - Verify KM-0626-128 trong Khuyến mãi khác và giá đúng");
+        ExtentTest tcVerifyPrice = test.createNode("TC08-VERIFY - Verify KM-0926-070 trong Khuyến mãi khác và giá đúng");
 
         Thread.sleep(3000); // Đợi giá cập nhật
 
@@ -449,12 +449,12 @@ public class TC21 extends BaseTest1 {
                 js.executeScript("arguments[0].click();", kmKhacLink);
                 Thread.sleep(2000);
 
-                // BƯỚC 2: Check KM-0626-128 có trong popup không
+                // BƯỚC 2: Check KM-0926-070 có trong popup không
                 String popupSource = driver.getPageSource();
-                if (popupSource.contains("KM-0626-128")) {
-                    tcVerifyPrice.pass("✅ CTKM KM-0626-128 hiển thị đúng trong popup Khuyến mãi khác");
+                if (popupSource.contains("KM-0926-070")) {
+                    tcVerifyPrice.pass("✅ CTKM KM-0926-070 hiển thị đúng trong popup Khuyến mãi khác");
                 } else {
-                    tcVerifyPrice.fail("❌ KHÔNG tìm thấy CTKM KM-0626-128 trong popup Khuyến mãi khác");
+                    tcVerifyPrice.fail("❌ KHÔNG tìm thấy CTKM KM-0926-070 trong popup Khuyến mãi khác");
                 }
 
                 // Đóng popup
