@@ -85,8 +85,9 @@ public class MudCodeProvider {
         try {
             Files.createDirectories(counterPath.getParent());
             Files.writeString(counterPath, String.valueOf(value), StandardCharsets.UTF_8);
+            System.out.println("[MudCodeProvider] Counter " + mudKey + " → " + value + " (path: " + counterPath.toAbsolutePath() + ")");
         } catch (Exception e) {
-            System.err.println("[MudCodeProvider] Không ghi được counter: " + e.getMessage());
+            System.err.println("[MudCodeProvider] Không ghi được counter " + mudKey + " tại " + counterPath.toAbsolutePath() + ": " + e.getMessage());
         }
     }
 
@@ -140,7 +141,7 @@ public class MudCodeProvider {
      * Keys được lấy tự động từ tên file counter trong thư mục mud-counters/.
      */
     public static void clearAllAfterRun() {
-        Path dir = Paths.get("src", "test", "resources", "data", "mud-counters");
+        Path dir = Paths.get("src", "test", "resources", "uatdata", "mud-counters");
         if (!Files.exists(dir)) return;
 
         try {
