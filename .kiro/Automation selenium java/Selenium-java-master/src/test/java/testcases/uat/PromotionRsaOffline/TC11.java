@@ -33,7 +33,7 @@ import listeners.TestListener;
 @Listeners(TestListener.class)
 public class TC11 extends BaseTest1 {
 
-    // Đọc sản phẩm từ file data/products.json
+    // Đọc sản phẩm từ file uatdata/products.json
     private JsonObject productsData;
 
     private JsonObject loadProducts() {

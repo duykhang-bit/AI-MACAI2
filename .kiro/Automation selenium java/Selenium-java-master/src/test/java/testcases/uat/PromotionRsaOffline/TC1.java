@@ -32,16 +32,16 @@ import listeners.TestListener;
 @Listeners(TestListener.class)
 public class TC1 extends BaseTest1 {
 
-    // Đọc sản phẩm từ file data/products.json
+    // Đọc sản phẩm từ file uatdata/products.json
     private JsonObject productsData;
 
     private JsonObject loadProducts() {
         if (productsData == null) {
-            try (InputStream is = getClass().getClassLoader().getResourceAsStream("data/products.json");
+            try (InputStream is = getClass().getClassLoader().getResourceAsStream("uatdata/products.json");
                  InputStreamReader reader = new InputStreamReader(is, StandardCharsets.UTF_8)) {
                 productsData = JsonParser.parseReader(reader).getAsJsonObject();
             } catch (Exception e) {
-                throw new RuntimeException("Không đọc được file data/products.json", e);
+                throw new RuntimeException("Không đọc được file uatdata/products.json", e);
             }
         }
         return productsData;
@@ -358,11 +358,15 @@ public class TC1 extends BaseTest1 {
         js.executeScript("arguments[0].click(); arguments[0].focus();", productInput);
         Thread.sleep(500);
 
-        // Clear ô search trước khi nhập mới
-        js.executeScript("arguments[0].value = '';" , productInput);
+        // Clear ô search (JS native setter + trigger React onChange)
+        js.executeScript(
+            "var el = arguments[0];"
+            + "var nativeSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;"
+            + "nativeSetter.call(el, '');"
+            + "el.dispatchEvent(new Event('input', { bubbles: true }));"
+            + "el.dispatchEvent(new Event('change', { bubbles: true }));", productInput);
+        Thread.sleep(300);
         productInput.sendKeys(Keys.chord(Keys.CONTROL, "a"));
-        Thread.sleep(200);
-        productInput.sendKeys(Keys.DELETE);
         Thread.sleep(200);
         productInput.sendKeys(Keys.DELETE);
         Thread.sleep(300);

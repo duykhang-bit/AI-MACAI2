@@ -36,11 +36,11 @@ public class TC22 extends BaseTest1 {
 
     private JsonObject loadProducts() {
         if (productsData == null) {
-            try (InputStream is = getClass().getClassLoader().getResourceAsStream("data/products.json");
+            try (InputStream is = getClass().getClassLoader().getResourceAsStream("uatdata/products.json");
                  InputStreamReader reader = new InputStreamReader(is, StandardCharsets.UTF_8)) {
                 productsData = JsonParser.parseReader(reader).getAsJsonObject();
             } catch (Exception e) {
-                throw new RuntimeException("Khong doc duoc file data/products.json", e);
+                throw new RuntimeException("Khong doc duoc file uatdata/products.json", e);
             }
         }
         return productsData;
