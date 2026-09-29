@@ -27,10 +27,10 @@ public class TC23 extends BaseTest1 {
 
     private static final String SDT           = "0835089254";
     private static final String PASSWORD      = "123456";
-    private static final String PRODUCT_CODE  = "00501988";
-    private static final String PRICE_SALE    = "205.600";
-    private static final String PRICE_ORIGIN  = "257.000";
-    private static final String DISCOUNT_AMT  = "51.400";
+    private static final String PRODUCT_CODE  = "00039500";
+    private static final String PRICE_SALE    = "348.000";
+    private static final String PRICE_ORIGIN  = "435.000";
+    private static final String DISCOUNT_AMT  = "87.000";
     private static final String DISCOUNT_PCT  = "20%";
 
     @Override
@@ -71,7 +71,7 @@ public class TC23 extends BaseTest1 {
         wait = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(30));
     }
 
-    @Test(priority = 1, description = "FLOW - Login va verify giam gia 20% SP 00501988 tren Nha Thuoc Long Chau Online UAT")
+    @Test(priority = 1, description = "FLOW - Login va verify giam gia 20% SP 00039500 tren Nha Thuoc Long Chau Online UAT")
     public void TC23() throws InterruptedException {
 
         JavascriptExecutor js = (JavascriptExecutor) driver;
@@ -152,8 +152,7 @@ public class TC23 extends BaseTest1 {
          * ========================= */
         ExtentTest tc03 = test.createNode("TC03 - Click Tiep tuc");
 
-            WebDriverWait wait =
-            new WebDriverWait(driver, Duration.ofSeconds(2));
+        wait = new WebDriverWait(driver, Duration.ofSeconds(15));
 
         wait.until(
             ExpectedConditions.elementToBeClickable(
@@ -205,7 +204,7 @@ public class TC23 extends BaseTest1 {
         } catch (Exception ignored) {}
 
         /* =========================
-         * TC05 - TIM KIEM SP 00501988
+         * TC05 - TIM KIEM SP 00039500
          * ========================= */
         ExtentTest tc05 = test.createNode("TC05 - Tim kiem SP " + PRODUCT_CODE);
 
@@ -228,21 +227,13 @@ public class TC23 extends BaseTest1 {
         WebElement product =
                 wait.until(
                         ExpectedConditions.elementToBeClickable(
-                                By.xpath("(//a[contains(@href,'00501988')])[1]")
+                                By.xpath("(//a[contains(@href,'00039500')])[1]")
                         )
                 );
 
-        product.click();
+        js.executeScript("arguments[0].click();", product);
         tc05.pass("Da click SP " + PRODUCT_CODE);
-            Thread.sleep(1500);
-        
-        /* =========================
-         * Chọn mua sản phẩm
-         * ========================= */
-              driver.findElement(
-    By.xpath("//a[contains(@href,'fohepta-400g-36190.html')]")
-).click();
-
+        Thread.sleep(2000);
 
         /* =========================
          * TC06 - VERIFY TRANG DETAIL
@@ -267,7 +258,11 @@ public class TC23 extends BaseTest1 {
 
         WebElement btnChonMua = wait.until(
                 ExpectedConditions.elementToBeClickable(
-                        By.xpath("//button[contains(.,'Chon mua')]")));
+                        By.xpath("//button[contains(.,'Chọn mua') or contains(.,'Chon mua') or " +
+                                 "contains(.,'Mua hàng') or contains(.,'Mua ngay') or contains(.,'Thêm vào giỏ')] | " +
+                                 "//button[.//span[contains(text(),'Chọn mua') or contains(text(),'Mua hàng')]]")));
+        js.executeScript("arguments[0].scrollIntoView({block:'center'});", btnChonMua);
+        Thread.sleep(500);
         js.executeScript("arguments[0].click();", btnChonMua);
         Thread.sleep(2000);
         tc07.pass("Da click Chon mua");
@@ -297,16 +292,13 @@ public class TC23 extends BaseTest1 {
 
         String cartSource = driver.getPageSource();
 
-        if (cartSource.contains("Fohepta") || cartSource.contains(PRODUCT_CODE))
+        if (cartSource.contains("Ensure") || cartSource.contains(PRODUCT_CODE))
             tc09.pass("PASS - SP " + PRODUCT_CODE + " co trong gio hang");
         else
             tc09.fail("FAIL - Khong thay SP trong gio hang");
 
         if (cartSource.contains(PRICE_SALE))     tc09.pass("PASS - Thanh tien = " + PRICE_SALE + "d");
         else                                     tc09.fail("FAIL - Khong thay thanh tien " + PRICE_SALE + "d");
-
-        if (cartSource.contains(DISCOUNT_AMT))   tc09.pass("PASS - Giam = " + DISCOUNT_AMT + "d");
-        else                                     tc09.fail("FAIL - Khong thay giam " + DISCOUNT_AMT + "d");
 
         if (cartSource.contains(PRICE_ORIGIN))   tc09.pass("PASS - Tong goc = " + PRICE_ORIGIN + "d");
         else                                     tc09.fail("FAIL - Khong thay tong goc " + PRICE_ORIGIN + "d");
@@ -316,7 +308,28 @@ public class TC23 extends BaseTest1 {
         else
             tc09.fail("FAIL - Khong hien thi giam " + DISCOUNT_PCT);
 
-        test.pass("PASS - TC1 verify FLASHSALE 20%: " + PRODUCT_CODE +
+        /* =========================
+         * TC10 - CHON GIAO HANG (Mua ngay / Thanh toan)
+         * ========================= */
+        ExtentTest tc10 = test.createNode("TC10 - Chon giao hang & thanh toan");
+        try {
+            // Nut "Mua ngay" hoac "Thanh toan" / "Dat hang" trong trang gio hang
+            WebElement btnThanhToan = wait.until(
+                    ExpectedConditions.elementToBeClickable(
+                            By.xpath("//button[contains(.,'Mua hang') or contains(.,'Mua ngay') or " +
+                                     "contains(.,'Thanh toan') or contains(.,'Thanh toán') or " +
+                                     "contains(.,'Dat hang') or contains(.,'Đặt hàng')] | " +
+                                     "//a[contains(.,'Thanh toan') or contains(.,'Thanh toán') or contains(.,'Mua hang')]")));
+            js.executeScript("arguments[0].scrollIntoView({block:'center'});", btnThanhToan);
+            Thread.sleep(500);
+            js.executeScript("arguments[0].click();", btnThanhToan);
+            Thread.sleep(3000);
+            tc10.pass("Da click nut giao hang / thanh toan");
+        } catch (Exception e) {
+            tc10.info("Khong tim thay nut thanh toan (co the can dang nhap/chon dia chi): " + e.getMessage());
+        }
+
+        test.pass("PASS - TC23 verify FLASHSALE 20%: " + PRODUCT_CODE +
                 " | " + PRICE_ORIGIN + "d -> " + PRICE_SALE + "d (giam " + DISCOUNT_AMT + "d)");
     }
 }

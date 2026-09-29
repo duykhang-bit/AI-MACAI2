@@ -1,0 +1,48 @@
+{
+  "info": {
+    "name": "BAPP - Query Datasource Province",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Query Province Datasource",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Cookie",
+            "value": "PASTE_COOKIE_CUA_BAN_VAO_DAY"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://bapp.frt.vn/api/v2/queries/query_datasource_plus_4ee7ba5ed7324d70a5b8c4e69672f703_d4bcd388072a4c0c978fe8fd20207d2b",
+          "protocol": "https",
+          "host": ["bapp", "frt", "vn"],
+          "path": [
+            "api",
+            "v2",
+            "queries",
+            "query_datasource_plus_4ee7ba5ed7324d70a5b8c4e69672f703_d4bcd388072a4c0c978fe8fd20207d2b"
+          ]
+        }
+      }
+    }
+  ]
+}

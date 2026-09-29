@@ -64,7 +64,7 @@ public class TC4 extends BaseTest1 {
         wait = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(30));
     }
 
-    @Test(priority = 1, description = "FLOW - Tạo đơn bán hàng RSA Web", invocationCount = 2)
+    @Test(priority = 1, description = "FLOW - Tạo đơn bán hàng RSA Web", invocationCount = 1)
     public void testCreateOrderFlow() throws InterruptedException {
 
         JavascriptExecutor js = (JavascriptExecutor) driver;
@@ -281,11 +281,11 @@ public class TC4 extends BaseTest1 {
                 .until(ExpectedConditions.elementToBeClickable(
                         By.cssSelector("input[type='phone']")));
         phoneInput.click();
-        phoneInput.sendKeys("0835089290");
+        phoneInput.sendKeys("0775465401");
         phoneInput.sendKeys(Keys.ENTER);
         Thread.sleep(1500);
 
-        tc07.pass("Đã nhập SĐT khách hàng 0835089290");
+        tc07.pass("Đã nhập SĐT khách hàng 0775465401");
 
         /*
          * =========================

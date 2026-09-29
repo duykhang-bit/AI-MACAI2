@@ -781,6 +781,6 @@ public class TC12 extends BaseTest1 {
         System.out.println("MÃ ĐƠN HÀNG: " + orderCode);
         System.out.println("========================================");
 
-        test.pass("✅ PASS NEGATIVE - TK Gia Đình Đảo 2 - Chỉ 3 SP không đủ ĐK nhận quà KM-0626-116 SP 00016600/00345425/00044081. Mã đơn: " + orderCode);
+        test.pass("✅ PASS NEGATIVE - TK Gia Đình Đảo 2 - Chỉ 3 SP đủ ĐK nhận quà KM-0626-116 SP 00016600/00345425/00044081. Mã đơn: " + orderCode);
     }
 }

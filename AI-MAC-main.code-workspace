@@ -9,6 +9,18 @@
     "java.test.defaultConfig": "",
     "java.configuration.updateBuildConfiguration": "automatic",
     "java.compile.nullAnalysis.mode": "automatic",
-    "java.debug.settings.onBuildFailureProceed": true
+    "java.debug.settings.onBuildFailureProceed": true,
+    "java.import.maven.enabled": true,
+    "java.import.gradle.enabled": false,
+    "java.import.maven.projectPomXml": ".kiro/Automation selenium java/Selenium-java-master/pom.xml",
+    "java.project.sourcePaths": [
+      ".kiro/Automation selenium java/Selenium-java-master/src/main/java",
+      ".kiro/Automation selenium java/Selenium-java-master/src/test/java"
+    ],
+    "java.test.config": {
+      "workingDirectory": "${workspaceFolder}/.kiro/Automation selenium java/Selenium-java-master"
+    },
+    "maven.terminal.useJavaHome": true,
+    "java.jdt.ls.lombokSupport.enabled": false
   }
 }

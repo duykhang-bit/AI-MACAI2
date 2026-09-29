@@ -254,42 +254,46 @@ public class TC5 extends BaseTest1 {
                 wait.until(ExpectedConditions.elementToBeClickable(
                                 By.xpath("//span[contains(text(),'Tiếp theo')]"))).click();
 
-                // Step 3
+                // Step 3 - Thiết lập điều kiện đầu vào ở dòng đầu tiên
                 ExtentTest tc09 = test.createNode("Loại đầu vào");
                 By dropdownLDV = By.xpath(
-                                "//div[contains(@class,'ant-col ant-col-3')]" +
-                                                "//div[contains(@class,'ant-select-selector')]");
+                                "(//div[contains(@class,'ant-select-selector')]" +
+                                                "[.//span[contains(normalize-space(.),'Chọn điều kiện') " +
+                                                "or contains(normalize-space(.),'Chọn điểu kiện')]])[1]");
                 WebElement dropdownElement1 = wait.until(
                                 ExpectedConditions.elementToBeClickable(dropdownLDV));
                 dropdownElement1.click();
 
                 By optionLDVBy = By.xpath(
-                                "//div[contains(@class,'ant-select-dropdown') and not(contains(@style,'display: none'))]"
-                                                +
+                                "//div[contains(@class,'ant-select-dropdown') " +
+                                                "and not(contains(@class,'ant-select-dropdown-hidden')) " +
+                                                "and not(contains(@style,'display: none'))]" +
                                                 "//div[contains(@class,'ant-select-item-option-content') and " +
                                                 "normalize-space()='Mã sản phẩm']");
 
                 wait.until(ExpectedConditions.elementToBeClickable(optionLDVBy)).click();
 
-                tc09.pass("Loại đầu vào");
+                tc09.pass("Chọn Loại đầu vào: Mã sản phẩm");
 
                 ExtentTest tc10 = test.createNode("Phép toán");
                 By dropdownPT = By.xpath(
-                                "//div[contains(@class,'ant-col ant-col-2')]" +
-                                                "//div[contains(@class,'ant-select-selector')]");
+                                "(//div[contains(@class,'ant-select-selector')]" +
+                                                "[.//span[contains(normalize-space(.),'Chọn phép') " +
+                                                "or contains(normalize-space(.),'phép toán')]])[1]");
                 WebElement dropdownElement2 = wait.until(
                                 ExpectedConditions.elementToBeClickable(dropdownPT));
                 dropdownElement2.click();
 
                 By optionPTBy = By.xpath(
-                                "//div[contains(@class,'ant-select-dropdown') and not(contains(@style,'display: none'))]"
-                                                +
+                                "//div[contains(@class,'ant-select-dropdown') " +
+                                                "and not(contains(@class,'ant-select-dropdown-hidden')) " +
+                                                "and not(contains(@style,'display: none'))]" +
                                                 "//div[contains(@class,'ant-select-item-option-content') and " +
                                                 "normalize-space()='Bằng']");
 
                 wait.until(ExpectedConditions.elementToBeClickable(optionPTBy)).click();
 
-                tc10.pass("Phép toán  OK");
+                tc10.pass("Phép toán Bằng OK");
 
                 ExtentTest tc11 = test.createNode("Giá trị");
 

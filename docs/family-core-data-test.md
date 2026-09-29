@@ -147,8 +147,8 @@ note nagfy 23/03 còn 2 tiếng
 
 / mẫu test case
 
-
- tạo flow session trên RAI Portal ở phase Verify cho các tickets, rồi chuyển session Done với cac ticket này:, và chuyển status ticket sang complete: 
+ tạo flow session trên RAI Portal ở phase Verify cho các tickets
+, rồi chuyển session Done với cac ticket này đủ các bước của verify tester:, và chuyển status ticket sang complete: 
 
 
 https://ptt-public.frt.vn/app/process-closing-shop#/dev

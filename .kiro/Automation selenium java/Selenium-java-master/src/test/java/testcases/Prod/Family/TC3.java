@@ -282,7 +282,7 @@ public class TC3 extends BaseTest1 {
         phoneInput.sendKeys(Keys.ENTER);
         Thread.sleep(1500);
 
-        tc07.pass("Đã nhập SĐT khách hàng 0835089290");
+        tc07.pass("Đã nhập SĐT khách hàng 0835089254");
 
         /*
          * =========================
