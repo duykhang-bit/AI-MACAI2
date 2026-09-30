@@ -497,7 +497,13 @@ public class TC17 extends BaseTest1 {
                                 "//input[contains(@placeholder,'Nhập mã') or contains(@placeholder,'voucher') or contains(@placeholder,'mã giảm') or contains(@placeholder,'Barcode')] | " +
                                 "//div[contains(@class,'modal')]//input[contains(@class,'ant-input')]")));
                 voucherInput.clear();
-                String mudCode = utils.MudCodeProvider.getNextMudCode("mud2");
+                String mudCode;
+                try {
+                    mudCode = utils.MudApiGenerator.generateMudCode("3725", "0835089255");
+                } catch (Exception _apiEx) {
+                    mudCode = utils.MudCodeProvider.getNextMudCode("mud2");
+                    tc08c.info("API fail → fallback pre-gen: " + mudCode + " | " + _apiEx.getMessage());
+                }
                 voucherInput.sendKeys(mudCode);
                 Thread.sleep(1000);
 

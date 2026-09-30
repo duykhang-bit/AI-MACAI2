@@ -1,0 +1,191 @@
+{
+  "info": {
+    "_postman_id": "mud-gen-3725-tc25",
+    "name": "UAT — MUD Generate — code 3725",
+    "description": "Generate MUD voucher code 3725 cho KM-0926-280 (test mud5).\nDùng cho TC25 — Mua SKU theo điều kiện MUD tặng PHM không giới hạn.\n\nAPI: POST http://uat-voucher-core.lc.frt.local/api/voucher/generate\nvoucherType: 2 (MUD)\ncode: 3725\nquantity: 1 (gen 1 mã mỗi lần chạy TC)\nphoneNumber: SĐT khách hàng trong test",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://uat-voucher-core.lc.frt.local",
+      "type": "string",
+      "description": "Base URL của voucher-core service trên UAT internal network"
+    },
+    {
+      "key": "voucher_code",
+      "value": "3725",
+      "type": "string",
+      "description": "Mã ưu đãi trong CTKM KM-0926-280"
+    },
+    {
+      "key": "phone_number",
+      "value": "0835089255",
+      "type": "string",
+      "description": "SĐT khách hàng test — phải trùng với CUSTOMER_PHONE trong TC25"
+    },
+    {
+      "key": "quantity",
+      "value": "1",
+      "type": "string",
+      "description": "Số lượng mã MUD cần gen mỗi lần chạy (khuyến nghị 1 để tránh lãng phí)"
+    }
+  ],
+  "item": [
+    {
+      "name": "📁 MUD Generate — code 3725",
+      "item": [
+        {
+          "name": "Generate 1 MUD code — TC25 (KM-0926-280)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Kiểm tra response status",
+                  "pm.test('Status 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "// Parse và lưu mud code đầu tiên vào variable",
+                  "pm.test('Response có chứa mã MUD', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.be.an('array');",
+                  "    pm.expect(jsonData.length).to.be.greaterThan(0);",
+                  "",
+                  "    // Lấy code đầu tiên từ response",
+                  "    var mudCode = jsonData[0].code || jsonData[0].voucherCode || jsonData[0];",
+                  "    pm.collectionVariables.set('generated_mud_code', mudCode);",
+                  "    console.log('Generated MUD code: ' + mudCode);",
+                  "    pm.test('MUD code không rỗng', function () {",
+                  "        pm.expect(mudCode).to.not.be.empty;",
+                  "    });",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Log thông tin trước khi gọi",
+                  "console.log('Generating MUD code for:');",
+                  "console.log('  voucher_code : ' + pm.collectionVariables.get('voucher_code'));",
+                  "console.log('  phone_number : ' + pm.collectionVariables.get('phone_number'));",
+                  "console.log('  quantity     : ' + pm.collectionVariables.get('quantity'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "accept",
+                "value": "text/plain",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\n    \"code\": \"{{voucher_code}}\",\n    \"voucherType\": 2,\n    \"quantity\": {{quantity}},\n    \"phoneNumber\": \"{{phone_number}}\"\n  }\n]",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/voucher/generate",
+              "host": ["{{base_url}}"],
+              "path": ["api", "voucher", "generate"]
+            },
+            "description": "Generate 1 mã MUD cho code 3725 (KM-0926-280).\n\nResponse mong đợi (ví dụ):\n[\n  {\n    \"code\": \"ABCD1234XY\",\n    \"voucherType\": 2,\n    \"phoneNumber\": \"0835089255\",\n    \"expiredAt\": \"2027-09-30T00:00:00\"\n  }\n]\n\nSau khi gen xong → copy giá trị 'code' → apply vào ô 'Nhập mã KM' trên trang bán hàng UAT."
+          },
+          "response": [
+            {
+              "name": "Example — Success 200",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  { "key": "accept", "value": "text/plain" },
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "[\n  {\n    \"code\": \"3725\",\n    \"voucherType\": 2,\n    \"quantity\": 1,\n    \"phoneNumber\": \"0835089255\"\n  }\n]"
+                },
+                "url": {
+                  "raw": "http://uat-voucher-core.lc.frt.local/api/voucher/generate",
+                  "protocol": "http",
+                  "host": ["uat-voucher-core", "lc", "frt", "local"],
+                  "path": ["api", "voucher", "generate"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "[\n  {\n    \"code\": \"ABCD1234XY\",\n    \"voucherType\": 2,\n    \"phoneNumber\": \"0835089255\",\n    \"expiredAt\": \"2027-09-30T00:00:00\"\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Generate 10 MUD codes — bulk (để nạp vào products.json)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "// In ra danh sách code để copy vào products.json mud2.codes",
+                  "pm.test('In danh sách codes để nạp vào products.json', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.be.an('array');",
+                  "",
+                  "    var codes = jsonData.map(function(item) {",
+                  "        return item.code || item.voucherCode || item;",
+                  "    });",
+                  "    console.log('=== COPY VÀO products.json mud2.codes ===');",
+                  "    console.log(JSON.stringify(codes, null, 2));",
+                  "    pm.collectionVariables.set('bulk_mud_codes', JSON.stringify(codes));",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "accept", "value": "text/plain", "type": "text" },
+              { "key": "Content-Type", "value": "application/json", "type": "text" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\n    \"code\": \"{{voucher_code}}\",\n    \"voucherType\": 2,\n    \"quantity\": 10,\n    \"phoneNumber\": \"{{phone_number}}\"\n  }\n]",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/voucher/generate",
+              "host": ["{{base_url}}"],
+              "path": ["api", "voucher", "generate"]
+            },
+            "description": "Gen bulk 10 codes để nạp thêm vào products.json mud2.codes.\nSau khi chạy → xem Console log → copy array codes vào products.json."
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

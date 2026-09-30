@@ -1062,5 +1062,13 @@
         "quantity": "5",
         "unit": "H?p",
         "note": "TC22 - BAO CAO SU OKAMOTO HYDRO PU HOP 2 CAI | H?p | SL: 5 | KM-0626-133 + KM-0626-132 | T?ng 710,000 | Gi?m 142,000"
+    },
+    "mud_tc25": {
+        "voucherCode": "3725",
+        "voucherType": 2,
+        "phoneNumber": "0835089255",
+        "promotionCode": "KM-0926-280",
+        "apiUrl": "http://uat-voucher-core.lc.frt.local/api/voucher/generate",
+        "note": "TC25 - KM-0926-280 test mud5 - Su dung ma uu dai theo san pham - Tang PHM 3452345 khong gioi han. Gen MUD qua API truoc khi chay TC."
     }
 }
