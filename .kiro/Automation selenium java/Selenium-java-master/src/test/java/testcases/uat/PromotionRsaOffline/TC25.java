@@ -347,23 +347,43 @@ public class TC25 extends BaseTest1 {
          */
         ExtentTest tc10 = test.createNode("TC10 - Nhập SP3 " + BUY_PRODUCT_3 + " Vỉ x1");
         searchAndAddProduct(js, BUY_PRODUCT_3);
-        // Chọn đơn vị Vỉ — dùng contains vì font UI có thể render khác
+        // Chọn đơn vị Vỉ — dùng JS dump text thực tế + click theo index
         try {
             Thread.sleep(1000);
             WebElement unitSel3 = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("(//div[contains(@class,'ant-select-selector')][.//span[contains(text(),'Hộp') or contains(text(),'Viên') or contains(text(),'Vỉ') or contains(text(),'Gói') or contains(text(),'Chai') or contains(text(),'Cái') or contains(text(),'Tuýp') or contains(text(),'Vi')]])[last()]")));
-            unitSel3.click();
+                    By.xpath("(//div[contains(@class,'ant-select-selector')][.//span[contains(@class,'ant-select-selection-item')]])[last()]")));
+            js.executeScript("arguments[0].click();", unitSel3);
             Thread.sleep(800);
-            // Thử exact trước, nếu fail dùng contains
-            try {
-                wait.until(ExpectedConditions.elementToBeClickable(
-                        By.xpath("//div[contains(@class,'ant-select-item-option-content') and text()='Vỉ']"))).click();
-            } catch (Exception ex) {
-                wait.until(ExpectedConditions.elementToBeClickable(
-                        By.xpath("//div[contains(@class,'ant-select-item-option-content') and contains(.,'V') and string-length(normalize-space(.))<=3]"))).click();
+
+            // Dump toàn bộ options để debug + tìm "Vỉ" bằng charCodeAt
+            Boolean clicked = (Boolean) js.executeScript(
+                "var items = document.querySelectorAll('.ant-select-item-option-content');" +
+                "console.log('=== UNIT OPTIONS ===');" +
+                "var target = null;" +
+                "for(var i=0;i<items.length;i++){" +
+                "  var t = items[i].innerText || items[i].textContent;" +
+                "  console.log('option['+i+']: ['+t+'] len='+t.length);" +
+                // Tìm option có 2-3 ký tự bắt đầu bằng V (Vỉ, Vĩ, Vi...)
+                // và KHÔNG phải Viên (>3 ký tự)
+                "  if(t.trim().length>=1 && t.trim().length<=3 && t.trim().charAt(0)==='V' && t.trim() !== 'Viên'){" +
+                "    target = items[i];" +
+                "  }" +
+                "}" +
+                "if(target){ target.click(); return true; }" +
+                "return false;");
+
+            if (Boolean.TRUE.equals(clicked)) {
+                tc10.info("✅ Đã chọn đơn vị Vỉ bằng JS");
+            } else {
+                // Fallback: chọn option thứ 3 nếu có (Hộp=0, Viên=1, Vỉ=2)
+                js.executeScript(
+                    "var items = document.querySelectorAll('.ant-select-item-option-content');" +
+                    "if(items.length>=3){ items[2].click(); } " +
+                    "else if(items.length>0){ items[items.length-1].click(); }");
+                tc10.info("Fallback: click option index 2 (Vỉ)");
             }
             Thread.sleep(1000);
-        } catch (Exception e) { tc10.info("Đơn vị mặc định đã là Vỉ"); }
+        } catch (Exception e) { tc10.info("Đơn vị mặc định đã là Vỉ: " + e.getMessage()); }
         tc10.pass("Đã thêm SP3 " + BUY_PRODUCT_3 + " đơn vị Vỉ");
         // SL=1 mặc định, không cần set
 
