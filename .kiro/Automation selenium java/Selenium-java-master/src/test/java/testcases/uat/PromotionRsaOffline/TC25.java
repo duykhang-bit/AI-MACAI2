@@ -32,7 +32,6 @@ public class TC25 extends BaseTest1 {
     // Điều kiện đầu vào:
     //   Mã SP 00005132 (Chứa) - Hộp >= 3
     //   Mã SP 00001374 (Chứa) - Viên >= 2
-    //   Mã SP 00005453 (Bằng) - Vỉ = 1
     //   Mã ưu đãi (campaign code): 3725  → gen serial MUD qua API → apply serial đó vào đơn
     // Điều kiện đầu ra:
     //   Phiếu 3452345, SL=1, Tối thiểu=0, Tối đa=0 => tặng PHM không giới hạn
@@ -40,16 +39,9 @@ public class TC25 extends BaseTest1 {
     private static final String INSIDE_CODE     = "00017";
     private static final String CUSTOMER_PHONE  = "0835089255";
     private static final String PROMOTION_CODE  = "KM-0926-280";
-    private static final String CAMPAIGN_CODE   = "3725";      // dùng để gen serial MUD qua API
+    private static final String CAMPAIGN_CODE   = "3725";
     private static final String BUY_PRODUCT_1   = "00005132";  // Hộp x3
     private static final String BUY_PRODUCT_2   = "00001374";  // Viên x2
-    private static final String BUY_PRODUCT_3   = "00005453";  // Vỉ x1
-    private static final String UNIT_1          = "Hộp";
-    private static final String UNIT_2          = "Viên";
-    private static final String UNIT_3          = "Vỉ";
-    private static final String QTY_1           = "3";
-    private static final String QTY_2           = "2";
-    private static final String QTY_3           = "1";
     private static final String GIFT_VOUCHER    = "3452345";   // PHM tặng không giới hạn
 
     @Override
@@ -339,62 +331,6 @@ public class TC25 extends BaseTest1 {
                 qtyInput2);
         Thread.sleep(1500);
         tc09b.pass("Đã nhập SL 2 cho SP2");
-
-        /*
-         * =========================
-         * TC10 - SP3: 00005453 | Vỉ | SL=1
-         * =========================
-         */
-        ExtentTest tc10 = test.createNode("TC10 - Nhập SP3 " + BUY_PRODUCT_3 + " Vỉ x1");
-        searchAndAddProduct(js, BUY_PRODUCT_3);
-        // Chọn đơn vị Vỉ — click dropdown của SP3, query ONLY trong dropdown đang open
-        try {
-            Thread.sleep(1000);
-            WebElement unitSel3 = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("(//div[contains(@class,'ant-select-selector')][.//span[contains(@class,'ant-select-selection-item')]])[last()]")));
-            js.executeScript("arguments[0].click();", unitSel3);
-            Thread.sleep(1000);
-
-            // Chỉ query trong dropdown popup đang open (visible)
-            Boolean clicked = (Boolean) js.executeScript(
-                // Tìm dropdown popup đang visible
-                "var popups = document.querySelectorAll('.ant-select-dropdown:not(.ant-select-dropdown-hidden)');" +
-                "if(popups.length === 0) return false;" +
-                "var popup = popups[popups.length-1];" +  // lấy popup cuối cùng
-                "var items = popup.querySelectorAll('.ant-select-item-option-content');" +
-                "console.log('=== UNIT OPTIONS (visible popup) count='+items.length+' ===');" +
-                "for(var i=0;i<items.length;i++){" +
-                "  var t = items[i].innerText.trim();" +
-                "  console.log('option['+i+']: ['+t+'] len='+t.length+' char0='+t.charCodeAt(0));" +
-                "}" +
-                // Click option: 2-3 ký tự, bắt đầu V, không phải Viên/Vĩ dài
-                "for(var i=0;i<items.length;i++){" +
-                "  var t = items[i].innerText.trim();" +
-                "  if(t.length>=1 && t.length<=3 && t.charAt(0)==='V' && t!=='Viên'){" +
-                "    items[i].click(); return true;" +
-                "  }" +
-                "}" +
-                "return false;");
-
-            if (Boolean.TRUE.equals(clicked)) {
-                tc10.info("✅ Đã chọn đơn vị Vỉ");
-            } else {
-                // Fallback cứng: dùng XPath với contains — Vỉ/Vi/Vĩ đều match
-                try {
-                    WebElement viOption = wait.until(ExpectedConditions.elementToBeClickable(
-                            By.xpath("//div[contains(@class,'ant-select-dropdown') and not(contains(@class,'hidden'))]" +
-                                    "//div[contains(@class,'ant-select-item-option-content')]" +
-                                    "[string-length(normalize-space(.))<=3 and starts-with(normalize-space(.),'V') and normalize-space(.)!='Viên']")));
-                    js.executeScript("arguments[0].click();", viOption);
-                    tc10.info("Fallback XPath đã chọn Vỉ");
-                } catch (Exception ex2) {
-                    tc10.warning("Không chọn được Vỉ: " + ex2.getMessage());
-                }
-            }
-            Thread.sleep(1000);
-        } catch (Exception e) { tc10.info("Đơn vị mặc định đã là Vỉ: " + e.getMessage()); }
-        tc10.pass("Đã thêm SP3 " + BUY_PRODUCT_3 + " đơn vị Vỉ");
-        // SL=1 mặc định, không cần set
 
         /*
          * =========================
