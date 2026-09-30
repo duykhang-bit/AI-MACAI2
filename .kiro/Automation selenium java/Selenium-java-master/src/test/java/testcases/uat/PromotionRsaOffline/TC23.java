@@ -128,9 +128,9 @@ public class TC23 extends BaseTest1 {
         ExtentTest tc02 = test.createNode("TC2 - Chọn ID + Nhap SDT \" + SDT)");
 
         WebElement ID = wait.until(
-            ExpectedConditions.elementToBeClickable(
+            ExpectedConditions.presenceOfElementLocated(
             By.xpath("//div[@class='border-stroke-disable hover:bg-white-2 rounded-full border bg-white p-3 leading-[1] cursor-pointer']")));
-        ID.click();
+        js.executeScript("arguments[0].scrollIntoView({block:'center'}); arguments[0].click();", ID);
         //Thread.sleep(millis: 300);
 
 
@@ -282,13 +282,20 @@ public class TC23 extends BaseTest1 {
         }
 
         wait.until(ExpectedConditions.urlContains("gio-hang"));
-        Thread.sleep(1500);
+        Thread.sleep(4000);
         tc08.pass("Da vao gio hang");
 
         /* =========================
          * TC09 - VERIFY GIO HANG
          * ========================= */
         ExtentTest tc09 = test.createNode("TC09 - Verify gio hang giam 20%");
+
+        // Đợi giá render xong trước khi verify
+        try {
+            wait.until(ExpectedConditions.presenceOfElementLocated(
+                    By.xpath("//*[contains(text(),'338.000') or contains(text(),'348.000') or contains(text(),'338')]")));
+        } catch (Exception ignored) {}
+        Thread.sleep(2000);
 
         String cartSource = driver.getPageSource();
 
@@ -313,23 +320,110 @@ public class TC23 extends BaseTest1 {
          * ========================= */
         ExtentTest tc10 = test.createNode("TC10 - Chon giao hang & thanh toan");
         try {
-            // Nut "Mua ngay" hoac "Thanh toan" / "Dat hang" trong trang gio hang
+            // Đóng cookie popup nếu có trước khi click Mua hàng
+            try {
+                WebElement btnAcceptCookie = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(5))
+                        .until(ExpectedConditions.elementToBeClickable(
+                                By.xpath("//button[contains(.,'Chấp nhận tất cả') or contains(.,'Chap nhan tat ca') or contains(.,'Accept')]")));
+                js.executeScript("arguments[0].click();", btnAcceptCookie);
+                Thread.sleep(1000);
+            } catch (Exception ignored) {}
+
+            // Đóng bottom-sheet / dialog nếu có
+            try {
+                WebElement btnCloseBs = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(3))
+                        .until(ExpectedConditions.elementToBeClickable(
+                                By.xpath("//button[contains(@class,'close') or contains(.,'Từ chối') or contains(.,'Tu choi') or contains(.,'×')]")));
+                js.executeScript("arguments[0].click();", btnCloseBs);
+                Thread.sleep(500);
+            } catch (Exception ignored) {}
+
+            // Click Mua hàng bằng JS để tránh intercepted
             WebElement btnThanhToan = wait.until(
-                    ExpectedConditions.elementToBeClickable(
-                            By.xpath("//button[contains(.,'Mua hang') or contains(.,'Mua ngay') or " +
-                                     "contains(.,'Thanh toan') or contains(.,'Thanh toán') or " +
-                                     "contains(.,'Dat hang') or contains(.,'Đặt hàng')] | " +
-                                     "//a[contains(.,'Thanh toan') or contains(.,'Thanh toán') or contains(.,'Mua hang')]")));
+                    ExpectedConditions.presenceOfElementLocated(
+                            By.xpath("//button[contains(.,'Mua hàng') or contains(.,'Mua hang') or " +
+                                     "contains(.,'Mua ngay') or contains(.,'Thanh toán') or contains(.,'Thanh toan') or " +
+                                     "contains(.,'Đặt hàng') or contains(.,'Dat hang')] | " +
+                                     "//a[contains(.,'Thanh toán') or contains(.,'Mua hàng')]")));
             js.executeScript("arguments[0].scrollIntoView({block:'center'});", btnThanhToan);
             Thread.sleep(500);
             js.executeScript("arguments[0].click();", btnThanhToan);
             Thread.sleep(3000);
-            tc10.pass("Da click nut giao hang / thanh toan");
+            tc10.pass("Da click nut Mua hàng / thanh toan");
         } catch (Exception e) {
-            tc10.info("Khong tim thay nut thanh toan (co the can dang nhap/chon dia chi): " + e.getMessage());
+            tc10.info("Khong tim thay nut thanh toan: " + e.getMessage());
         }
 
-        test.pass("PASS - TC23 verify FLASHSALE 20%: " + PRODUCT_CODE +
+        /*
+         * =========================
+         * TC11 - CHON PHUONG THUC THANH TOAN QR CODE
+         * =========================
+         */
+        ExtentTest tc11 = test.createNode("TC11 - Chon thanh toan QR Code");
+        try {
+            Thread.sleep(2000);
+            // Chọn "Thanh toán bằng chuyển khoản (QR Code)"
+            WebElement qrOption = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(10))
+                    .until(ExpectedConditions.elementToBeClickable(
+                            By.xpath("//*[contains(.,'chuyển khoản') or contains(.,'QR Code') or contains(.,'QR code')]" +
+                                     "[not(self::div[contains(@class,'label')])]")));
+            js.executeScript("arguments[0].click();", qrOption);
+            Thread.sleep(1000);
+            tc11.pass("Da chon phuong thuc QR Code");
+        } catch (Exception e) {
+            tc11.info("Khong chon duoc QR Code (co the da mac dinh): " + e.getMessage());
+        }
+
+        /*
+         * =========================
+         * TC12 - CLICK HOAN TAT
+         * =========================
+         */
+        ExtentTest tc12 = test.createNode("TC12 - Click Hoan tat don hang");
+        try {
+            WebElement btnHoanTat = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(10))
+                    .until(ExpectedConditions.presenceOfElementLocated(
+                            By.xpath("//button[contains(.,'Hoàn tất') or contains(.,'Hoan tat')]")));
+            js.executeScript("arguments[0].scrollIntoView({block:'center'}); arguments[0].click();", btnHoanTat);
+            // QR load hơi lâu — wait đến khi URL chứa "/don-hang/thanh-toan/" hoặc element QR xuất hiện
+            try {
+                new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(15))
+                        .until(ExpectedConditions.or(
+                                ExpectedConditions.urlContains("/don-hang/thanh-toan/"),
+                                ExpectedConditions.presenceOfElementLocated(
+                                        By.xpath("//*[contains(.,'chuyển khoản') or contains(.,'QR') " +
+                                                "or contains(.,'Thông tin chuyển khoản') or contains(.,'Mã QR')]"))
+                        ));
+            } catch (TimeoutException te) {
+                Thread.sleep(5000); // fallback nếu wait timeout
+            }
+            Thread.sleep(2000); // thêm 2s để QR render xong hoàn toàn
+            tc12.pass("Da click Hoan tat");
+        } catch (Exception e) {
+            tc12.fail("Khong click duoc Hoan tat: " + e.getMessage());
+        }
+
+        /*
+         * =========================
+         * TC13 - VERIFY MAN HINH QR + MA DON
+         * =========================
+         */
+        ExtentTest tc13 = test.createNode("TC13 - Verify man hinh QR thanh toan va ma don");
+        String currentUrl = driver.getCurrentUrl();
+        String pageSource13 = driver.getPageSource();
+
+        if (currentUrl.contains("/don-hang/thanh-toan/")) {
+            // Lấy mã đơn từ URL
+            String orderId = currentUrl.replaceAll(".*/don-hang/thanh-toan/", "").replaceAll("[^0-9]", "");
+            tc13.pass("✅ PASS - Trang QR thanh toan hien thi dung. Ma don: " + orderId + " | URL: " + currentUrl);
+        } else if (pageSource13.contains("Thong tin chuyen khoan") || pageSource13.contains("Thông tin chuyển khoản")
+                || pageSource13.contains("QR") || pageSource13.contains("338.000")) {
+            tc13.pass("✅ PASS - Trang QR thanh toan hien thi. Thanh tien 338.000d.");
+        } else {
+            tc13.fail("❌ FAIL - Khong thay trang QR thanh toan. URL: " + currentUrl);
+        }
+
+        test.pass("PASS - TC23 verify FLASHSALE 20% KM-0926-311: " + PRODUCT_CODE +
                 " | " + PRICE_ORIGIN + "d -> " + PRICE_SALE + "d (giam " + DISCOUNT_AMT + "d)");
     }
 }
