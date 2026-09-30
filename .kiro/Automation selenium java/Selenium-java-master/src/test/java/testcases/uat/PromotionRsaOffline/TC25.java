@@ -604,20 +604,36 @@ public class TC25 extends BaseTest1 {
         js.executeScript("arguments[0].click();", productItem);
         Thread.sleep(2500);
 
-        // Chọn đơn vị — lấy dropdown của dòng SP cuối cùng vừa thêm
+        // Chọn đơn vị — dùng JS để tránh vấn đề encoding với Vỉ/Vĩ
         try {
             Thread.sleep(500);
+            // Click dropdown đơn vị của dòng SP cuối cùng
             WebElement unitSelect = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("(//div[contains(@class,'ant-select-selector')][.//span[contains(text(),'Hộp') or " +
-                            "contains(text(),'Viên') or contains(text(),'Vỉ') or contains(text(),'Gói') or " +
-                            "contains(text(),'Chai') or contains(text(),'Cái') or contains(text(),'Tuýp') or " +
-                            "contains(text(),'Vi') or contains(text(),'Vĩ')]])[last()]")));
-            unitSelect.click();
+                    By.xpath("(//div[contains(@class,'ant-select-selector')][.//span[contains(@class,'ant-select-selection-item')]])[last()]")));
+            js.executeScript("arguments[0].click();", unitSelect);
             Thread.sleep(800);
-            WebElement unitOption = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//div[contains(@class,'ant-select-item-option-content') and " +
-                            "(text()='" + unit + "' or normalize-space(text())='" + unit + "')]")));
-            unitOption.click();
+
+            // Dùng JS tìm option chứa text đơn vị — tránh exact match encoding
+            final String unitText = unit;
+            WebElement unitOption = (WebElement) js.executeScript(
+                    "var items = document.querySelectorAll('.ant-select-item-option-content');" +
+                    "for(var i=0;i<items.length;i++){" +
+                    "  if(items[i].innerText.trim()==='" + unitText + "' || " +
+                    "     items[i].textContent.trim()==='" + unitText + "'){" +
+                    "    return items[i];" +
+                    "  }" +
+                    "}" +
+                    "return null;");
+
+            if (unitOption != null) {
+                js.executeScript("arguments[0].click();", unitOption);
+            } else {
+                // Fallback: tìm option visible chứa text gần đúng
+                WebElement fallbackOption = wait.until(ExpectedConditions.elementToBeClickable(
+                        By.xpath("//div[contains(@class,'ant-select-item-option-content') " +
+                                "and contains(.,'" + unitText + "')]")));
+                js.executeScript("arguments[0].click();", fallbackOption);
+            }
             Thread.sleep(1000);
         } catch (Exception e) {
             // Đơn vị mặc định đã đúng hoặc SP chỉ có 1 đơn vị
