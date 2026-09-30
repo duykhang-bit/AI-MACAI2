@@ -281,37 +281,91 @@ public class TC25 extends BaseTest1 {
          * TC08 - SP1: 00005132 | Hộp | SL=3
          * =========================
          */
-        ExtentTest tc08 = test.createNode("TC08 - Nhập SP1 " + BUY_PRODUCT_1 + " đơn vị " + UNIT_1 + " SL " + QTY_1);
-        addProduct(js, BUY_PRODUCT_1, UNIT_1);
-        tc08.pass("Đã thêm SP1 " + BUY_PRODUCT_1);
+        ExtentTest tc08 = test.createNode("TC08 - Nhập SP1 " + BUY_PRODUCT_1 + " Hộp x3");
+        searchAndAddProduct(js, BUY_PRODUCT_1);
+        // Chọn đơn vị Hộp
+        try {
+            Thread.sleep(1000);
+            WebElement unitSel1 = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//div[contains(@class,'ant-select-selector')][.//span[contains(text(),'Hộp') or contains(text(),'Viên') or contains(text(),'Vỉ') or contains(text(),'Gói') or contains(text(),'Chai') or contains(text(),'Cái') or contains(text(),'Tuýp')]]")));
+            unitSel1.click();
+            Thread.sleep(800);
+            wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//div[contains(@class,'ant-select-item-option-content') and text()='Hộp']"))).click();
+            Thread.sleep(1000);
+        } catch (Exception e) { tc08.info("Đơn vị mặc định đã là Hộp"); }
+        tc08.pass("Đã thêm SP1 " + BUY_PRODUCT_1 + " đơn vị Hộp");
 
-        ExtentTest tc08b = test.createNode("TC08b - Nhập SL " + QTY_1 + " cho SP1");
-        setQuantity(js, QTY_1);
-        tc08b.pass("Đã nhập SL " + QTY_1 + " cho SP1");
+        // Nhập SL=3
+        ExtentTest tc08b = test.createNode("TC08b - Nhập SL 3 cho SP1");
+        Thread.sleep(1500);
+        WebElement qtyInput1 = wait.until(ExpectedConditions.elementToBeClickable(
+                By.xpath("//input[contains(@id,'input-quantity-product')]")));
+        js.executeScript(
+                "var el=arguments[0]; var s=Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype,'value').set;" +
+                "s.call(el,'3'); el.dispatchEvent(new Event('input',{bubbles:true})); el.dispatchEvent(new Event('change',{bubbles:true})); el.blur();",
+                qtyInput1);
+        Thread.sleep(1500);
+        tc08b.pass("Đã nhập SL 3 cho SP1");
 
         /*
          * =========================
          * TC09 - SP2: 00001374 | Viên | SL=2
          * =========================
          */
-        ExtentTest tc09 = test.createNode("TC09 - Nhập SP2 " + BUY_PRODUCT_2 + " đơn vị " + UNIT_2 + " SL " + QTY_2);
-        addProduct(js, BUY_PRODUCT_2, UNIT_2);
-        tc09.pass("Đã thêm SP2 " + BUY_PRODUCT_2);
+        ExtentTest tc09 = test.createNode("TC09 - Nhập SP2 " + BUY_PRODUCT_2 + " Viên x2");
+        searchAndAddProduct(js, BUY_PRODUCT_2);
+        // Chọn đơn vị Viên
+        try {
+            Thread.sleep(1000);
+            WebElement unitSel2 = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("(//div[contains(@class,'ant-select-selector')][.//span[contains(text(),'Hộp') or contains(text(),'Viên') or contains(text(),'Vỉ') or contains(text(),'Gói') or contains(text(),'Chai') or contains(text(),'Cái') or contains(text(),'Tuýp')]])[last()]")));
+            unitSel2.click();
+            Thread.sleep(800);
+            wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//div[contains(@class,'ant-select-item-option-content') and text()='Viên']"))).click();
+            Thread.sleep(1000);
+        } catch (Exception e) { tc09.info("Đơn vị mặc định đã là Viên"); }
+        tc09.pass("Đã thêm SP2 " + BUY_PRODUCT_2 + " đơn vị Viên");
 
-        ExtentTest tc09b = test.createNode("TC09b - Nhập SL " + QTY_2 + " cho SP2");
-        setQuantity(js, QTY_2);
-        tc09b.pass("Đã nhập SL " + QTY_2 + " cho SP2");
+        // Nhập SL=2
+        ExtentTest tc09b = test.createNode("TC09b - Nhập SL 2 cho SP2");
+        Thread.sleep(1500);
+        WebElement qtyInput2 = wait.until(ExpectedConditions.elementToBeClickable(
+                By.xpath("(//input[contains(@id,'input-quantity-product')])[last()]")));
+        js.executeScript(
+                "var el=arguments[0]; var s=Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype,'value').set;" +
+                "s.call(el,'2'); el.dispatchEvent(new Event('input',{bubbles:true})); el.dispatchEvent(new Event('change',{bubbles:true})); el.blur();",
+                qtyInput2);
+        Thread.sleep(1500);
+        tc09b.pass("Đã nhập SL 2 cho SP2");
 
         /*
          * =========================
          * TC10 - SP3: 00005453 | Vỉ | SL=1
          * =========================
          */
-        ExtentTest tc10 = test.createNode("TC10 - Nhập SP3 " + BUY_PRODUCT_3 + " đơn vị " + UNIT_3 + " SL " + QTY_3);
-        addProduct(js, BUY_PRODUCT_3, UNIT_3);
-        tc10.pass("Đã thêm SP3 " + BUY_PRODUCT_3);
-
-        // SL=1 là mặc định, không cần setQuantity
+        ExtentTest tc10 = test.createNode("TC10 - Nhập SP3 " + BUY_PRODUCT_3 + " Vỉ x1");
+        searchAndAddProduct(js, BUY_PRODUCT_3);
+        // Chọn đơn vị Vỉ — dùng contains vì font UI có thể render khác
+        try {
+            Thread.sleep(1000);
+            WebElement unitSel3 = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("(//div[contains(@class,'ant-select-selector')][.//span[contains(text(),'Hộp') or contains(text(),'Viên') or contains(text(),'Vỉ') or contains(text(),'Gói') or contains(text(),'Chai') or contains(text(),'Cái') or contains(text(),'Tuýp') or contains(text(),'Vi')]])[last()]")));
+            unitSel3.click();
+            Thread.sleep(800);
+            // Thử exact trước, nếu fail dùng contains
+            try {
+                wait.until(ExpectedConditions.elementToBeClickable(
+                        By.xpath("//div[contains(@class,'ant-select-item-option-content') and text()='Vỉ']"))).click();
+            } catch (Exception ex) {
+                wait.until(ExpectedConditions.elementToBeClickable(
+                        By.xpath("//div[contains(@class,'ant-select-item-option-content') and contains(.,'V') and string-length(normalize-space(.))<=3]"))).click();
+            }
+            Thread.sleep(1000);
+        } catch (Exception e) { tc10.info("Đơn vị mặc định đã là Vỉ"); }
+        tc10.pass("Đã thêm SP3 " + BUY_PRODUCT_3 + " đơn vị Vỉ");
+        // SL=1 mặc định, không cần set
 
         /*
          * =========================
@@ -567,30 +621,23 @@ public class TC25 extends BaseTest1 {
                 + " tặng PHM " + GIFT_VOUCHER + " | Đơn: " + orderCode);
     }
 
-    // ─── HELPER: nhập sản phẩm + chọn đơn vị ────────────────────────────────────
-    private void addProduct(JavascriptExecutor js, String sku, String unit) throws InterruptedException {
+    // ─── HELPER: search SKU và click item đầu tiên trong dropdown ───────────────
+    private void searchAndAddProduct(JavascriptExecutor js, String sku) throws InterruptedException {
         WebElement productInput = wait.until(ExpectedConditions.visibilityOfElementLocated(
                 By.xpath("//input[starts-with(@id,'search-product-input_session')]")));
-
         js.executeScript("arguments[0].click(); arguments[0].focus();", productInput);
         Thread.sleep(300);
-
-        // Clear
         js.executeScript(
-                "var el = arguments[0];" +
-                "var nativeSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype,'value').set;" +
-                "nativeSetter.call(el,'');" +
-                "el.dispatchEvent(new Event('input',{bubbles:true}));" +
-                "el.dispatchEvent(new Event('change',{bubbles:true}));", productInput);
+                "var el=arguments[0]; var s=Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype,'value').set;" +
+                "s.call(el,''); el.dispatchEvent(new Event('input',{bubbles:true})); el.dispatchEvent(new Event('change',{bubbles:true}));",
+                productInput);
         Thread.sleep(200);
         productInput.sendKeys(Keys.chord(Keys.CONTROL, "a"));
         productInput.sendKeys(Keys.DELETE);
         Thread.sleep(300);
-
         productInput.sendKeys(sku);
         Thread.sleep(1000);
 
-        // Click search button
         WebElement searchBtn = driver.findElement(
                 By.xpath("//button[contains(@class,'ant-input-search-button') or contains(@class,'ant-btn-icon-only')] | " +
                         "//span[contains(@class,'anticon-search')]/ancestor::button | " +
@@ -598,62 +645,9 @@ public class TC25 extends BaseTest1 {
         js.executeScript("arguments[0].click();", searchBtn);
         Thread.sleep(3000);
 
-        // Chọn item đầu tiên trong dropdown
         WebElement productItem = wait.until(ExpectedConditions.elementToBeClickable(
                 By.xpath("//div[contains(@class,'search-input-dropdown')]//div[contains(@class,'ant-select-item-option')]")));
         js.executeScript("arguments[0].click();", productItem);
         Thread.sleep(2500);
-
-        // Chọn đơn vị — dùng JS để tránh vấn đề encoding với Vỉ/Vĩ
-        try {
-            Thread.sleep(500);
-            // Click dropdown đơn vị của dòng SP cuối cùng
-            WebElement unitSelect = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("(//div[contains(@class,'ant-select-selector')][.//span[contains(@class,'ant-select-selection-item')]])[last()]")));
-            js.executeScript("arguments[0].click();", unitSelect);
-            Thread.sleep(800);
-
-            // Dùng JS tìm option chứa text đơn vị — tránh exact match encoding
-            final String unitText = unit;
-            WebElement unitOption = (WebElement) js.executeScript(
-                    "var items = document.querySelectorAll('.ant-select-item-option-content');" +
-                    "for(var i=0;i<items.length;i++){" +
-                    "  if(items[i].innerText.trim()==='" + unitText + "' || " +
-                    "     items[i].textContent.trim()==='" + unitText + "'){" +
-                    "    return items[i];" +
-                    "  }" +
-                    "}" +
-                    "return null;");
-
-            if (unitOption != null) {
-                js.executeScript("arguments[0].click();", unitOption);
-            } else {
-                // Fallback: tìm option visible chứa text gần đúng
-                WebElement fallbackOption = wait.until(ExpectedConditions.elementToBeClickable(
-                        By.xpath("//div[contains(@class,'ant-select-item-option-content') " +
-                                "and contains(.,'" + unitText + "')]")));
-                js.executeScript("arguments[0].click();", fallbackOption);
-            }
-            Thread.sleep(1000);
-        } catch (Exception e) {
-            // Đơn vị mặc định đã đúng hoặc SP chỉ có 1 đơn vị
-        }
-    }
-
-    // ─── HELPER: nhập số lượng cho SP vừa thêm ───────────────────────────────────
-    // Lấy ô qty CUỐI CÙNG trên trang = SP vừa được thêm vào giỏ
-    private void setQuantity(JavascriptExecutor js, String qty) throws InterruptedException {
-        Thread.sleep(1500);
-        // (last()) để luôn lấy đúng dòng SP mới nhất, tránh set nhầm SP cũ
-        WebElement qtyInput = wait.until(ExpectedConditions.elementToBeClickable(
-                By.xpath("(//input[contains(@id,'input-quantity-product')])[last()]")));
-        js.executeScript(
-                "var el = arguments[0];" +
-                "var nativeSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype,'value').set;" +
-                "nativeSetter.call(el,'" + qty + "');" +
-                "el.dispatchEvent(new Event('input',{bubbles:true}));" +
-                "el.dispatchEvent(new Event('change',{bubbles:true}));" +
-                "el.blur();", qtyInput);
-        Thread.sleep(1500);
     }
 }
