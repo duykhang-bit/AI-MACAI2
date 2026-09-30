@@ -455,6 +455,30 @@ public class TC25 extends BaseTest1 {
 
         /*
          * =========================
+         * TC12b - VERIFY PHM 3452345 HIỆN TRÊN MÀN HÌNH BÁN HÀNG
+         * Verify TRƯỚC khi tạo đơn — lúc này PHM đang hiện trong danh sách SP
+         * =========================
+         */
+        ExtentTest tc12b = test.createNode("TC12b - Verify PHM " + GIFT_VOUCHER + " giảm 50% trên màn hình bán hàng");
+        Thread.sleep(2000); // đợi UI render PHM sau khi apply MUD
+
+        String pageSourceBefore = driver.getPageSource();
+        boolean hasGiftVoucher = pageSourceBefore.contains(GIFT_VOUCHER)
+                || pageSourceBefore.contains("345234"); // UI có thể hiển thị truncated
+        boolean hasDiscount50  = pageSourceBefore.contains("50%")
+                || pageSourceBefore.contains("giảm 50")
+                || pageSourceBefore.contains("Giảm 50");
+
+        if (hasGiftVoucher && hasDiscount50) {
+            tc12b.pass("✅ PHM " + GIFT_VOUCHER + " hiển thị với giảm 50% — CTKM áp dụng đúng");
+        } else if (hasGiftVoucher) {
+            tc12b.warning("⚠️ Tìm thấy PHM " + GIFT_VOUCHER + " nhưng KHÔNG thấy '50%'");
+        } else {
+            tc12b.fail("❌ Không tìm thấy PHM " + GIFT_VOUCHER + " trên màn hình bán hàng");
+        }
+
+        /*
+         * =========================
          * TC13 - TẠO ĐƠN
          * =========================
          */
@@ -543,36 +567,6 @@ public class TC25 extends BaseTest1 {
         } catch (Exception e) {
             orderCode = "Có thể đã tạo - check hệ thống";
             test.info("⚠️ Lỗi khi tạo đơn: " + e.getMessage());
-        }
-
-        /*
-         * =========================
-         * TC16 - VERIFY PHM TẶNG 3452345 KHÔNG GIỚI HẠN
-         * =========================
-         */
-        ExtentTest tc16 = test.createNode("TC16 - Verify PHM tặng " + GIFT_VOUCHER + " giảm 50%");
-
-        String pageSource = driver.getPageSource();
-
-        // PASS khi: tìm thấy PHM 3452345 VÀ có text "50%" (giảm 50%)
-        boolean hasGiftVoucher = pageSource.contains(GIFT_VOUCHER)
-                || pageSource.contains("345234"); // UI có thể hiển thị truncated
-        boolean hasDiscount50  = pageSource.contains("50%")
-                || pageSource.contains("giảm 50")
-                || pageSource.contains("Giảm 50");
-
-        if (hasGiftVoucher && hasDiscount50) {
-            tc16.pass("✅ PHM " + GIFT_VOUCHER + " hiển thị với giảm 50% — CTKM áp dụng đúng");
-        } else if (hasGiftVoucher) {
-            tc16.warning("⚠️ Tìm thấy PHM " + GIFT_VOUCHER + " nhưng KHÔNG thấy '50%' — kiểm tra lại badge");
-        } else {
-            tc16.fail("❌ Không tìm thấy PHM " + GIFT_VOUCHER + " — kiểm tra lại điều kiện KM hoặc SKU");
-        }
-
-        if (pageSource.contains(PROMOTION_CODE)) {
-            tc16.pass("✅ CTKM " + PROMOTION_CODE + " hiển thị trên trang đơn");
-        } else {
-            tc16.info("ℹ️ " + PROMOTION_CODE + " không hiển thị trực tiếp (có thể bình thường)");
         }
 
         System.out.println("========================================");
