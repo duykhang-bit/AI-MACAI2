@@ -531,11 +531,21 @@ public class TC25 extends BaseTest1 {
          * TC16 - VERIFY PHM TẶNG 3452345 KHÔNG GIỚI HẠN
          * =========================
          */
-        ExtentTest tc16 = test.createNode("TC16 - Verify PHM tặng " + GIFT_VOUCHER + " (không giới hạn)");
+        ExtentTest tc16 = test.createNode("TC16 - Verify PHM tặng " + GIFT_VOUCHER + " giảm 50%");
 
         String pageSource = driver.getPageSource();
-        if (pageSource.contains(GIFT_VOUCHER)) {
-            tc16.pass("✅ Tìm thấy PHM " + GIFT_VOUCHER + " — CTKM áp dụng đúng");
+
+        // PASS khi: tìm thấy PHM 3452345 VÀ có text "50%" (giảm 50%)
+        boolean hasGiftVoucher = pageSource.contains(GIFT_VOUCHER)
+                || pageSource.contains("345234"); // UI có thể hiển thị truncated
+        boolean hasDiscount50  = pageSource.contains("50%")
+                || pageSource.contains("giảm 50")
+                || pageSource.contains("Giảm 50");
+
+        if (hasGiftVoucher && hasDiscount50) {
+            tc16.pass("✅ PHM " + GIFT_VOUCHER + " hiển thị với giảm 50% — CTKM áp dụng đúng");
+        } else if (hasGiftVoucher) {
+            tc16.warning("⚠️ Tìm thấy PHM " + GIFT_VOUCHER + " nhưng KHÔNG thấy '50%' — kiểm tra lại badge");
         } else {
             tc16.fail("❌ Không tìm thấy PHM " + GIFT_VOUCHER + " — kiểm tra lại điều kiện KM hoặc SKU");
         }
@@ -594,13 +604,13 @@ public class TC25 extends BaseTest1 {
         js.executeScript("arguments[0].click();", productItem);
         Thread.sleep(2500);
 
-        // Chọn đơn vị
+        // Chọn đơn vị — lấy dropdown của dòng SP cuối cùng vừa thêm
         try {
             Thread.sleep(500);
             WebElement unitSelect = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//div[contains(@class,'ant-select-selector')][.//span[contains(text(),'Hộp') or " +
+                    By.xpath("(//div[contains(@class,'ant-select-selector')][.//span[contains(text(),'Hộp') or " +
                             "contains(text(),'Viên') or contains(text(),'Vỉ') or contains(text(),'Gói') or " +
-                            "contains(text(),'Chai') or contains(text(),'Cái') or contains(text(),'Tuýp')]]")));
+                            "contains(text(),'Chai') or contains(text(),'Cái') or contains(text(),'Tuýp')]])[last()]")));
             unitSelect.click();
             Thread.sleep(800);
             WebElement unitOption = wait.until(ExpectedConditions.elementToBeClickable(
