@@ -501,12 +501,23 @@ public class TC25 extends BaseTest1 {
                 Thread.sleep(3000);
             }
 
+            // Lấy mã đơn hàng — dùng cùng pattern TC8
             try {
                 WebElement orderEl = driver.findElement(
-                        By.xpath("//span[contains(@class,'order-number') or contains(@class,'order-code') or contains(@class,'ma-don')]"));
+                        By.xpath("//span[contains(@class,'order-number') or contains(@class,'order-code') or contains(@class,'ma-don')] | " +
+                                "//div[contains(@class,'order-number') or contains(@class,'order-code')] | " +
+                                "//div[contains(@class,'header')]//span[string-length(normalize-space()) > 3 and string-length(normalize-space()) < 12 and number(normalize-space()) = number(normalize-space())]"));
                 orderCode = orderEl.getText().trim();
             } catch (Exception e) {
-                orderCode = "Đơn tạo thành công - check màn hình";
+                try {
+                    // Fallback: tìm số nguyên 5-10 ký tự lớn hơn 1000000 (dạng mã đơn RSA)
+                    WebElement numEl = driver.findElement(
+                            By.xpath("//*[string-length(normalize-space()) >= 5 and string-length(normalize-space()) <= 10 " +
+                                    "and number(normalize-space()) = number(normalize-space()) and normalize-space() > 1000000]"));
+                    orderCode = numEl.getText().trim();
+                } catch (Exception e2) {
+                    orderCode = "Đơn tạo thành công - check màn hình";
+                }
             }
             tc15.pass("✅ Hoàn tất! Mã đơn: " + orderCode);
 
