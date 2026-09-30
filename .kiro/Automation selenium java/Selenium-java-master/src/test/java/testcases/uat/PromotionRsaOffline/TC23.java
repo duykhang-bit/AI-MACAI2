@@ -385,9 +385,9 @@ public class TC23 extends BaseTest1 {
                     .until(ExpectedConditions.presenceOfElementLocated(
                             By.xpath("//button[contains(.,'Hoàn tất') or contains(.,'Hoan tat')]")));
             js.executeScript("arguments[0].scrollIntoView({block:'center'}); arguments[0].click();", btnHoanTat);
-            // QR load hơi lâu — wait đến khi URL chứa "/don-hang/thanh-toan/" hoặc element QR xuất hiện
+            // QR load hơi lâu — wait tối đa 60s, hễ hiện là chạy tiếp liền
             try {
-                new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(15))
+                new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(60))
                         .until(ExpectedConditions.or(
                                 ExpectedConditions.urlContains("/don-hang/thanh-toan/"),
                                 ExpectedConditions.presenceOfElementLocated(
@@ -395,9 +395,9 @@ public class TC23 extends BaseTest1 {
                                                 "or contains(.,'Thông tin chuyển khoản') or contains(.,'Mã QR')]"))
                         ));
             } catch (TimeoutException te) {
-                Thread.sleep(5000); // fallback nếu wait timeout
+                tc12.info("⚠️ Wait 60s nhưng QR chưa hiện — tiếp tục verify");
             }
-            Thread.sleep(2000); // thêm 2s để QR render xong hoàn toàn
+            Thread.sleep(2000); // 2s để QR render xong hoàn toàn
             tc12.pass("Da click Hoan tat");
         } catch (Exception e) {
             tc12.fail("Khong click duoc Hoan tat: " + e.getMessage());
