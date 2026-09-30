@@ -610,11 +610,13 @@ public class TC25 extends BaseTest1 {
             WebElement unitSelect = wait.until(ExpectedConditions.elementToBeClickable(
                     By.xpath("(//div[contains(@class,'ant-select-selector')][.//span[contains(text(),'Hộp') or " +
                             "contains(text(),'Viên') or contains(text(),'Vỉ') or contains(text(),'Gói') or " +
-                            "contains(text(),'Chai') or contains(text(),'Cái') or contains(text(),'Tuýp')]])[last()]")));
+                            "contains(text(),'Chai') or contains(text(),'Cái') or contains(text(),'Tuýp') or " +
+                            "contains(text(),'Vi') or contains(text(),'Vĩ')]])[last()]")));
             unitSelect.click();
             Thread.sleep(800);
             WebElement unitOption = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//div[contains(@class,'ant-select-item-option-content') and text()='" + unit + "']")));
+                    By.xpath("//div[contains(@class,'ant-select-item-option-content') and " +
+                            "(text()='" + unit + "' or normalize-space(text())='" + unit + "')]")));
             unitOption.click();
             Thread.sleep(1000);
         } catch (Exception e) {
