@@ -347,40 +347,49 @@ public class TC25 extends BaseTest1 {
          */
         ExtentTest tc10 = test.createNode("TC10 - Nhập SP3 " + BUY_PRODUCT_3 + " Vỉ x1");
         searchAndAddProduct(js, BUY_PRODUCT_3);
-        // Chọn đơn vị Vỉ — dùng JS dump text thực tế + click theo index
+        // Chọn đơn vị Vỉ — click dropdown của SP3, query ONLY trong dropdown đang open
         try {
             Thread.sleep(1000);
             WebElement unitSel3 = wait.until(ExpectedConditions.elementToBeClickable(
                     By.xpath("(//div[contains(@class,'ant-select-selector')][.//span[contains(@class,'ant-select-selection-item')]])[last()]")));
             js.executeScript("arguments[0].click();", unitSel3);
-            Thread.sleep(800);
+            Thread.sleep(1000);
 
-            // Dump toàn bộ options để debug + tìm "Vỉ" bằng charCodeAt
+            // Chỉ query trong dropdown popup đang open (visible)
             Boolean clicked = (Boolean) js.executeScript(
-                "var items = document.querySelectorAll('.ant-select-item-option-content');" +
-                "console.log('=== UNIT OPTIONS ===');" +
-                "var target = null;" +
+                // Tìm dropdown popup đang visible
+                "var popups = document.querySelectorAll('.ant-select-dropdown:not(.ant-select-dropdown-hidden)');" +
+                "if(popups.length === 0) return false;" +
+                "var popup = popups[popups.length-1];" +  // lấy popup cuối cùng
+                "var items = popup.querySelectorAll('.ant-select-item-option-content');" +
+                "console.log('=== UNIT OPTIONS (visible popup) count='+items.length+' ===');" +
                 "for(var i=0;i<items.length;i++){" +
-                "  var t = items[i].innerText || items[i].textContent;" +
-                "  console.log('option['+i+']: ['+t+'] len='+t.length);" +
-                // Tìm option có 2-3 ký tự bắt đầu bằng V (Vỉ, Vĩ, Vi...)
-                // và KHÔNG phải Viên (>3 ký tự)
-                "  if(t.trim().length>=1 && t.trim().length<=3 && t.trim().charAt(0)==='V' && t.trim() !== 'Viên'){" +
-                "    target = items[i];" +
+                "  var t = items[i].innerText.trim();" +
+                "  console.log('option['+i+']: ['+t+'] len='+t.length+' char0='+t.charCodeAt(0));" +
+                "}" +
+                // Click option: 2-3 ký tự, bắt đầu V, không phải Viên/Vĩ dài
+                "for(var i=0;i<items.length;i++){" +
+                "  var t = items[i].innerText.trim();" +
+                "  if(t.length>=1 && t.length<=3 && t.charAt(0)==='V' && t!=='Viên'){" +
+                "    items[i].click(); return true;" +
                 "  }" +
                 "}" +
-                "if(target){ target.click(); return true; }" +
                 "return false;");
 
             if (Boolean.TRUE.equals(clicked)) {
-                tc10.info("✅ Đã chọn đơn vị Vỉ bằng JS");
+                tc10.info("✅ Đã chọn đơn vị Vỉ");
             } else {
-                // Fallback: chọn option thứ 3 nếu có (Hộp=0, Viên=1, Vỉ=2)
-                js.executeScript(
-                    "var items = document.querySelectorAll('.ant-select-item-option-content');" +
-                    "if(items.length>=3){ items[2].click(); } " +
-                    "else if(items.length>0){ items[items.length-1].click(); }");
-                tc10.info("Fallback: click option index 2 (Vỉ)");
+                // Fallback cứng: dùng XPath với contains — Vỉ/Vi/Vĩ đều match
+                try {
+                    WebElement viOption = wait.until(ExpectedConditions.elementToBeClickable(
+                            By.xpath("//div[contains(@class,'ant-select-dropdown') and not(contains(@class,'hidden'))]" +
+                                    "//div[contains(@class,'ant-select-item-option-content')]" +
+                                    "[string-length(normalize-space(.))<=3 and starts-with(normalize-space(.),'V') and normalize-space(.)!='Viên']")));
+                    js.executeScript("arguments[0].click();", viOption);
+                    tc10.info("Fallback XPath đã chọn Vỉ");
+                } catch (Exception ex2) {
+                    tc10.warning("Không chọn được Vỉ: " + ex2.getMessage());
+                }
             }
             Thread.sleep(1000);
         } catch (Exception e) { tc10.info("Đơn vị mặc định đã là Vỉ: " + e.getMessage()); }
