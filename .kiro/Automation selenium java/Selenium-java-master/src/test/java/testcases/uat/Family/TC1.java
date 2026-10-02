@@ -278,11 +278,11 @@ public class TC1 extends BaseTest1 {
                 .until(ExpectedConditions.elementToBeClickable(
                         By.cssSelector("input[type='phone']")));
         phoneInput.click();
-        phoneInput.sendKeys("0775465401");
+        phoneInput.sendKeys("0835089254");
         phoneInput.sendKeys(Keys.ENTER);
         Thread.sleep(1500);
 
-        tc07.pass("Đã nhập SĐT khách hàng 0775465401");
+        tc07.pass("Đã nhập SĐT khách hàng 0835089254");
 
         /*
          * =========================
@@ -447,19 +447,59 @@ public class TC1 extends BaseTest1 {
          * =========================
          */
         String orderCode = "";
+        Exception orderCreationFailed = null;
         try {
             ExtentTest tc09 = test.createNode("TC09 - Click Tạo đơn (F4)");
 
+            // Locator cũ dùng union XPath → trả element đầu tiên theo document order,
+            // có thể khớp "Lưu đơn (F3)" / "Huỷ (F8)" thay vì "Tạo đơn (F4)".
+            // → Locate theo TEXT và verify lại trước khi click.
             WebElement btnTaoDonF4 = wait.until(
                     ExpectedConditions.elementToBeClickable(
-                            By.xpath("//button[contains(@class,'btn_container') or contains(@id,'btn_finish')] | " +
-                                    "//button[.//span[contains(text(),'Tạo đơn')]] | " +
-                                    "//div[contains(@class,'btn_container')]//button")));
+                            By.xpath("//button[contains(normalize-space(.),'Tạo đơn')]")));
+
+            String btnInfo = (String) js.executeScript(
+                    "var e=arguments[0];" +
+                    "return 'text=\"' + (e.innerText||'').trim() + '\" id=' + (e.id||'-') " +
+                    "+ ' class=' + (e.className||'-') + ' disabled=' + (e.disabled===true);",
+                    btnTaoDonF4);
+            tc09.info("Element sẽ click: " + btnInfo);
+            if (!btnInfo.contains("Tạo đơn")) {
+                throw new RuntimeException("Locator khớp sai element, không phải nút Tạo đơn: " + btnInfo);
+            }
+
             js.executeScript("arguments[0].scrollIntoView({block:'center'});", btnTaoDonF4);
             Thread.sleep(500);
-            js.executeScript("arguments[0].click();", btnTaoDonF4);
+            // Click native trước; JS click chỉ fallback (JS click bỏ qua overlay/pointer-events).
+            try {
+                btnTaoDonF4.click();
+            } catch (Exception clickEx) {
+                tc09.info("Native click fail (" + clickEx.getClass().getSimpleName() + ") → fallback JS click");
+                js.executeScript("arguments[0].click();", btnTaoDonF4);
+            }
             Thread.sleep(3000);
-            tc09.pass("Đã click Tạo đơn (F4)");
+
+            // Bắt toast validation của RSA ngay sau click (toast tự tắt sau vài giây).
+            try {
+                java.util.List<WebElement> toasts = driver.findElements(By.xpath(
+                        "//div[contains(@class,'ant-notification-notice') or contains(@class,'ant-message-notice')" +
+                        " or contains(@class,'Toastify__toast')]"));
+                for (WebElement t : toasts) {
+                    String msg = t.getText().replace("\n", " ").trim();
+                    if (!msg.isEmpty()) tc09.warning("⚠️ Thông báo từ app sau khi click Tạo đơn: " + msg);
+                }
+            } catch (Exception ignore) { }
+
+            // Verify đã sang màn thanh toán, không chỉ "đã click".
+            boolean onPayment = !driver.findElements(By.xpath(
+                    "//*[contains(text(),'Phương thức thanh toán')] | //*[contains(text(),'Về giỏ hàng')]")).isEmpty();
+            if (onPayment) {
+                tc09.pass("✅ Đã click Tạo đơn (F4) — màn thanh toán đã mở");
+            } else {
+                attachScreenshot("❌ Click Tạo đơn nhưng KHÔNG sang màn thanh toán");
+                tc09.fail("❌ Click Tạo đơn nhưng vẫn ở màn bán hàng — app chặn tạo đơn (xem thông báo/ảnh ở trên)");
+                throw new RuntimeException("Tạo đơn không có tác dụng — không sang được màn thanh toán");
+            }
 
             ExtentTest tc10 = test.createNode("TC10 - Click Tổng tiền");
 
@@ -547,14 +587,22 @@ public class TC1 extends BaseTest1 {
 
             tc11.pass("✅ Hoàn tất đơn hàng! Mã đơn: " + orderCode);
         } catch (Exception e) {
-            // Nếu bất kỳ bước nào fail, vẫn PASS vì đơn có thể đã tạo
-            orderCode = "Đơn có thể đã tạo - check hệ thống";
-            test.info("⚠️ Có lỗi nhưng đơn có thể đã tạo: " + e.getMessage());
+            // Trước đây nuốt lỗi (test.info + vẫn pass) → report báo pass giả.
+            // Giờ chụp màn hình, fail node và giữ lỗi để ném lại cuối hàm.
+            orderCode = "KHÔNG TẠO ĐƯỢC ĐƠN";
+            attachScreenshot("❌ Lỗi ở luồng tạo đơn / thanh toán");
+            test.fail("❌ Lỗi khi tạo đơn: " + e.getMessage());
+            orderCreationFailed = e;
         }
 
         System.out.println("========================================");
         System.out.println("MÃ ĐƠN HÀNG: " + orderCode);
         System.out.println("========================================");
+
+        if (orderCreationFailed != null) {
+            throw new AssertionError("TC1 FAIL ở luồng tạo đơn/thanh toán: "
+                    + orderCreationFailed.getMessage(), orderCreationFailed);
+        }
 
         test.pass("✅ Hoàn thành flow tạo đơn bán hàng RSA Web. Mã đơn: " + orderCode);
     }
