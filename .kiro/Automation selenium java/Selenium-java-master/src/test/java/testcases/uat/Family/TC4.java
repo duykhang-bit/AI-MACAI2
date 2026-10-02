@@ -281,11 +281,11 @@ public class TC4 extends BaseTest1 {
                 .until(ExpectedConditions.elementToBeClickable(
                         By.cssSelector("input[type='phone']")));
         phoneInput.click();
-        phoneInput.sendKeys("0775465401");
+        phoneInput.sendKeys("0835089254");
         phoneInput.sendKeys(Keys.ENTER);
         Thread.sleep(1500);
 
-        tc07.pass("Đã nhập SĐT khách hàng 0775465401");
+        tc07.pass("Đã nhập SĐT khách hàng 0835089254");
 
         /*
          * =========================
