@@ -1068,7 +1068,7 @@
         "voucherType": 2,
         "phoneNumber": "0835089255",
         "promotionCode": "KM-0926-280",
-        "apiUrl": "http://uat-voucher-core.lc.frt.local/api/voucher/generate",
+        "apiUrl": "http://uat-offline-swagger.lc.frt.local/lc-voucher-core/api/voucher/generate",
         "note": "TC25 - KM-0926-280 test mud5 - Su dung ma uu dai theo san pham - Tang PHM 3452345 khong gioi han. Gen MUD qua API truoc khi chay TC."
     }
 }

@@ -2,13 +2,13 @@
   "info": {
     "_postman_id": "mud-gen-3725-tc25",
     "name": "UAT — MUD Generate — code 3725",
-    "description": "Generate MUD voucher code 3725 cho KM-0926-280 (test mud5).\nDùng cho TC25 — Mua SKU theo điều kiện MUD tặng PHM không giới hạn.\n\nAPI: POST http://uat-voucher-core.lc.frt.local/api/voucher/generate\nvoucherType: 2 (MUD)\ncode: 3725\nquantity: 1 (gen 1 mã mỗi lần chạy TC)\nphoneNumber: SĐT khách hàng trong test",
+    "description": "Generate MUD voucher code 3725 cho KM-0926-280 (test mud5).\nDùng cho TC25 — Mua SKU theo điều kiện MUD tặng PHM không giới hạn.\n\nAPI: POST http://uat-offline-swagger.lc.frt.local/lc-voucher-core/api/voucher/generate\nvoucherType: 2 (MUD)\ncode: 3725\nquantity: 1 (gen 1 mã mỗi lần chạy TC)\nphoneNumber: SĐT khách hàng trong test",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
     {
       "key": "base_url",
-      "value": "http://uat-voucher-core.lc.frt.local",
+      "value": "http://uat-offline-swagger.lc.frt.local/lc-voucher-core",
       "type": "string",
       "description": "Base URL của voucher-core service trên UAT internal network"
     },
@@ -123,10 +123,10 @@
                   "raw": "[\n  {\n    \"code\": \"3725\",\n    \"voucherType\": 2,\n    \"quantity\": 1,\n    \"phoneNumber\": \"0835089255\"\n  }\n]"
                 },
                 "url": {
-                  "raw": "http://uat-voucher-core.lc.frt.local/api/voucher/generate",
+                  "raw": "http://uat-offline-swagger.lc.frt.local/lc-voucher-core/api/voucher/generate",
                   "protocol": "http",
-                  "host": ["uat-voucher-core", "lc", "frt", "local"],
-                  "path": ["api", "voucher", "generate"]
+                  "host": ["uat-offline-swagger", "lc", "frt", "local"],
+                  "path": ["lc-voucher-core", "api", "voucher", "generate"]
                 }
               },
               "status": "OK",

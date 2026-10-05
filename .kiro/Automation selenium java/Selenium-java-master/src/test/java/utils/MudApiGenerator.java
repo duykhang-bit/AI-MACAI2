@@ -9,7 +9,7 @@ import java.nio.charset.StandardCharsets;
  * Gọi API generate MUD voucher code trên UAT internal network.
  *
  * API endpoint:
- *   POST http://uat-voucher-core.lc.frt.local/api/voucher/generate
+ *   POST http://uat-offline-swagger.lc.frt.local/lc-voucher-core/api/voucher/generate
  *
  * Request body (JSON array):
  *   [{ "code": "<voucherCode>", "voucherType": 2, "quantity": 1, "phoneNumber": "<phone>" }]
@@ -22,7 +22,7 @@ import java.nio.charset.StandardCharsets;
 public class MudApiGenerator {
 
     private static final String API_URL =
-            "http://uat-voucher-core.lc.frt.local/api/voucher/generate";
+            "http://uat-offline-swagger.lc.frt.local/lc-voucher-core/api/voucher/generate";
     private static final int TIMEOUT_MS = 15_000; // 15 giây
 
     /**
