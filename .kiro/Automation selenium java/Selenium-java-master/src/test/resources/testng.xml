@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
-<suite name="All Tests Suite" verbose="1" parallel="classes" thread-count="3">
+<suite name="All Tests Suite" verbose="1" parallel="classes" thread-count="2">
     <listeners>
         <listener class-name="listeners.TestListener"/>
         <listener class-name="utils.DashboardReportGenerator"/>
     </listeners>
     <test name="CI - Promotion Tests">
         <packages>
-            <package name="testcases.uat.Family"/>
+            <package name="testcases.uat.Promotion"/>
         </packages>
     </test>
 </suite>

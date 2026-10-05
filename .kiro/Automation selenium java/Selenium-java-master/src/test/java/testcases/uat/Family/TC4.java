@@ -64,7 +64,7 @@ public class TC4 extends BaseTest1 {
         wait = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(30));
     }
 
-    @Test(priority = 1, description = "FLOW - Tạo đơn bán hàng RSA Web", invocationCount = 1)
+    @Test(priority = 1, description = "FLOW - Tạo đơn bán hàng RSA Web", invocationCount = 5)
     public void testCreateOrderFlow() throws InterruptedException {
 
         JavascriptExecutor js = (JavascriptExecutor) driver;
