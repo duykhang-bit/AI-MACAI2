@@ -144,7 +144,7 @@ public class TC21 extends BaseTest1 {
          * TC02 - CHỌN SHOP 80006
          * =========================
          */
-        ExtentTest tc02 = test.createNode("TC02 - Nhập 80046 và chọn shop");
+        ExtentTest tc02 = test.createNode("TC02 - Nhập 80006 và chọn shop");
 
         // Ô "Chọn Shop" là Ant Design Select → click vào dropdown trước
         WebElement shopDropdown = wait.until(
@@ -158,18 +158,18 @@ public class TC21 extends BaseTest1 {
                 ExpectedConditions.elementToBeClickable(
                         By.xpath("//div[contains(@class,'ant-select-dropdown')]//input | " +
                                 "//input[contains(@class,'ant-select-selection-search-input')]")));
-        shopSearchInput.sendKeys("80046");
+        shopSearchInput.sendKeys("80006");
         Thread.sleep(1500);
 
         // Chọn shop 80006 từ danh sách dropdown
         WebElement shopOption = wait.until(
                 ExpectedConditions.elementToBeClickable(
-                        By.xpath("//div[contains(@class,'ant-select-item-option') and contains(.,'80046')] | " +
-                                "//div[contains(@class,'ant-select-item-option-content') and contains(text(),'80046')]")));
+                        By.xpath("//div[contains(@class,'ant-select-item-option') and contains(.,'80006')] | " +
+                                "//div[contains(@class,'ant-select-item-option-content') and contains(text(),'80006')]")));
         shopOption.click();
 
         Thread.sleep(1000);
-        tc02.pass("Đã chọn shop 80046");
+        tc02.pass("Đã chọn shop 80006");
 
         /*
          * =========================
