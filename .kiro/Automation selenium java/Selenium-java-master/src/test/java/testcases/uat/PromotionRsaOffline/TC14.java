@@ -108,7 +108,7 @@ public class TC14 extends BaseTest1 {
         try {
             java.net.http.HttpClient httpClient = java.net.http.HttpClient.newHttpClient();
             java.net.http.HttpRequest request = java.net.http.HttpRequest.newBuilder()
-                    .uri(java.net.URI.create("http://uat-promotion-listener.lc.frt.local/api/promotion/clear-cache-quota?promotionCode=KM-0625-1172&phone=0835089291&type=MedicinalProperties"))
+                    .uri(java.net.URI.create("http://uat-offline-swagger.lc.frt.local/lc-promotion-listener/api/promotion/clear-cache-quota?promotionCode=KM-0625-1172&phone=0835089291&type=MedicinalProperties"))
                     .header("accept", "*/*")
                     .POST(java.net.http.HttpRequest.BodyPublishers.noBody())
                     .build();
