@@ -7,11 +7,7 @@
     </listeners>
     <test name="CI - Promotion Tests">
         <packages>
-<<<<<<< HEAD
             <package name="testcases.uat.Mudsku"/>
-=======
-            <package name="testcases.uat.Promotion"/>
->>>>>>> 0a26924f00b1f09ad08ab75d99ed09cbc3e85c45
         </packages>
     </test>
 </suite>
