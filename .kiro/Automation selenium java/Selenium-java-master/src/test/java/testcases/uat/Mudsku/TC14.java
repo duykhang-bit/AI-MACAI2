@@ -33,7 +33,7 @@ public class TC14 extends BaseTest1 {
     private static final String CUSTOMER_PHONE  = "0835089254";
     private static final String PROMOTION_CODE  = "KM-1026-107";
     private static final String CAMPAIGN_CODE   = "3754";
-    private static final String BUY_PRODUCT_1   = "00016991";
+    private static final String BUY_PRODUCT_1   = "00032958";
     private static final int    BUY_QTY         = 1;
 
     @Override
