@@ -245,6 +245,30 @@ public class TC25new extends BaseTest1 {
 
         Thread.sleep(2000);
         tc06.pass("Da nhap ma inside " + INSIDE_CODE);
+        /*
+         * =========================
+         * TC06.5 - XU LY MODAL "CANH BAO THAY DOI GIA"
+         * =========================
+         */
+        ExtentTest tc06c = test.createNode("TC06.5 - Xu ly modal canh bao thay doi gia");
+        
+        try {
+            WebElement modalThayDoiGia = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(5))
+                    .until(ExpectedConditions.visibilityOfElementLocated(
+                            By.xpath("//*[contains(@class,'ant-modal') and .//*[contains(text(),'Cảnh báo có sp thay đổi giá')]]")));
+            
+            tc06c.info("Phat hien modal 'Canh bao co sp thay doi gia' - click 'De sau'");
+            
+            WebElement btnDeSau = modalThayDoiGia.findElement(
+                    By.xpath(".//button[contains(.,'Để sau') or contains(.,'De sau')]"));
+            js.executeScript("arguments[0].click();", btnDeSau);
+            Thread.sleep(1500);
+            
+            tc06c.pass("Da click 'De sau' tren modal thay doi gia");
+        } catch (TimeoutException e) {
+            tc06c.info("Khong co modal canh bao thay doi gia");
+        }
+
 
         /*
          * =========================

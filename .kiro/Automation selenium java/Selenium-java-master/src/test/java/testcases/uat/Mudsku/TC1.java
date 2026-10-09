@@ -251,7 +251,9 @@ public class TC1 extends BaseTest1 {
         try {
             WebElement insideOption = wait.until(ExpectedConditions.elementToBeClickable(
                     By.xpath("//*[contains(text(),'Tr\u1ea7n Th\u1ecb Thanh Th\u1ea3o') or contains(text(),'(" + INSIDE_CODE + ")')]")));
-            insideOption.click();
+            js.executeScript("arguments[0].scrollIntoView({block: 'center'});", insideOption);
+            Thread.sleep(500);
+            js.executeScript("arguments[0].click();", insideOption);
             Thread.sleep(500);
         } catch (TimeoutException e) { }
 
@@ -263,6 +265,30 @@ public class TC1 extends BaseTest1 {
 
         Thread.sleep(2000);
         tc06.pass("Da nhap ma inside " + INSIDE_CODE);
+        /*
+         * =========================
+         * TC06.5 - XU LY MODAL "CANH BAO THAY DOI GIA"
+         * =========================
+         */
+        ExtentTest tc06c = test.createNode("TC06.5 - Xu ly modal canh bao thay doi gia");
+        
+        try {
+            WebElement modalThayDoiGia = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(5))
+                    .until(ExpectedConditions.visibilityOfElementLocated(
+                            By.xpath("//*[contains(@class,'ant-modal') and .//*[contains(text(),'Cảnh báo có sp thay đổi giá')]]")));
+            
+            tc06c.info("Phat hien modal 'Canh bao co sp thay doi gia' - click 'De sau'");
+            
+            WebElement btnDeSau = modalThayDoiGia.findElement(
+                    By.xpath(".//button[contains(.,'Để sau') or contains(.,'De sau')]"));
+            js.executeScript("arguments[0].click();", btnDeSau);
+            Thread.sleep(1500);
+            
+            tc06c.pass("Da click 'De sau' tren modal thay doi gia");
+        } catch (TimeoutException e) {
+            tc06c.info("Khong co modal canh bao thay doi gia");
+        }
+
 
         /*
          * =========================
@@ -298,6 +324,30 @@ public class TC1 extends BaseTest1 {
         Thread.sleep(1500);
         tc08.pass("Da them SP " + BUY_PRODUCT_1);
         tc08b.pass("Da nhap SL " + BUY_QTY);
+        /*
+         * =========================
+         * TC08.5 - XU LY MODAL "CANH BAO THAY DOI GIA"
+         * =========================
+         */
+        ExtentTest tc08c = test.createNode("TC08.5 - Xu ly modal canh bao thay doi gia");
+        
+        try {
+            WebElement modalThayDoiGia = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(5))
+                    .until(ExpectedConditions.visibilityOfElementLocated(
+                            By.xpath("//*[contains(@class,'ant-modal') and .//*[contains(text(),'Cảnh báo có sp thay đổi giá')]]")));
+            
+            tc08c.info("Phat hien modal 'Canh bao co sp thay doi gia' - click 'De sau'");
+            
+            WebElement btnDeSau = modalThayDoiGia.findElement(
+                    By.xpath(".//button[contains(.,'Để sau') or contains(.,'De sau')]"));
+            js.executeScript("arguments[0].click();", btnDeSau);
+            Thread.sleep(1500);
+            
+            tc08c.pass("Da click 'De sau' tren modal thay doi gia");
+        } catch (TimeoutException e) {
+            tc08c.info("Khong co modal canh bao thay doi gia");
+        }
+
 
         /*
          * =========================
