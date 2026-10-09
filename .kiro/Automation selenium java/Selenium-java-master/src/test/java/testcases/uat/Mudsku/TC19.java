@@ -601,14 +601,14 @@ public class TC19 extends BaseTest1 {
         productInput.sendKeys(Keys.DELETE);
         Thread.sleep(300);
         productInput.sendKeys(sku);
-        Thread.sleep(1000);
+        Thread.sleep(2000); // Increase wait for search to complete
 
         WebElement searchBtn = driver.findElement(
                 By.xpath("//button[contains(@class,'ant-input-search-button') or contains(@class,'ant-btn-icon-only')] | " +
                         "//span[contains(@class,'anticon-search')]/ancestor::button | " +
                         "//button[@id='button-search']"));
         js.executeScript("arguments[0].click();", searchBtn);
-        Thread.sleep(3000);
+        Thread.sleep(4000); // Increase wait for dropdown to appear
 
         WebElement productItem = wait.until(ExpectedConditions.elementToBeClickable(
                 By.xpath("//div[contains(@class,'search-input-dropdown')]//div[contains(@class,'ant-select-item-option')]")));

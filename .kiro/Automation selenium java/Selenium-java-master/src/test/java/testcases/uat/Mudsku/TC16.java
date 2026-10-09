@@ -250,7 +250,10 @@ public class TC16 extends BaseTest1 {
         try {
             WebElement insideOption = wait.until(ExpectedConditions.elementToBeClickable(
                     By.xpath("//*[contains(text(),'Tr\u1ea7n Th\u1ecb Thanh Th\u1ea3o') or contains(text(),'(" + INSIDE_CODE + ")')]")));
-            insideOption.click();
+            // Fix ElementClickIntercepted: scroll and use JS click
+            js.executeScript("arguments[0].scrollIntoView({block: 'center'});", insideOption);
+            Thread.sleep(500); // Let overlay disappear
+            js.executeScript("arguments[0].click();", insideOption);
             Thread.sleep(500);
         } catch (TimeoutException e) { }
 

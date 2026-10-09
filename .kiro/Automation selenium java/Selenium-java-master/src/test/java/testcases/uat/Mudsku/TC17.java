@@ -287,7 +287,7 @@ public class TC17 extends BaseTest1 {
         searchAndAddProduct(js, BUY_PRODUCT_1);
 
         ExtentTest tc08b = test.createNode("TC08b - Nhap SL " + BUY_QTY);
-        Thread.sleep(1500);
+        Thread.sleep(3000); // Increase wait before finding qty input
         WebElement qtyInput1 = wait.until(ExpectedConditions.elementToBeClickable(
                 By.xpath("//input[contains(@id,'input-quantity-product')]")));
         js.executeScript(
