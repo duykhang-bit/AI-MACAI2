@@ -358,22 +358,37 @@ public class TC1 extends BaseTest1 {
 
         Thread.sleep(2000);
 
-        // Tìm ô số lượng (id chứa "input-quantity-product")
-        WebElement qtyInput = wait.until(
-                ExpectedConditions.elementToBeClickable(
-                        By.xpath("//input[contains(@id,'input-quantity-product')]")));
-        // Dùng JS để set value trực tiếp + trigger React onChange
-        js.executeScript(
-                "var el = arguments[0];" +
-                "var nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;" +
-                "nativeInputValueSetter.call(el, '19');" +
-                "el.dispatchEvent(new Event('input', { bubbles: true }));" +
-                "el.dispatchEvent(new Event('change', { bubbles: true }));" +
-                "el.blur();",
-                qtyInput);
-        Thread.sleep(2000);
-
-        tc08b.pass("Đã nhập số lượng 19");
+        // Tìm tất cả ô số lượng và chọn cái CUỐI CÙNG (mới thêm nhất)
+        java.util.List<WebElement> allQtyInputs = driver.findElements(
+                By.xpath("//input[contains(@id,'input-quantity-product')]"));
+        if (allQtyInputs.isEmpty()) {
+            throw new RuntimeException("Không tìm thấy ô nhập số lượng nào!");
+        }
+        WebElement qtyInput = allQtyInputs.get(allQtyInputs.size() - 1);
+        
+        // Scroll vào view và highlight để chắc chắn
+        js.executeScript("arguments[0].scrollIntoView({block:'center'});", qtyInput);
+        js.executeScript("arguments[0].style.border='3px solid red'", qtyInput);
+        Thread.sleep(500);
+        
+        // Triple-click để select all, xóa, rồi nhập
+        qtyInput.click();
+        qtyInput.sendKeys(Keys.chord(Keys.CONTROL, "a"));
+        Thread.sleep(200);
+        qtyInput.sendKeys(Keys.DELETE);
+        Thread.sleep(300);
+        qtyInput.sendKeys("19");
+        qtyInput.sendKeys(Keys.ENTER);
+        Thread.sleep(1000);
+        
+        // Verify số lượng đã nhập đúng
+        String actualQty = qtyInput.getAttribute("value");
+        if (!"19".equals(actualQty)) {
+            attachScreenshot("⚠️ Số lượng nhập không khớp");
+            tc08b.warning("⚠️ Số lượng hiển thị: " + actualQty + " (mong đợi: 19)");
+        } else {
+            tc08b.pass("✅ Đã nhập số lượng 19 chính xác");
+        }
 
         /*
          * =========================
@@ -451,26 +466,45 @@ public class TC1 extends BaseTest1 {
         try {
             ExtentTest tc09 = test.createNode("TC09 - Click Tạo đơn (F4)");
 
-            // Locator cũ dùng union XPath → trả element đầu tiên theo document order,
-            // có thể khớp "Lưu đơn (F3)" / "Huỷ (F8)" thay vì "Tạo đơn (F4)".
-            // → Locate theo TEXT và verify lại trước khi click.
-            WebElement btnTaoDonF4 = wait.until(
-                    ExpectedConditions.elementToBeClickable(
-                            By.xpath("//button[contains(normalize-space(.),'Tạo đơn')]")));
-
+            // Chờ 2s để React render xong button
+            Thread.sleep(2000);
+            
+            // Tìm CHÍNH XÁC nút "Tạo đơn (F4)" - không phải "Lưu đơn (F3)" hay "Huỷ (F8)"
+            // Chiến lược: Tìm tất cả button có text chứa "Tạo đơn", filter trong Java
+            java.util.List<WebElement> allButtons = driver.findElements(
+                    By.xpath("//button[contains(.,'đơn') or contains(.,'Đơn')]"));
+            
+            WebElement btnTaoDonF4 = null;
+            for (WebElement btn : allButtons) {
+                String btnText = btn.getText().toLowerCase().trim();
+                tc09.info("🔍 Button tìm thấy: '" + btn.getText() + "'");
+                if (btnText.contains("tạo đơn") && !btnText.contains("lưu")) {
+                    btnTaoDonF4 = btn;
+                    break;
+                }
+            }
+            
+            if (btnTaoDonF4 == null) {
+                attachScreenshot("❌ Không tìm thấy nút Tạo đơn");
+                throw new RuntimeException("Không tìm thấy nút 'Tạo đơn (F4)' trên trang");
+            }
+            
+            // Scroll và highlight
+            js.executeScript("arguments[0].scrollIntoView({block:'center'});", btnTaoDonF4);
+            js.executeScript("arguments[0].style.border='3px solid green'", btnTaoDonF4);
+            Thread.sleep(500);
+            
             String btnInfo = (String) js.executeScript(
                     "var e=arguments[0];" +
                     "return 'text=\"' + (e.innerText||'').trim() + '\" id=' + (e.id||'-') " +
                     "+ ' class=' + (e.className||'-') + ' disabled=' + (e.disabled===true);",
                     btnTaoDonF4);
-            tc09.info("Element sẽ click: " + btnInfo);
-            if (!btnInfo.contains("Tạo đơn")) {
-                throw new RuntimeException("Locator khớp sai element, không phải nút Tạo đơn: " + btnInfo);
-            }
+            tc09.info("✅ Sẽ click button: " + btnInfo);
+            
+            // Chụp ảnh TRƯỚC KHI click
+            attachScreenshot("📸 Trước khi click Tạo đơn");
 
-            js.executeScript("arguments[0].scrollIntoView({block:'center'});", btnTaoDonF4);
-            Thread.sleep(500);
-            // Click native trước; JS click chỉ fallback (JS click bỏ qua overlay/pointer-events).
+            // Click native trước; JS click chỉ fallback
             try {
                 btnTaoDonF4.click();
             } catch (Exception clickEx) {
@@ -479,7 +513,7 @@ public class TC1 extends BaseTest1 {
             }
             Thread.sleep(3000);
 
-            // Bắt toast validation của RSA ngay sau click (toast tự tắt sau vài giây).
+            // Bắt toast validation của RSA ngay sau click
             try {
                 java.util.List<WebElement> toasts = driver.findElements(By.xpath(
                         "//div[contains(@class,'ant-notification-notice') or contains(@class,'ant-message-notice')" +
@@ -491,12 +525,16 @@ public class TC1 extends BaseTest1 {
             } catch (Exception ignore) { }
 
             // Verify đã sang màn thanh toán, không chỉ "đã click".
+            Thread.sleep(2000);
             boolean onPayment = !driver.findElements(By.xpath(
                     "//*[contains(text(),'Phương thức thanh toán')] | //*[contains(text(),'Về giỏ hàng')]")).isEmpty();
+            
+            // Chụp ảnh SAU KHI click
+            attachScreenshot(onPayment ? "✅ Đã sang màn thanh toán" : "❌ KHÔNG sang màn thanh toán");
+            
             if (onPayment) {
                 tc09.pass("✅ Đã click Tạo đơn (F4) — màn thanh toán đã mở");
             } else {
-                attachScreenshot("❌ Click Tạo đơn nhưng KHÔNG sang màn thanh toán");
                 tc09.fail("❌ Click Tạo đơn nhưng vẫn ở màn bán hàng — app chặn tạo đơn (xem thông báo/ảnh ở trên)");
                 throw new RuntimeException("Tạo đơn không có tác dụng — không sang được màn thanh toán");
             }
