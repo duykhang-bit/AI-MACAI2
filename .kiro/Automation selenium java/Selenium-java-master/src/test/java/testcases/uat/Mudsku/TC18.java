@@ -74,7 +74,7 @@ public class TC18 extends BaseTest1 {
         wait = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(30));
     }
 
-    @Test(priority = 1, description = "KM-1026-111", invocationCount = 1)
+    @Test(priority = 1, description = "KM-1026-111 - TK Gia Dinh - Giam gia 30% - Nuoc suc mieng Pearlie White Fluorinze Anti-Bacterial Fluoride (750ml)", invocationCount = 1)
     public void TC018() throws InterruptedException {
 
         JavascriptExecutor js = (JavascriptExecutor) driver;

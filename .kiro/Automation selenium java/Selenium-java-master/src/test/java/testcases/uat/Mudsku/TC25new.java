@@ -79,7 +79,7 @@ public class TC25new extends BaseTest1 {
     }
 
     @Test(priority = 1,
-          description = "KM-1026-118 -- Giam gia 50% - Dung dich ve sinh phu nu Natural Feminine La Trau Khong 100ml",
+          description = "KM-1026-118 - TK Gia Dinh - Giam gia 50% - Dung dich ve sinh phu nu Natural Feminine La Trau Khong (100ml)",
           invocationCount = 1)
     public void TC025new() throws InterruptedException {
 
