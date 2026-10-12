@@ -320,66 +320,6 @@ public class TC17 extends BaseTest1 {
                 qtyInput1);
         Thread.sleep(1500);
         tc08b.pass("Da nhap SL " + BUY_QTY);
-
-        /*
-         * =========================
-         * TC08bb - CLICK VAO O TRANG BEN CANH "SAN PHAM CO TEN VANG"
-         * =========================
-         */
-        ExtentTest tc08bb = test.createNode("TC08bb - Click vao o trang de hien barcode input");
-        WebElement emptyProductCell = wait.until(ExpectedConditions.elementToBeClickable(
-                By.xpath("//div[contains(@class,'search-input-dropdown')]//div[contains(@class,'combodiv')] | " +
-                        "//div[contains(@class,'ant-select-selector')] | " +
-                        "//div[contains(@id,'search-product-input')]//ancestor::div[contains(@class,'ant-select')]")));
-        js.executeScript("arguments[0].scrollIntoView({block: 'center'});", emptyProductCell);
-        Thread.sleep(500);
-        js.executeScript("arguments[0].click();", emptyProductCell);
-        Thread.sleep(1500);
-        tc08bb.pass("Da click vao o trang");
-
-        /*
-         * =========================
-         * TC08bbb - CLICK VAO BARCODE INPUT
-         * =========================
-         */
-        ExtentTest tc08bbb = test.createNode("TC08bbb - Click vao barcode input");
-        WebElement barcodeInput = wait.until(ExpectedConditions.elementToBeClickable(
-                By.xpath("//input[contains(@placeholder,'barcode') or contains(@placeholder,'Barcode') or contains(@placeholder,'F1')]")));
-        barcodeInput.click();
-        Thread.sleep(1500); // Wait for dropdown to appear
-        tc08bbb.pass("Da click vao barcode input");
-
-        /*
-         * =========================
-         * TC08bbbb - CHON SAN PHAM TU DROPDOWN BARCODE
-         * =========================
-         */
-        ExtentTest tc08bbbb = test.createNode("TC08bbbb - Chon san pham tu dropdown barcode");
-        WebElement barcodeDropdownItem = wait.until(ExpectedConditions.elementToBeClickable(
-                By.xpath("//div[contains(@class,'search-input-dropdown') or contains(@class,'ant-select-dropdown')]" +
-                        "//div[contains(@class,'ant-select-item-option') or contains(@class,'combodiv')]")));
-        js.executeScript("arguments[0].scrollIntoView({block: 'center'});", barcodeDropdownItem);
-        Thread.sleep(500);
-        js.executeScript("arguments[0].click();", barcodeDropdownItem);
-        Thread.sleep(1500);
-        tc08bbbb.pass("Da chon san pham tu dropdown barcode");
-
-        /*
-         * =========================
-         * TC08bc - CLICK BUTTON "THEM VAO GIO HANG" (button mau vang)
-         * =========================
-         */
-        ExtentTest tc08bc = test.createNode("TC08bc - Click button Them vao gio hang");
-        WebElement btnThemGioHang = wait.until(ExpectedConditions.elementToBeClickable(
-                By.xpath("//button[contains(@class,'btn-warning') or contains(@class,'ant-btn-primary') and (contains(.,'Thêm') or contains(.,'Them') or contains(.,'giỏ'))]")));
-        js.executeScript("arguments[0].scrollIntoView({block: 'center'});", btnThemGioHang);
-        Thread.sleep(500);
-        js.executeScript("arguments[0].click();", btnThemGioHang);
-        Thread.sleep(2000); // Wait for product to be added
-        tc08bc.pass("Da click button Them vao gio hang");
-
-        tc08.pass("Da them SP " + BUY_PRODUCT_1);
-
         /*
          * =========================
          * TC08.5 - XU LY MODAL "CANH BAO THAY DOI GIA"
@@ -404,6 +344,53 @@ public class TC17 extends BaseTest1 {
             tc08c.info("Khong co modal canh bao thay doi gia");
         }
 
+
+        /*
+         * =========================
+         * TC08bb - CLICK VAO O "THEM BARCODE (F1)" TRONG MODAL CHON SAN PHAM
+         * =========================
+         */
+        ExtentTest tc08bb = test.createNode("TC08bb - Click vao o Them barcode (F1)");
+        WebElement barcodeInput = wait.until(ExpectedConditions.elementToBeClickable(
+                By.xpath("//input[contains(@placeholder,'barcode') or contains(@placeholder,'Barcode') or contains(@placeholder,'F1')] | " +
+                        "//input[contains(@placeholder,'Thêm barcode')]")));
+        js.executeScript("arguments[0].scrollIntoView({block: 'center'});", barcodeInput);
+        Thread.sleep(500);
+        js.executeScript("arguments[0].click();", barcodeInput);
+        Thread.sleep(1500); // Wait for dropdown to appear
+        tc08bb.pass("Da click vao o Them barcode");
+
+        /*
+         * =========================
+         * TC08bbb - CHON BARCODE TU DROPDOWN
+         * =========================
+         */
+        ExtentTest tc08bbb = test.createNode("TC08bbb - Chon barcode tu dropdown");
+        WebElement barcodeDropdownItem = wait.until(ExpectedConditions.elementToBeClickable(
+                By.xpath("//div[contains(@class,'ant-select-dropdown')]//div[contains(@class,'ant-select-item-option')] | " +
+                        "//div[contains(@class,'rc-virtual-list')]//div[contains(@class,'ant-select-item')]")));
+        js.executeScript("arguments[0].scrollIntoView({block: 'center'});", barcodeDropdownItem);
+        Thread.sleep(500);
+        js.executeScript("arguments[0].click();", barcodeDropdownItem);
+        Thread.sleep(1500);
+        tc08bbb.pass("Da chon barcode tu dropdown");
+
+        /*
+         * =========================
+         * TC08bc - CLICK BUTTON "THEM VAO GIO (F4)" TRONG MODAL
+         * =========================
+         */
+        ExtentTest tc08bc = test.createNode("TC08bc - Click button Them vao gio (F4)");
+        WebElement btnThemGioHang = wait.until(ExpectedConditions.elementToBeClickable(
+                By.xpath("//div[contains(@class,'ant-modal')]//button[contains(.,'Thêm vào giỏ') or contains(.,'F4')] | " +
+                        "//button[contains(@class,'ant-btn-primary') and contains(.,'Thêm')]")));
+        js.executeScript("arguments[0].scrollIntoView({block: 'center'});", btnThemGioHang);
+        Thread.sleep(500);
+        js.executeScript("arguments[0].click();", btnThemGioHang);
+        Thread.sleep(2000); // Wait for product to be added
+        tc08bc.pass("Da click button Them vao gio (F4)");
+
+        tc08.pass("Da them SP " + BUY_PRODUCT_1);
 
         /*
          * =========================
