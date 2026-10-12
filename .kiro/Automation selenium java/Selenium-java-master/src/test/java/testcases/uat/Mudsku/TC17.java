@@ -323,22 +323,38 @@ public class TC17 extends BaseTest1 {
 
         /*
          * =========================
-         * TC08bb - CLICK VAO BARCODE INPUT
+         * TC08bb - CLICK VAO O TRANG BEN CANH "SAN PHAM CO TEN VANG"
          * =========================
          */
-        ExtentTest tc08bb = test.createNode("TC08bb - Click vao barcode input");
+        ExtentTest tc08bb = test.createNode("TC08bb - Click vao o trang de hien barcode input");
+        WebElement emptyProductCell = wait.until(ExpectedConditions.elementToBeClickable(
+                By.xpath("//div[contains(@class,'search-input-dropdown')]//div[contains(@class,'combodiv')] | " +
+                        "//div[contains(@class,'ant-select-selector')] | " +
+                        "//div[contains(@id,'search-product-input')]//ancestor::div[contains(@class,'ant-select')]")));
+        js.executeScript("arguments[0].scrollIntoView({block: 'center'});", emptyProductCell);
+        Thread.sleep(500);
+        js.executeScript("arguments[0].click();", emptyProductCell);
+        Thread.sleep(1500);
+        tc08bb.pass("Da click vao o trang");
+
+        /*
+         * =========================
+         * TC08bbb - CLICK VAO BARCODE INPUT
+         * =========================
+         */
+        ExtentTest tc08bbb = test.createNode("TC08bbb - Click vao barcode input");
         WebElement barcodeInput = wait.until(ExpectedConditions.elementToBeClickable(
                 By.xpath("//input[contains(@placeholder,'barcode') or contains(@placeholder,'Barcode') or contains(@placeholder,'F1')]")));
         barcodeInput.click();
         Thread.sleep(1500); // Wait for dropdown to appear
-        tc08bb.pass("Da click vao barcode input");
+        tc08bbb.pass("Da click vao barcode input");
 
         /*
          * =========================
-         * TC08bbb - CHON SAN PHAM TU DROPDOWN BARCODE
+         * TC08bbbb - CHON SAN PHAM TU DROPDOWN BARCODE
          * =========================
          */
-        ExtentTest tc08bbb = test.createNode("TC08bbb - Chon san pham tu dropdown barcode");
+        ExtentTest tc08bbbb = test.createNode("TC08bbbb - Chon san pham tu dropdown barcode");
         WebElement barcodeDropdownItem = wait.until(ExpectedConditions.elementToBeClickable(
                 By.xpath("//div[contains(@class,'search-input-dropdown') or contains(@class,'ant-select-dropdown')]" +
                         "//div[contains(@class,'ant-select-item-option') or contains(@class,'combodiv')]")));
@@ -346,7 +362,7 @@ public class TC17 extends BaseTest1 {
         Thread.sleep(500);
         js.executeScript("arguments[0].click();", barcodeDropdownItem);
         Thread.sleep(1500);
-        tc08bbb.pass("Da chon san pham tu dropdown barcode");
+        tc08bbbb.pass("Da chon san pham tu dropdown barcode");
 
         /*
          * =========================
