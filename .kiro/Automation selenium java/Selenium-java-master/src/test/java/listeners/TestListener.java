@@ -32,10 +32,17 @@ public class TestListener implements ITestListener {
     }
 
     public void onTestSkipped(ITestResult result) {
+        // ExtentTest duoc tao trong BaseTest1 (field 'test'), KHONG set vao ThreadLocal cua listener
+        // => test.get() co the null. Phai null-safe neu khong se nem NPE va bien SKIP thanh FAIL.
+        String reason = (result.getThrowable() != null ? result.getThrowable().getMessage() : "Unknown");
         ExtentTest extentTest = test.get();
-        extentTest.skip("⏭️ TEST SKIPPED");
-        extentTest.skip("Skip Reason: " + (result.getThrowable() != null ? result.getThrowable().getMessage() : "Unknown"));
-        extentTest.info("Test Skipped at: " + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()));
+        if (extentTest != null) {
+            extentTest.skip("⏭️ TEST SKIPPED");
+            extentTest.skip("Skip Reason: " + reason);
+            extentTest.info("Test Skipped at: " + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()));
+        } else {
+            System.out.println("[TestListener] ⏭️ SKIPPED: " + result.getName() + " | Reason: " + reason);
+        }
     }
 
     public void onStart(ITestContext context) {
