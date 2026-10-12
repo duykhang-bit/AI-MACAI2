@@ -292,11 +292,27 @@ public class TC4 extends BaseTest1 {
         ExtentTest tc06 = test.createNode("TC06 - Nhập mã inside 00017");
 
         // Đợi popup quét mã inside xuất hiện và tìm ô input
-        WebElement insideInput = wait.until(
-                ExpectedConditions.elementToBeClickable(
-                        By.xpath("//div[contains(@class,'modal') or contains(@class,'popup') or contains(@class,'dialog') or contains(@class,'ant-modal')]" +
-                                "//input[@type='text' or @type='search'] | " +
-                                "//input[contains(@placeholder,'inside') or contains(@placeholder,'mã')]")));
+        By insideLocator = By.xpath("//div[contains(@class,'modal') or contains(@class,'popup') or contains(@class,'dialog') or contains(@class,'ant-modal')]" +
+                "//input[@type='text' or @type='search'] | " +
+                "//input[contains(@placeholder,'inside') or contains(@placeholder,'mã')]");
+        WebElement insideInput;
+        try {
+            insideInput = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(15))
+                    .until(ExpectedConditions.elementToBeClickable(insideLocator));
+        } catch (TimeoutException e) {
+            // Trang Ban hang load trang (chua co tab don, khong hien popup inside) -> reload lai trang
+            tc06.info("Trang Ban hang chua load (khong co popup inside) -> reload trang");
+            driver.navigate().refresh();
+            Thread.sleep(4000);
+            wait.until(ExpectedConditions.urlContains("sell"));
+            try {
+                WebElement btnDeSau = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(5))
+                        .until(ExpectedConditions.elementToBeClickable(By.xpath("//button[contains(.,'Để sau')]")));
+                js.executeScript("arguments[0].click();", btnDeSau);
+                Thread.sleep(1000);
+            } catch (TimeoutException ignore) { }
+            insideInput = wait.until(ExpectedConditions.elementToBeClickable(insideLocator));
+        }
         insideInput.clear();
         insideInput.sendKeys("00017");
         Thread.sleep(1500);
