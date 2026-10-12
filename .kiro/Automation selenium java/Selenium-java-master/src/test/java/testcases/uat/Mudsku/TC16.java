@@ -544,6 +544,7 @@ public class TC16 extends BaseTest1 {
                         " or contains(@class,'Toastify__toast')]"));
                 for (WebElement t : toasts) {
                     String msg = t.getText().replace("\n", " ").trim();
+                    if (!msg.isEmpty()) utils.MudskuHelper.noteToast(msg);
                     if (!msg.isEmpty()) tc13.warning("⚠️ Thông báo từ app sau khi click Tạo đơn: " + msg);
                 }
             } catch (Exception ignore) { }
@@ -558,6 +559,7 @@ public class TC16 extends BaseTest1 {
             } else {
                 attachScreenshot("Click Tao don nhung khong sang man thanh toan");
                 tc13.fail("Click Tao don nhung van o man ban hang");
+                utils.MudskuHelper.skipIfOutOfStock(driver); // SKU khong du ton -> SKIP
                 throw new RuntimeException("Tao don khong co tac dung");
             }
 
@@ -619,6 +621,7 @@ public class TC16 extends BaseTest1 {
             tc15.pass("Hoan tat! Ma don: " + orderCode);
 
         } catch (Exception e) {
+            if (e instanceof org.testng.SkipException) throw (org.testng.SkipException) e; // loi data -> SKIP
             orderCode = "KHONG TAO DUOC DON";
             attachScreenshot("Loi o luong tao don");
             test.fail("Loi khi tao don: " + e.getMessage());
@@ -661,9 +664,7 @@ public class TC16 extends BaseTest1 {
         js.executeScript("arguments[0].click();", searchBtn);
         Thread.sleep(3000);
 
-        WebElement productItem = wait.until(ExpectedConditions.elementToBeClickable(
-                By.xpath("//div[contains(@class,'search-input-dropdown')]//div[contains(@class,'ant-select-item-option')]")));
-        js.executeScript("arguments[0].click();", productItem);
-        Thread.sleep(2500);
+        // Dropdown ket qua / panel Tem vang (barcode) / SKU khong co tren UAT -> SKIP
+        utils.MudskuHelper.addProductAfterSearch(driver, js, sku);
     }
 }
