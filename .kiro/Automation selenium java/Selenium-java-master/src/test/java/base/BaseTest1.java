@@ -140,7 +140,7 @@ public class BaseTest1 {
         }
 
         if (driver != null) {
-          //driver.quit();// bật tắt chrome
+          driver.quit();// bật tắt chrome
         }
     }
 
@@ -171,6 +171,37 @@ public class BaseTest1 {
         }
 
         extent.flush();
+
+        // Archive report kèm timestamp + số TC để KHONG bi ghi de boi lan chay sau
+        archiveReport(total, passed, failed);
+    }
+
+    /**
+     * Copy report vua flush sang test-output/archive/ voi ten co timestamp.
+     * Giup giu lai report cu khi chay lai 1 TC rieng le (ExtentSparkReporter luon ghi de file goc).
+     */
+    private void archiveReport(int total, int passed, int failed) {
+        try {
+            File reportFile = new File(config.getReportPath());
+            if (!reportFile.exists()) {
+                System.out.println("[Report] Khong tim thay report de archive: " + reportFile.getAbsolutePath());
+                return;
+            }
+
+            File archiveDir = new File(reportFile.getParentFile(), "archive");
+            archiveDir.mkdirs();
+
+            String stamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+            String name = String.format("ExtentReport_%s_%dTC_%dpass_%dfail.html",
+                    stamp, total, passed, failed);
+
+            File dest = new File(archiveDir, name);
+            FileUtils.copyFile(reportFile, dest);
+
+            System.out.println("[Report] Da archive: " + dest.getAbsolutePath());
+        } catch (Exception e) {
+            System.err.println("[Report] Archive loi: " + e.getMessage());
+        }
     }
 
     /* =====================================================

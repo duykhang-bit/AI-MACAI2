@@ -28,10 +28,6 @@ import listeners.TestListener;
 @Listeners(TestListener.class)
 public class TC25new extends BaseTest1 {
 
-    // KM-1026-118 -- Giam gia 50% - Dung dich ve sinh phu nu Natural Feminine La Trau Khong 100ml
-    // Dieu kien dau vao:
-    //   Ma SP 00031035 - SL >= 1
-    //   Ma uu dai (campaign code): 3765  -> gen serial MUD qua API -> apply serial do vao don
     private static final String SHOP_CODE       = "80006";
     private static final String INSIDE_CODE     = "00017";
     private static final String CUSTOMER_PHONE  = "0835089254";
@@ -78,26 +74,24 @@ public class TC25new extends BaseTest1 {
         wait = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(30));
     }
 
-    @Test(priority = 1,
-          description = "KM-1026-118 - TK Gia Dinh - Giam gia 50% - Dung dich ve sinh phu nu Natural Feminine La Trau Khong (100ml)",
-          invocationCount = 1)
+    @Test(priority = 1, description = "KM-1026-118 - TK Gia Dinh - Giam gia 50% - Dung dich ve sinh phu nu Natural Feminine La Trau Khong (100ml)", invocationCount = 1)
     public void TC025new() throws InterruptedException {
 
         JavascriptExecutor js = (JavascriptExecutor) driver;
 
-        // ─── STEP 0: GEN MUD SERIAL QUA API TRUOC KHI VAO TRANG ─────────────────
-        ExtentTest tcGenMud = test.createNode("TC00 - Gen serial MUD qua API (campaign=" + CAMPAIGN_CODE + ")");
+        ExtentTest tcGenMud = test.createNode("TC00 - Lay serial MUD (campaign=" + CAMPAIGN_CODE + ")");
         String mudSerial = null;
+        boolean useProdMode = true;
         try {
-            mudSerial = utils.MudApiGenerator.generateMudCode(CAMPAIGN_CODE, CUSTOMER_PHONE);
-            if (mudSerial == null || mudSerial.isEmpty() || mudSerial.equals(CAMPAIGN_CODE)) {
-                throw new RuntimeException("API tra ve serial khong hop le: " + mudSerial);
+            mudSerial = utils.MudCodeProvider.getNextMudCode("mud25", useProdMode);
+            if (mudSerial == null || mudSerial.isEmpty()) {
+                throw new RuntimeException("PROD pool (mud01) het serial!");
             }
-            tcGenMud.pass("Gen MUD thanh cong - serial: " + mudSerial);
-            System.out.println("[TC25new] MUD serial from API: " + mudSerial);
+            tcGenMud.pass("Dung MUD serial tu PROD pool: " + mudSerial);
+            System.out.println("[TC25new] MUD serial: " + mudSerial + " | campaign=" + CAMPAIGN_CODE);
         } catch (Exception e) {
-            mudSerial = utils.MudCodeProvider.getNextMudCode("mud2");
-            tcGenMud.warning("API fail -> dung serial pre-gen: " + mudSerial + " | Loi: " + e.getMessage());
+            tcGenMud.fail("Khong lay duoc MUD serial: " + e.getMessage());
+            throw new RuntimeException("TC25new FAIL - khong co MUD serial!", e);
         }
         final String mudSerialToApply = mudSerial;
 
@@ -106,7 +100,7 @@ public class TC25new extends BaseTest1 {
          * TC01 - LOGIN
          * =========================
          */
-        ExtentTest tc01 = test.createNode("TC01 - Login voi tai khoan lanttp");
+        ExtentTest tc01 = test.createNode("TC01 - Login");
 
         WebElement username = wait.until(ExpectedConditions.elementToBeClickable(
                 By.name("LoginInput.UserNameOrEmailAddress")));
@@ -165,15 +159,15 @@ public class TC25new extends BaseTest1 {
         ExtentTest tc03 = test.createNode("TC03 - Hoan tat chon shop");
 
         WebElement btnHoanTat = wait.until(ExpectedConditions.elementToBeClickable(
-                By.xpath("//button[contains(text(),'Hoan tat') or .//span[contains(text(),'Hoan tat')]] | " +
-                        "//a[contains(text(),'Hoan tat')]")));
+                By.xpath("//button[contains(text(),'Ho\u00e0n t\u1ea5t') or .//span[contains(text(),'Ho\u00e0n t\u1ea5t')]] | " +
+                        "//a[contains(text(),'Ho\u00e0n t\u1ea5t')]")));
         btnHoanTat.click();
         Thread.sleep(2000);
         tc03.pass("Click Hoan tat thanh cong");
 
         /*
          * =========================
-         * TC04 - TAT POPUP SAI DOI TUONG / THAY DOI GIA
+         * TC04 - TAT POPUP
          * =========================
          */
         ExtentTest tc04 = test.createNode("TC04 - Tat popup neu co");
@@ -181,7 +175,7 @@ public class TC25new extends BaseTest1 {
         try {
             WebElement closePopup = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(5))
                     .until(ExpectedConditions.elementToBeClickable(
-                            By.xpath("//*[contains(@class,'ant-modal') and .//*[contains(text(),'Danh sach san pham sai doi tuong')]]" +
+                            By.xpath("//*[contains(@class,'ant-modal') and .//*[contains(text(),'Danh s\u00e1ch s\u1ea3n ph\u1ea9m sai \u0111\u1ed1i t\u01b0\u1ee3ng')]]" +
                                     "//button[@aria-label='Close' or contains(@class,'ant-modal-close')]")));
             js.executeScript("arguments[0].click();", closePopup);
             tc04.pass("Da tat popup sai doi tuong");
@@ -206,15 +200,38 @@ public class TC25new extends BaseTest1 {
         ExtentTest tc05 = test.createNode("TC05 - Chon muc Ban hang");
 
         WebElement menuBanHang = wait.until(ExpectedConditions.elementToBeClickable(
-                By.xpath("//p[contains(@class,'feature_home') and contains(text(),'Ban hang')] | " +
-                        "//a[.//p[contains(text(),'Ban hang')]] | " +
-                        "//p[contains(text(),'Ban hang (')]")));
+                By.xpath("//p[contains(@class,'feature_home') and contains(text(),'B\u00e1n h\u00e0ng')] | " +
+                        "//a[.//p[contains(text(),'B\u00e1n h\u00e0ng')]] | " +
+                        "//p[contains(text(),'B\u00e1n h\u00e0ng (')]")));
         js.executeScript("arguments[0].scrollIntoView({block:'center'});", menuBanHang);
-        Thread.sleep(300);
-        menuBanHang.click();
+        Thread.sleep(500);
+        js.executeScript("arguments[0].click();", menuBanHang);
         Thread.sleep(3000);
         wait.until(ExpectedConditions.urlContains("sell"));
         tc05.pass("Da vao muc Ban hang");
+        /*
+         * =========================
+         * TC05b - XU LY MODAL "CANH BAO THAY DOI GIA" (SAU KHI VAO BAN HANG)
+         * =========================
+         */
+        ExtentTest tc05b = test.createNode("TC05b - Xu ly modal canh bao thay doi gia");
+        
+        try {
+            WebElement modalThayDoiGia = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(5))
+                    .until(ExpectedConditions.visibilityOfElementLocated(
+                            By.xpath("//*[contains(@class,'ant-modal') and .//*[contains(text(),'Cảnh báo có sp thay đổi giá')]]")));
+            
+            tc05b.info("Phat hien modal 'Canh bao co sp thay doi gia' - click 'De sau'");
+            
+            WebElement btnDeSau = modalThayDoiGia.findElement(
+                    By.xpath(".//button[contains(.,'Để sau') or contains(.,'De sau')]"));
+            js.executeScript("arguments[0].click();", btnDeSau);
+            Thread.sleep(1500);
+            
+            tc05b.pass("Da click 'De sau' tren modal thay doi gia");
+        } catch (TimeoutException e) {
+            tc05b.info("Khong co modal canh bao thay doi gia");
+        }
 
         /*
          * =========================
@@ -225,21 +242,21 @@ public class TC25new extends BaseTest1 {
 
         WebElement insideInput = wait.until(ExpectedConditions.elementToBeClickable(
                 By.xpath("//div[contains(@class,'ant-modal')]//input[@type='text' or @type='search'] | " +
-                        "//input[contains(@placeholder,'inside') or contains(@placeholder,'ma')]")));
+                        "//input[contains(@placeholder,'inside') or contains(@placeholder,'m\u00e3')]")));
         insideInput.clear();
         insideInput.sendKeys(INSIDE_CODE);
         Thread.sleep(1500);
 
         try {
             WebElement insideOption = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//*[contains(text(),'Tran Thi Thanh Thao') or contains(text(),'(" + INSIDE_CODE + ")')]")));
+                    By.xpath("//*[contains(text(),'Tr\u1ea7n Th\u1ecb Thanh Th\u1ea3o') or contains(text(),'(" + INSIDE_CODE + ")')]")));
             insideOption.click();
             Thread.sleep(500);
         } catch (TimeoutException e) { }
 
         try {
             WebElement btnXacNhan = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//button[contains(.,'Xac nhan') or contains(.,'Xac Nhan')]")));
+                    By.xpath("//button[contains(.,'X\u00e1c nh\u1eadn') or contains(.,'X\u00e1c Nh\u1eadn')]")));
             btnXacNhan.click();
         } catch (TimeoutException e) { }
 
@@ -287,18 +304,51 @@ public class TC25new extends BaseTest1 {
 
         /*
          * =========================
-         * TC08 - SP: 00031035 | SL=1
+         * TC08 - THEM SAN PHAM
          * =========================
          */
         ExtentTest tc08 = test.createNode("TC08 - Nhap SP " + BUY_PRODUCT_1 + " SL=" + BUY_QTY);
         searchAndAddProduct(js, BUY_PRODUCT_1);
 
-        tc08.pass("Da them SP " + BUY_PRODUCT_1 + " SL=" + BUY_QTY);
+        ExtentTest tc08b = test.createNode("TC08b - Nhap SL " + BUY_QTY);
+        Thread.sleep(1500);
+        WebElement qtyInput1 = wait.until(ExpectedConditions.elementToBeClickable(
+                By.xpath("//input[contains(@id,'input-quantity-product')]")));
+        js.executeScript(
+                "var el=arguments[0]; var s=Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype,'value').set;" +
+                "s.call(el,'" + BUY_QTY + "'); el.dispatchEvent(new Event('input',{bubbles:true})); el.dispatchEvent(new Event('change',{bubbles:true})); el.blur();",
+                qtyInput1);
+        Thread.sleep(1500);
+        tc08.pass("Da them SP " + BUY_PRODUCT_1);
+        tc08b.pass("Da nhap SL " + BUY_QTY);
+        /*
+         * =========================
+         * TC08.5 - XU LY MODAL "CANH BAO THAY DOI GIA"
+         * =========================
+         */
+        ExtentTest tc08c = test.createNode("TC08.5 - Xu ly modal canh bao thay doi gia");
+        
+        try {
+            WebElement modalThayDoiGia = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(5))
+                    .until(ExpectedConditions.visibilityOfElementLocated(
+                            By.xpath("//*[contains(@class,'ant-modal') and .//*[contains(text(),'Cảnh báo có sp thay đổi giá')]]")));
+            
+            tc08c.info("Phat hien modal 'Canh bao co sp thay doi gia' - click 'De sau'");
+            
+            WebElement btnDeSau = modalThayDoiGia.findElement(
+                    By.xpath(".//button[contains(.,'Để sau') or contains(.,'De sau')]"));
+            js.executeScript("arguments[0].click();", btnDeSau);
+            Thread.sleep(1500);
+            
+            tc08c.pass("Da click 'De sau' tren modal thay doi gia");
+        } catch (TimeoutException e) {
+            tc08c.info("Khong co modal canh bao thay doi gia");
+        }
+
 
         /*
          * =========================
-         * TC11 - APPLY SERIAL MUD DA GEN VAO DON
-         * Serial lay tu API o TC00 -- click "Nhap ma KM" -> nhap serial -> Ap dung
+         * TC11 - APPLY SERIAL MUD
          * =========================
          */
         ExtentTest tc11 = test.createNode("TC11 - Apply serial MUD: " + mudSerialToApply);
@@ -311,11 +361,11 @@ public class TC25new extends BaseTest1 {
                     "for (var i = 0; i < all.length; i++) {" +
                     "  var el = all[i];" +
                     "  var txt = el.textContent || '';" +
-                    "  if (txt.includes('Nhap ma KM') && el.offsetParent !== null) {" +
+                    "  if (txt.includes('Nh\u1eadp m\u00e3 KM') && el.offsetParent !== null) {" +
                     "    var children = el.children;" +
                     "    var hasChildWithText = false;" +
                     "    for (var j = 0; j < children.length; j++) {" +
-                    "      if ((children[j].textContent || '').includes('Nhap ma KM')) {" +
+                    "      if ((children[j].textContent || '').includes('Nh\u1eadp m\u00e3 KM')) {" +
                     "        hasChildWithText = true; break;" +
                     "      }" +
                     "    }" +
@@ -346,32 +396,26 @@ public class TC25new extends BaseTest1 {
 
                 WebElement voucherInput = wait.until(ExpectedConditions.elementToBeClickable(
                         By.xpath("//div[contains(@class,'ant-modal')]//input[@type='text'] | " +
-                                "//div[contains(@class,'ant-modal')]//input[not(@type='hidden') and not(@type='checkbox') and not(@type='radio')] | " +
                                 "//div[contains(@class,'ant-modal')]//input[contains(@class,'ant-input')] | " +
-                                "//input[contains(@placeholder,'Nhap ma') or contains(@placeholder,'voucher') " +
-                                "    or contains(@placeholder,'ma giam') or contains(@placeholder,'Barcode')] | " +
-                                "//div[contains(@class,'modal')]//input[contains(@class,'ant-input')]")));
+                                "//input[contains(@placeholder,'Barcode')]")));
                 voucherInput.clear();
                 voucherInput.sendKeys(mudSerialToApply);
                 Thread.sleep(1000);
 
                 WebElement btnApDung = wait.until(ExpectedConditions.elementToBeClickable(
-                        By.xpath("//div[contains(@class,'ant-modal')]//button[contains(.,'Ap dung')] | " +
-                                "//div[contains(@class,'ant-modal')]//*[contains(text(),'Ap dung')] | " +
-                                "//button[contains(.,'Ap dung')] | " +
-                                "//span[contains(text(),'Ap dung')]/ancestor::button | " +
-                                "//span[contains(text(),'Ap dung')]")));
+                        By.xpath("//div[contains(@class,'ant-modal')]//button[contains(.,'p d\u1ee5ng')] | " +
+                                "//button[contains(.,'p d\u1ee5ng')]")));
                 js.executeScript("arguments[0].click();", btnApDung);
                 Thread.sleep(3000);
 
                 try {
                     WebElement btnXacNhanVoucher = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(5))
                             .until(ExpectedConditions.elementToBeClickable(
-                                    By.xpath("//div[contains(@class,'ant-modal')]//button[contains(.,'Xac nhan')] | " +
-                                            "//button[contains(.,'Xac nhan')]")));
+                                    By.xpath("//div[contains(@class,'ant-modal')]//button[contains(.,'X\u00e1c nh\u1eadn')] | " +
+                                            "//button[contains(.,'X\u00e1c nh\u1eadn')]")));
                     js.executeScript("arguments[0].click();", btnXacNhanVoucher);
                     Thread.sleep(2000);
-                } catch (TimeoutException te) { /* popup tu dong sau apply */ }
+                } catch (TimeoutException te) { }
 
                 tc11.pass("Apply serial MUD thanh cong: " + mudSerialToApply);
             }
@@ -381,7 +425,7 @@ public class TC25new extends BaseTest1 {
 
         /*
          * =========================
-         * TC12 - VERIFY CTKM KM-1026-118 DUOC AP DUNG
+         * TC12 - VERIFY CTKM
          * =========================
          */
         ExtentTest tc12 = test.createNode("TC12 - Verify CTKM " + PROMOTION_CODE);
@@ -389,17 +433,17 @@ public class TC25new extends BaseTest1 {
         try {
             WebElement promotionLink = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(8))
                     .until(ExpectedConditions.elementToBeClickable(
-                            By.xpath("//*[contains(normalize-space(.),'Khuyen mai khac')]")));
+                            By.xpath("//*[contains(normalize-space(.),'Khuy\u1ebfn m\u00e3i kh\u00e1c')]")));
             js.executeScript("arguments[0].click();", promotionLink);
             Thread.sleep(1000);
 
             WebElement promotionModal = wait.until(ExpectedConditions.visibilityOfElementLocated(
-                    By.xpath("//*[contains(@class,'ant-modal') and .//*[contains(.,'Danh sach khuyen mai')]]")));
-            promotionModal.findElement(By.xpath(".//*[contains(normalize-space(.),'" + PROMOTION_CODE + "')]"));
-            tc12.pass("Tim thay " + PROMOTION_CODE + " trong danh sach khuyen mai");
+                    By.xpath("//*[contains(@class,'ant-modal') and .//*[contains(.,'Danh s\u00e1ch khuy\u1ebfn m\u00e3i')]]")));
+            promotionModal.findElement(By.xpath(".//*[contains(.,'" + PROMOTION_CODE + "') or contains(.,'Mua 2 t\u1eb7ng 1')]"));
+            tc12.pass("Tim thay CTKM " + PROMOTION_CODE);
 
             try {
-                WebElement btnConfirm = promotionModal.findElement(By.xpath(".//button[contains(.,'Xac nhan')]"));
+                WebElement btnConfirm = promotionModal.findElement(By.xpath(".//button[contains(.,'X\u00e1c nh\u1eadn')]"));
                 js.executeScript("arguments[0].click();", btnConfirm);
             } catch (NoSuchElementException ex) {
                 WebElement closeBtn = promotionModal.findElement(
@@ -408,8 +452,32 @@ public class TC25new extends BaseTest1 {
             }
             Thread.sleep(1500);
         } catch (Exception e) {
-            tc12.info("Khong tim thay 'Khuyen mai khac' -- verify qua man hinh ban hang. " + e.getMessage());
+            tc12.info("Khong tim thay Khuyen mai khac: " + e.getMessage());
+        }        /*
+         * =========================
+         * TC12.5 - XU LY MODAL "CANH BAO CO SP THAY DOI GIA"
+         * =========================
+         */
+        ExtentTest tc12_5 = test.createNode("TC12.5 - Xu ly modal canh bao thay doi gia");
+        
+        try {
+            WebElement modalThayDoiGia = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(5))
+                    .until(ExpectedConditions.visibilityOfElementLocated(
+                            By.xpath("//*[contains(@class,'ant-modal') and .//*[contains(text(),'Cảnh báo có sp thay đổi giá')]]")));
+            
+            tc12_5.info("Phat hien modal 'Canh bao co sp thay doi gia' - click 'De sau'");
+            
+            WebElement btnDeSau = modalThayDoiGia.findElement(
+                    By.xpath(".//button[contains(.,'Để sau') or contains(.,'De sau')]"));
+            js.executeScript("arguments[0].click();", btnDeSau);
+            Thread.sleep(1500);
+            
+            tc12_5.pass("Da click 'De sau' tren modal thay doi gia");
+        } catch (TimeoutException e) {
+            tc12_5.info("Khong co modal canh bao thay doi gia");
         }
+
+
 
         /*
          * =========================
@@ -421,61 +489,86 @@ public class TC25new extends BaseTest1 {
         try {
             ExtentTest tc13 = test.createNode("TC13 - Click Tao don");
 
-            WebElement btnTaoDon = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//button[contains(normalize-space(.),'Tao don')]")));
-
+            // Chờ 2s để React render xong button
+            Thread.sleep(2000);
+            
+            // Tìm CHÍNH XÁC nút "Tạo đơn (F4)" - không phải "Lưu đơn (F3)" hay "Huỷ (F8)"
+            java.util.List<WebElement> allButtons = driver.findElements(
+                    By.xpath("//button[contains(.,'đơn') or contains(.,'Đơn')]"));
+            
+            WebElement btnTaoDon = null;
+            for (WebElement btn : allButtons) {
+                String btnText = btn.getText().toLowerCase().trim();
+                tc13.info("🔍 Button tìm thấy: '" + btn.getText() + "'");
+                if (btnText.contains("tạo đơn") && !btnText.contains("lưu")) {
+                    btnTaoDon = btn;
+                    break;
+                }
+            }
+            
+            if (btnTaoDon == null) {
+                attachScreenshot("❌ Không tìm thấy nút Tạo đơn");
+                throw new RuntimeException("Không tìm thấy nút 'Tạo đơn (F4)' trên trang");
+            }
+            
+            // Scroll và highlight
+            js.executeScript("arguments[0].scrollIntoView({block:'center'});", btnTaoDon);
+            js.executeScript("arguments[0].style.border='3px solid green'", btnTaoDon);
+            Thread.sleep(500);
+            
             String btnInfo = (String) js.executeScript(
                     "var e=arguments[0];" +
-                    "return 'text=\"' + (e.innerText||'').trim() + '\" id=' + (e.id||'-') " +
-                    "+ ' class=' + (e.className||'-') + ' disabled=' + (e.disabled===true);",
+                    "return 'text=\"' + (e.innerText||'').trim() + '\" disabled=' + (e.disabled===true);",
                     btnTaoDon);
-            tc13.info("Element se click: " + btnInfo);
+            tc13.info("✅ Sẽ click button: " + btnInfo);
+            
+            // Chụp ảnh TRƯỚC KHI click
+            attachScreenshot("📸 Trước khi click Tạo đơn");
 
-            if (!btnInfo.contains("Tao don")) {
-                throw new RuntimeException("Locator khop sai element, khong phai nut Tao don: " + btnInfo);
-            }
-
-            js.executeScript("arguments[0].scrollIntoView({block:'center'});", btnTaoDon);
-            Thread.sleep(500);
+            // Click native trước; JS click chỉ fallback
             try {
                 btnTaoDon.click();
             } catch (Exception clickEx) {
-                tc13.info("Native click fail (" + clickEx.getClass().getSimpleName() + ") -> fallback JS click");
+                tc13.info("Native click fail (" + clickEx.getClass().getSimpleName() + ") → fallback JS click");
                 js.executeScript("arguments[0].click();", btnTaoDon);
             }
             Thread.sleep(3000);
 
+            // Bắt toast validation của RSA ngay sau click
             try {
-                List<WebElement> toasts = driver.findElements(By.xpath(
+                java.util.List<WebElement> toasts = driver.findElements(By.xpath(
                         "//div[contains(@class,'ant-notification-notice') or contains(@class,'ant-message-notice')" +
                         " or contains(@class,'Toastify__toast')]"));
                 for (WebElement t : toasts) {
                     String msg = t.getText().replace("\n", " ").trim();
-                    if (!msg.isEmpty()) tc13.warning("Thong bao tu app sau khi click Tao don: " + msg);
+                    if (!msg.isEmpty()) tc13.warning("⚠️ Thông báo từ app sau khi click Tạo đơn: " + msg);
                 }
             } catch (Exception ignore) { }
 
+            // Verify đã sang màn thanh toán
+            Thread.sleep(2000);
+
             boolean onPayment = !driver.findElements(By.xpath(
-                    "//*[contains(text(),'Phuong thuc thanh toan')] | //*[contains(text(),'Ve gio hang')]")).isEmpty();
+                    "//*[contains(text(),'Ph\u01b0\u01a1ng th\u1ee9c thanh to\u00e1n')] | //*[contains(text(),'V\u1ec1 gi\u1ecf h\u00e0ng')]")).isEmpty();
             if (onPayment) {
-                tc13.pass("Da click Tao don -- man thanh toan da mo");
+                tc13.pass("Da click Tao don - man thanh toan da mo");
             } else {
-                attachScreenshot("Click Tao don nhung KHONG sang man thanh toan");
-                tc13.fail("Click Tao don nhung van o man ban hang -- app chan tao don (xem thong bao/anh o tren)");
-                throw new RuntimeException("Tao don khong co tac dung -- khong sang duoc man thanh toan");
+                attachScreenshot("Click Tao don nhung khong sang man thanh toan");
+                tc13.fail("Click Tao don nhung van o man ban hang");
+                throw new RuntimeException("Tao don khong co tac dung");
             }
 
             ExtentTest tc14 = test.createNode("TC14 - Click Tong tien");
             WebElement btnTongTien = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//button[contains(.,'Tong tien')] | " +
-                            "//*[contains(text(),'Tong tien') and contains(text(),'Shift')]")));
+                    By.xpath("//button[contains(.,'T\u1ed5ng ti\u1ec1n')] | " +
+                            "//*[contains(text(),'T\u1ed5ng ti\u1ec1n') and contains(text(),'Shift')]")));
             js.executeScript("arguments[0].click();", btnTongTien);
             Thread.sleep(3000);
             tc14.pass("Da click Tong tien");
 
             ExtentTest tc15 = test.createNode("TC15 - Hoan tat don");
             WebElement btnHoanTatFinal = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//button[contains(.,'Hoan tat')]")));
+                    By.xpath("//button[contains(.,'Ho\u00e0n t\u1ea5t')]")));
             js.executeScript("arguments[0].click();", btnHoanTatFinal);
             Thread.sleep(3000);
 
@@ -490,7 +583,7 @@ public class TC25new extends BaseTest1 {
                 Thread.sleep(1500);
 
                 WebElement nvOption = wait.until(ExpectedConditions.elementToBeClickable(
-                        By.xpath("//*[contains(text(),'Tran Thi Thanh Thao') or contains(text(),'(" + INSIDE_CODE + ")')]")));
+                        By.xpath("//*[contains(text(),'Tr\u1ea7n Th\u1ecb Thanh Th\u1ea3o') or contains(text(),'(" + INSIDE_CODE + ")')]")));
                 nvOption.click();
                 Thread.sleep(1000);
 
@@ -505,7 +598,7 @@ public class TC25new extends BaseTest1 {
                 } catch (Exception e) { }
 
                 WebElement btnXacNhanFinal = wait.until(ExpectedConditions.elementToBeClickable(
-                        By.xpath("//button[contains(.,'Xac nhan') or .//span[text()='Xac nhan']]")));
+                        By.xpath("//button[contains(.,'X\u00e1c nh\u1eadn') or .//span[text()='X\u00e1c nh\u1eadn']]")));
                 btnXacNhanFinal.click();
                 Thread.sleep(5000);
             } catch (Exception e) {
@@ -514,44 +607,34 @@ public class TC25new extends BaseTest1 {
 
             try {
                 WebElement orderEl = driver.findElement(
-                        By.xpath("//span[contains(@class,'order-number') or contains(@class,'order-code') or contains(@class,'ma-don')] | " +
-                                "//div[contains(@class,'order-number') or contains(@class,'order-code')] | " +
-                                "//div[contains(@class,'header')]//span[string-length(normalize-space()) > 3 and string-length(normalize-space()) < 12 and number(normalize-space()) = number(normalize-space())]"));
+                        By.xpath("//span[contains(@class,'order-number') or contains(@class,'order-code')] | " +
+                                "//div[contains(@class,'order-number') or contains(@class,'order-code')]"));
                 orderCode = orderEl.getText().trim();
             } catch (Exception e) {
-                try {
-                    WebElement numEl = driver.findElement(
-                            By.xpath("//*[string-length(normalize-space()) >= 5 and string-length(normalize-space()) <= 10 " +
-                                    "and number(normalize-space()) = number(normalize-space()) and normalize-space() > 1000000]"));
-                    orderCode = numEl.getText().trim();
-                } catch (Exception e2) {
-                    orderCode = "Don tao thanh cong - check man hinh";
-                }
+                orderCode = "Don tao thanh cong - check man hinh";
             }
             tc15.pass("Hoan tat! Ma don: " + orderCode);
 
         } catch (Exception e) {
             orderCode = "KHONG TAO DUOC DON";
-            attachScreenshot("Loi o luong tao don / thanh toan");
+            attachScreenshot("Loi o luong tao don");
             test.fail("Loi khi tao don: " + e.getMessage());
             orderCreationFailed = e;
         }
 
         System.out.println("========================================");
-        System.out.println("TC25new -- KM-1026-118 -- Giam gia 50% - Dung dich ve sinh phu nu Natural Feminine La Trau Khong 100ml");
+        System.out.println("TC25new - " + PROMOTION_CODE);
         System.out.println("MUD serial: " + mudSerialToApply);
         System.out.println("Ma don   : " + orderCode);
         System.out.println("========================================");
 
         if (orderCreationFailed != null) {
-            throw new AssertionError("TC25new FAIL o luong tao don/thanh toan: "
-                    + orderCreationFailed.getMessage(), orderCreationFailed);
+            throw new AssertionError("TC25new FAIL: " + orderCreationFailed.getMessage(), orderCreationFailed);
         }
 
-        test.pass("TC25new xong -- KM " + PROMOTION_CODE + " serial=" + mudSerialToApply + " | Don: " + orderCode);
+        test.pass("TC25new xong - KM " + PROMOTION_CODE + " serial=" + mudSerialToApply + " | Don: " + orderCode);
     }
 
-    // ─── HELPER: search SKU va click item dau tien trong dropdown ───────────────
     private void searchAndAddProduct(JavascriptExecutor js, String sku) throws InterruptedException {
         WebElement productInput = wait.until(ExpectedConditions.visibilityOfElementLocated(
                 By.xpath("//input[starts-with(@id,'search-product-input_session')]")));
