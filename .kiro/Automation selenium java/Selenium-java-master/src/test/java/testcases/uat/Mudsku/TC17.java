@@ -321,6 +321,41 @@ public class TC17 extends BaseTest1 {
         Thread.sleep(1500);
         tc08.pass("Da them SP " + BUY_PRODUCT_1);
         tc08b.pass("Da nhap SL " + BUY_QTY);
+
+        /*
+         * =========================
+         * TC08bb - CLICK VAO BARCODE INPUT
+         * =========================
+         */
+        ExtentTest tc08bb = test.createNode("TC08bb - Click vao barcode input");
+        try {
+            WebElement barcodeInput = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//input[contains(@placeholder,'barcode') or contains(@placeholder,'Barcode') or contains(@placeholder,'F1')]")));
+            barcodeInput.click();
+            Thread.sleep(500);
+            tc08bb.pass("Da click vao barcode input");
+        } catch (TimeoutException e) {
+            tc08bb.info("Khong tim thay barcode input");
+        }
+
+        /*
+         * =========================
+         * TC08bc - CLICK BUTTON "THEM VAO GIO HANG"
+         * =========================
+         */
+        ExtentTest tc08bc = test.createNode("TC08bc - Click button Them vao gio hang");
+        try {
+            WebElement btnThemGioHang = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//button[contains(.,'Thêm vào giỏ hàng') or contains(.,'Them vao gio hang')]")));
+            js.executeScript("arguments[0].scrollIntoView({block: 'center'});", btnThemGioHang);
+            Thread.sleep(500);
+            js.executeScript("arguments[0].click();", btnThemGioHang);
+            Thread.sleep(1500);
+            tc08bc.pass("Da click button Them vao gio hang");
+        } catch (TimeoutException e) {
+            tc08bc.info("Khong tim thay button Them vao gio hang");
+        }
+
         /*
          * =========================
          * TC08.5 - XU LY MODAL "CANH BAO THAY DOI GIA"
