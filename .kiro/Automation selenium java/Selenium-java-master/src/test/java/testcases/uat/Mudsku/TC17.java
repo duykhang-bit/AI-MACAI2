@@ -319,7 +319,6 @@ public class TC17 extends BaseTest1 {
                 "s.call(el,'" + BUY_QTY + "'); el.dispatchEvent(new Event('input',{bubbles:true})); el.dispatchEvent(new Event('change',{bubbles:true})); el.blur();",
                 qtyInput1);
         Thread.sleep(1500);
-        tc08.pass("Da them SP " + BUY_PRODUCT_1);
         tc08b.pass("Da nhap SL " + BUY_QTY);
 
         /*
@@ -340,21 +339,23 @@ public class TC17 extends BaseTest1 {
 
         /*
          * =========================
-         * TC08bc - CLICK BUTTON "THEM VAO GIO HANG"
+         * TC08bc - CLICK BUTTON "THEM SP (F2)"
          * =========================
          */
-        ExtentTest tc08bc = test.createNode("TC08bc - Click button Them vao gio hang");
+        ExtentTest tc08bc = test.createNode("TC08bc - Click button Them sp (F2)");
         try {
-            WebElement btnThemGioHang = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//button[contains(.,'Thêm vào giỏ hàng') or contains(.,'Them vao gio hang')]")));
-            js.executeScript("arguments[0].scrollIntoView({block: 'center'});", btnThemGioHang);
+            WebElement btnThemSp = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//button[contains(.,'Thêm sp') or contains(.,'Them sp') or contains(.,'F2')]")));
+            js.executeScript("arguments[0].scrollIntoView({block: 'center'});", btnThemSp);
             Thread.sleep(500);
-            js.executeScript("arguments[0].click();", btnThemGioHang);
+            js.executeScript("arguments[0].click();", btnThemSp);
             Thread.sleep(1500);
-            tc08bc.pass("Da click button Them vao gio hang");
+            tc08bc.pass("Da click button Them sp (F2)");
         } catch (TimeoutException e) {
-            tc08bc.info("Khong tim thay button Them vao gio hang");
+            tc08bc.info("Khong tim thay button Them sp");
         }
+
+        tc08.pass("Da them SP " + BUY_PRODUCT_1);
 
         /*
          * =========================
