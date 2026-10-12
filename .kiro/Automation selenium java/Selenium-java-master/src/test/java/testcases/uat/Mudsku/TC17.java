@@ -331,10 +331,31 @@ public class TC17 extends BaseTest1 {
             WebElement barcodeInput = wait.until(ExpectedConditions.elementToBeClickable(
                     By.xpath("//input[contains(@placeholder,'barcode') or contains(@placeholder,'Barcode') or contains(@placeholder,'F1')]")));
             barcodeInput.click();
-            Thread.sleep(500);
+            Thread.sleep(1000);
             tc08bb.pass("Da click vao barcode input");
         } catch (TimeoutException e) {
             tc08bb.info("Khong tim thay barcode input");
+        }
+
+        /*
+         * =========================
+         * TC08bb2 - CHON BARCODE TU DROPDOWN
+         * =========================
+         */
+        ExtentTest tc08bb2 = test.createNode("TC08bb2 - Chon barcode tu dropdown");
+        try {
+            // Wait for barcode dropdown to appear
+            WebElement barcodeDropdown = wait.until(ExpectedConditions.visibilityOfElementLocated(
+                    By.xpath("//div[contains(@class,'ant-select-dropdown')]//div[contains(@class,'ant-select-item')]")));
+            
+            // Click on first barcode option
+            js.executeScript("arguments[0].scrollIntoView({block: 'center'});", barcodeDropdown);
+            Thread.sleep(500);
+            js.executeScript("arguments[0].click();", barcodeDropdown);
+            Thread.sleep(1000);
+            tc08bb2.pass("Da chon barcode tu dropdown");
+        } catch (TimeoutException e) {
+            tc08bb2.info("Khong tim thay barcode dropdown - co the da tu dong chon");
         }
 
         /*
