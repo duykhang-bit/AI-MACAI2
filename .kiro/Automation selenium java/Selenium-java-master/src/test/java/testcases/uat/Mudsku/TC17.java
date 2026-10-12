@@ -323,7 +323,7 @@ public class TC17 extends BaseTest1 {
 
         /*
          * =========================
-         * TC08bb - CLICK VAO BARCODE INPUT
+         * TC08bb - CLICK VAO BARCODE INPUT (barcode tu dong fill)
          * =========================
          */
         ExtentTest tc08bb = test.createNode("TC08bb - Click vao barcode input");
@@ -331,49 +331,28 @@ public class TC17 extends BaseTest1 {
             WebElement barcodeInput = wait.until(ExpectedConditions.elementToBeClickable(
                     By.xpath("//input[contains(@placeholder,'barcode') or contains(@placeholder,'Barcode') or contains(@placeholder,'F1')]")));
             barcodeInput.click();
-            Thread.sleep(1000);
-            tc08bb.pass("Da click vao barcode input");
+            Thread.sleep(1500); // Wait for barcode to auto-fill
+            tc08bb.pass("Da click vao barcode input - barcode tu dong fill");
         } catch (TimeoutException e) {
             tc08bb.info("Khong tim thay barcode input");
         }
 
         /*
          * =========================
-         * TC08bb2 - CHON BARCODE TU DROPDOWN
+         * TC08bc - CLICK BUTTON "THEM VAO GIO HANG" (button mau vang)
          * =========================
          */
-        ExtentTest tc08bb2 = test.createNode("TC08bb2 - Chon barcode tu dropdown");
+        ExtentTest tc08bc = test.createNode("TC08bc - Click button Them vao gio hang");
         try {
-            // Wait for barcode dropdown to appear
-            WebElement barcodeDropdown = wait.until(ExpectedConditions.visibilityOfElementLocated(
-                    By.xpath("//div[contains(@class,'ant-select-dropdown')]//div[contains(@class,'ant-select-item')]")));
-            
-            // Click on first barcode option
-            js.executeScript("arguments[0].scrollIntoView({block: 'center'});", barcodeDropdown);
+            WebElement btnThemGioHang = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//button[contains(@class,'btn-warning') or contains(@class,'ant-btn-primary') and (contains(.,'Thêm') or contains(.,'Them') or contains(.,'giỏ'))]")));
+            js.executeScript("arguments[0].scrollIntoView({block: 'center'});", btnThemGioHang);
             Thread.sleep(500);
-            js.executeScript("arguments[0].click();", barcodeDropdown);
-            Thread.sleep(1000);
-            tc08bb2.pass("Da chon barcode tu dropdown");
+            js.executeScript("arguments[0].click();", btnThemGioHang);
+            Thread.sleep(2000); // Wait for product to be added
+            tc08bc.pass("Da click button Them vao gio hang");
         } catch (TimeoutException e) {
-            tc08bb2.info("Khong tim thay barcode dropdown - co the da tu dong chon");
-        }
-
-        /*
-         * =========================
-         * TC08bc - CLICK BUTTON "THEM SP (F2)"
-         * =========================
-         */
-        ExtentTest tc08bc = test.createNode("TC08bc - Click button Them sp (F2)");
-        try {
-            WebElement btnThemSp = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//button[contains(.,'Thêm sp') or contains(.,'Them sp') or contains(.,'F2')]")));
-            js.executeScript("arguments[0].scrollIntoView({block: 'center'});", btnThemSp);
-            Thread.sleep(500);
-            js.executeScript("arguments[0].click();", btnThemSp);
-            Thread.sleep(1500);
-            tc08bc.pass("Da click button Them sp (F2)");
-        } catch (TimeoutException e) {
-            tc08bc.info("Khong tim thay button Them sp");
+            tc08bc.info("Khong tim thay button Them vao gio hang");
         }
 
         tc08.pass("Da them SP " + BUY_PRODUCT_1);
