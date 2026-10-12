@@ -304,6 +304,30 @@ public class TC24 extends BaseTest1 {
 
         /*
          * =========================
+         * TC07.5 - XU LY MODAL "CANH BAO THAY DOI GIA" (TRUOC KHI SEARCH PRODUCT)
+         * =========================
+         */
+        ExtentTest tc07c = test.createNode("TC07.5 - Xu ly modal canh bao thay doi gia");
+        
+        try {
+            WebElement modalThayDoiGia = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(5))
+                    .until(ExpectedConditions.visibilityOfElementLocated(
+                            By.xpath("//*[contains(@class,'ant-modal') and .//*[contains(text(),'Cảnh báo có sp thay đổi giá')]]")));
+            
+            tc07c.info("Phat hien modal 'Canh bao co sp thay doi gia' - click 'De sau'");
+            
+            WebElement btnDeSau = modalThayDoiGia.findElement(
+                    By.xpath(".//button[contains(.,'Để sau') or contains(.,'De sau')]"));
+            js.executeScript("arguments[0].click();", btnDeSau);
+            Thread.sleep(1500);
+            
+            tc07c.pass("Da click 'De sau' tren modal thay doi gia");
+        } catch (TimeoutException e) {
+            tc07c.info("Khong co modal canh bao thay doi gia");
+        }
+
+        /*
+         * =========================
          * TC08 - THEM SAN PHAM
          * =========================
          */

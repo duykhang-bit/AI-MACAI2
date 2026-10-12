@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="TC1 Debug" verbose="1">
+    <listeners>
+        <listener class-name="listeners.TestListener"/>
+    </listeners>
+    <test name="TC1">
+        <classes>
+            <class name="testcases.uat.Mudsku.TC1"/>
+        </classes>
+    </test>
+</suite>

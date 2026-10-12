@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Rerun Failed TCs" verbose="1" parallel="classes" thread-count="5">
+    <listeners>
+        <listener class-name="listeners.TestListener"/>
+        <listener class-name="utils.DashboardReportGenerator"/>
+    </listeners>
+    <test name="Failed TCs Rerun">
+        <classes>
+            <class name="testcases.uat.Mudsku.TC13"/>
+            <class name="testcases.uat.Mudsku.TC14"/>
+            <class name="testcases.uat.Mudsku.TC15"/>
+            <class name="testcases.uat.Mudsku.TC16"/>
+            <class name="testcases.uat.Mudsku.TC17"/>
+            <class name="testcases.uat.Mudsku.TC18"/>
+            <class name="testcases.uat.Mudsku.TC19"/>
+            <class name="testcases.uat.Mudsku.TC20"/>
+            <class name="testcases.uat.Mudsku.TC21"/>
+        </classes>
+    </test>
+</suite>

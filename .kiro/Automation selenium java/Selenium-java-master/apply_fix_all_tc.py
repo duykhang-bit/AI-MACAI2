@@ -1,0 +1,134 @@
+#!/usr/bin/env python3
+"""
+Apply improved pattern từ TC1 cho tất cả TCs còn lại trong Mudsku
+"""
+import os
+import re
+from pathlib import Path
+
+# OLD pattern cần replace (từ grep search result)
+OLD_CLICK_TAO_DON = '''WebElement btnTaoDon = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//button[contains(normalize-space(.),'T\\u1ea1o \\u0111\\u01a1n')]")));
+
+            String btnInfo = (String) js.executeScript(
+                    "var e=arguments[0];" +
+                    "return 'text=\\"' + (e.innerText||'').trim() + '\\" disabled=' + (e.disabled===true);",
+                    btnTaoDon);
+            tc13.info("Element se click: " + btnInfo);
+
+            js.executeScript("arguments[0].scrollIntoView({block:'center'});", btnTaoDon);
+            Thread.sleep(500);
+            try {
+                btnTaoDon.click();
+            } catch (Exception clickEx) {
+                js.executeScript("arguments[0].click();", btnTaoDon);
+            }
+            Thread.sleep(3000);'''
+
+# NEW pattern (improved từ TC1)
+NEW_CLICK_TAO_DON = '''// Chờ 2s để React render xong button
+            Thread.sleep(2000);
+            
+            // Tìm CHÍNH XÁC nút "Tạo đơn (F4)" - không phải "Lưu đơn (F3)" hay "Huỷ (F8)"
+            java.util.List<WebElement> allButtons = driver.findElements(
+                    By.xpath("//button[contains(.,'đơn') or contains(.,'Đơn')]"));
+            
+            WebElement btnTaoDon = null;
+            for (WebElement btn : allButtons) {
+                String btnText = btn.getText().toLowerCase().trim();
+                tc13.info("🔍 Button tìm thấy: '" + btn.getText() + "'");
+                if (btnText.contains("tạo đơn") && !btnText.contains("lưu")) {
+                    btnTaoDon = btn;
+                    break;
+                }
+            }
+            
+            if (btnTaoDon == null) {
+                attachScreenshot("❌ Không tìm thấy nút Tạo đơn");
+                throw new RuntimeException("Không tìm thấy nút 'Tạo đơn (F4)' trên trang");
+            }
+            
+            // Scroll và highlight
+            js.executeScript("arguments[0].scrollIntoView({block:'center'});", btnTaoDon);
+            js.executeScript("arguments[0].style.border='3px solid green'", btnTaoDon);
+            Thread.sleep(500);
+            
+            String btnInfo = (String) js.executeScript(
+                    "var e=arguments[0];" +
+                    "return 'text=\\"' + (e.innerText||'').trim() + '\\" disabled=' + (e.disabled===true);",
+                    btnTaoDon);
+            tc13.info("✅ Sẽ click button: " + btnInfo);
+            
+            // Chụp ảnh TRƯỚC KHI click
+            attachScreenshot("📸 Trước khi click Tạo đơn");
+
+            // Click native trước; JS click chỉ fallback
+            try {
+                btnTaoDon.click();
+            } catch (Exception clickEx) {
+                tc13.info("Native click fail (" + clickEx.getClass().getSimpleName() + ") → fallback JS click");
+                js.executeScript("arguments[0].click();", btnTaoDon);
+            }
+            Thread.sleep(3000);
+
+            // Bắt toast validation của RSA ngay sau click
+            try {
+                java.util.List<WebElement> toasts = driver.findElements(By.xpath(
+                        "//div[contains(@class,'ant-notification-notice') or contains(@class,'ant-message-notice')" +
+                        " or contains(@class,'Toastify__toast')]"));
+                for (WebElement t : toasts) {
+                    String msg = t.getText().replace("\\n", " ").trim();
+                    if (!msg.isEmpty()) tc13.warning("⚠️ Thông báo từ app sau khi click Tạo đơn: " + msg);
+                }
+            } catch (Exception ignore) { }
+
+            // Verify đã sang màn thanh toán
+            Thread.sleep(2000);'''
+
+def fix_tc_file(filepath):
+    """Fix một TC file"""
+    print(f"🔧 {filepath.name}...", end=" ")
+    
+    with open(filepath, 'r', encoding='utf-8') as f:
+        content = f.read()
+    
+    # Skip TC1 (đã fix rồi)
+    if 'TC1.java' in str(filepath):
+        print("⏭️  Skip (already fixed)")
+        return False
+    
+    # Check xem có pattern cũ không
+    if OLD_CLICK_TAO_DON not in content:
+        print("⏭️  Skip (không có pattern cũ)")
+        return False
+    
+    # Replace
+    new_content = content.replace(OLD_CLICK_TAO_DON, NEW_CLICK_TAO_DON)
+    
+    # Write back
+    with open(filepath, 'w', encoding='utf-8') as f:
+        f.write(new_content)
+    
+    print("✅ Fixed!")
+    return True
+
+def main():
+    mudsku_dir = Path(__file__).parent / "src" / "test" / "java" / "testcases" / "uat" / "Mudsku"
+    
+    if not mudsku_dir.exists():
+        print(f"❌ Thư mục không tồn tại: {mudsku_dir}")
+        return
+    
+    tc_files = sorted(mudsku_dir.glob("TC*.java"))
+    print(f"📋 Tìm thấy {len(tc_files)} TC files\n")
+    
+    fixed_count = 0
+    for tc_file in tc_files:
+        if fix_tc_file(tc_file):
+            fixed_count += 1
+    
+    print(f"\n✅ DONE! Fixed {fixed_count}/{len(tc_files)-1} files (TC1 excluded)")
+    print(f"⚠️  Remember to run: mvn clean test-compile")
+
+if __name__ == "__main__":
+    main()

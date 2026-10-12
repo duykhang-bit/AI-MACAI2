@@ -129,7 +129,7 @@ public class TC25new extends BaseTest1 {
         } catch (NoSuchElementException e) { }
 
         wait.until(ExpectedConditions.visibilityOfElementLocated(
-                By.xpath("//*[contains(text(),'Chon dia chi dang nhap') or contains(text(),'Chon Shop')]")));
+                By.xpath("//*[contains(text(),'Ch\u1ecdn \u0111\u1ecba ch\u1ec9 \u0111\u0103ng nh\u1eadp') or contains(text(),'Ch\u1ecdn Shop')]")));
         tc01.pass("Login thanh cong");
 
         /*
