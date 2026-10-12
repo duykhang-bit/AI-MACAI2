@@ -347,18 +347,17 @@ public class TC17 extends BaseTest1 {
 
         /*
          * =========================
-         * TC08bb - CLICK VAO O "THEM BARCODE (F1)" TRONG MODAL CHON SAN PHAM
+         * TC08bb - NHAP BARCODE VAO O "THEM BARCODE (F1)"
          * =========================
          */
-        ExtentTest tc08bb = test.createNode("TC08bb - Click vao o Them barcode (F1)");
+        ExtentTest tc08bb = test.createNode("TC08bb - Nhap barcode vao o Them barcode (F1)");
         WebElement barcodeInput = wait.until(ExpectedConditions.elementToBeClickable(
                 By.xpath("//input[contains(@placeholder,'barcode') or contains(@placeholder,'Barcode') or contains(@placeholder,'F1')] | " +
                         "//input[contains(@placeholder,'Thêm barcode')]")));
-        js.executeScript("arguments[0].scrollIntoView({block: 'center'});", barcodeInput);
-        Thread.sleep(500);
-        js.executeScript("arguments[0].click();", barcodeInput);
+        barcodeInput.clear();
+        barcodeInput.sendKeys("02499882"); // Barcode cua san pham 00031901
         Thread.sleep(1500); // Wait for dropdown to appear
-        tc08bb.pass("Da click vao o Them barcode");
+        tc08bb.pass("Da nhap barcode: 02499882");
 
         /*
          * =========================
