@@ -31,8 +31,8 @@ public class TC17 extends BaseTest1 {
     private static final String SHOP_CODE       = "80046";
     private static final String INSIDE_CODE     = "62372";
     private static final String CUSTOMER_PHONE  = "0835089254";
-    private static final String PROMOTION_CODE  = "KM-1026-110";
-    private static final String CAMPAIGN_CODE   = "3757";
+    private static final String PROMOTION_CODE  = "KM-1026-182";
+    private static final String CAMPAIGN_CODE   = "1089";
     private static final String BUY_PRODUCT_1   = "00031901";
     private static final int    BUY_QTY         = 1;
 
@@ -74,7 +74,7 @@ public class TC17 extends BaseTest1 {
         wait = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(30));
     }
 
-    @Test(priority = 1, description = "KM-1026-110 - TK Gia Dinh - Giam gia 30% - Vien uong bo sung vitamin C 500mg Nature's Bounty (100 vien)", invocationCount = 1)
+    @Test(priority = 1, description = "KM-1026-182 - TK Gia Dinh - Giam gia 30% - Vien uong bo sung vitamin C 500mg Nature's Bounty (100 vien)", invocationCount = 1)
     public void TC017() throws InterruptedException {
 
         JavascriptExecutor js = (JavascriptExecutor) driver;

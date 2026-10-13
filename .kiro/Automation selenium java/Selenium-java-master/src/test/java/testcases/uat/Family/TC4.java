@@ -289,10 +289,10 @@ public class TC4 extends BaseTest1 {
 
         /*
          * =========================
-         * TC08 - NHẬP SẢN PHẨM 00029334
+         * TC08 - NHẬP SẢN PHẨM 00001507
          * =========================
          */
-        ExtentTest tc08 = test.createNode("TC08 - Nhập sản phẩm 00029334");
+        ExtentTest tc08 = test.createNode("TC08 - Nhập sản phẩm 00001507");
 
         Thread.sleep(1000);
 
@@ -318,7 +318,7 @@ public class TC4 extends BaseTest1 {
         Thread.sleep(500);
 
         // Nhập mã sản phẩm
-        productInput.sendKeys("00029334");
+        productInput.sendKeys("00001507");
         Thread.sleep(1000);
 
         // Click nút search (icon kính lúp) để trigger tìm kiếm
@@ -351,14 +351,14 @@ public class TC4 extends BaseTest1 {
             // Đơn vị mặc định đã là Hộp
         }
 
-        tc08.pass("Đã nhập sản phẩm 00029334 và chọn đơn vị Hộp");
+        tc08.pass("Đã nhập sản phẩm 00001507 và chọn đơn vị Hộp");
 
         /*
          * =========================
-         * TC08b - NHẬP SỐ LƯỢNG 19 CHO SP 00029334
+         * TC08b - NHẬP SỐ LƯỢNG 2 CHO SP 00001507
          * =========================
          */
-        ExtentTest tc08b = test.createNode("TC08b - Nhập số lượng 19");
+        ExtentTest tc08b = test.createNode("TC08b - Nhập số lượng 2");
 
         Thread.sleep(2000);
 
@@ -370,14 +370,14 @@ public class TC4 extends BaseTest1 {
         js.executeScript(
                 "var el = arguments[0];" +
                 "var nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;" +
-                "nativeInputValueSetter.call(el, '19');" +
+                "nativeInputValueSetter.call(el, '2');" +
                 "el.dispatchEvent(new Event('input', { bubbles: true }));" +
                 "el.dispatchEvent(new Event('change', { bubbles: true }));" +
                 "el.blur();",
                 qtyInput);
         Thread.sleep(2000);
 
-        tc08b.pass("Đã nhập số lượng 19");
+        tc08b.pass("Đã nhập số lượng 2");
 
         /*
          * =========================
