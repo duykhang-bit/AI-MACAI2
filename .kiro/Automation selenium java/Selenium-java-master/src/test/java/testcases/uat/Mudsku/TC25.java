@@ -26,14 +26,14 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import listeners.TestListener;
 
 @Listeners(TestListener.class)
-public class TC28 extends BaseTest1 {
+public class TC25 extends BaseTest1 {
 
     private static final String SHOP_CODE       = "80006";
     private static final String INSIDE_CODE     = "00017";
     private static final String CUSTOMER_PHONE  = "0835089254";
-    private static final String PROMOTION_CODE  = "KM-1026-121";
-    private static final String CAMPAIGN_CODE   = "3768";
-    private static final String BUY_PRODUCT_1   = "00500213";
+    private static final String PROMOTION_CODE  = "KM-1026-120";
+    private static final String CAMPAIGN_CODE   = "3767";
+    private static final String BUY_PRODUCT_1   = "00503328";
     private static final int    BUY_QTY         = 1;
 
     @Override
@@ -74,8 +74,8 @@ public class TC28 extends BaseTest1 {
         wait = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(30));
     }
 
-    @Test(priority = 1, description = "KM-1026-121 - TK Gia Dinh - Qua Tang - Bao cao su Safefit Freezer Max S52 (3 cai)", invocationCount = 1)
-    public void TC028() throws InterruptedException {
+    @Test(priority = 1, description = "KM-1026-120 - TK Gia Dinh - Qua Tang - Kem duong da tay Reihaku Hatomugi Hand Cream (65g)", invocationCount = 1)
+    public void TC025() throws InterruptedException {
 
         JavascriptExecutor js = (JavascriptExecutor) driver;
 
@@ -83,15 +83,15 @@ public class TC28 extends BaseTest1 {
         String mudSerial = null;
         boolean useProdMode = true;
         try {
-            mudSerial = utils.MudCodeProvider.getNextMudCode("mud28", useProdMode);
+            mudSerial = utils.MudCodeProvider.getNextMudCode("mud27", useProdMode);
             if (mudSerial == null || mudSerial.isEmpty()) {
                 throw new RuntimeException("PROD pool (mud01) het serial!");
             }
             tcGenMud.pass("Dung MUD serial tu PROD pool: " + mudSerial);
-            System.out.println("[TC28] MUD serial: " + mudSerial + " | campaign=" + CAMPAIGN_CODE);
+            System.out.println("[TC25] MUD serial: " + mudSerial + " | campaign=" + CAMPAIGN_CODE);
         } catch (Exception e) {
             tcGenMud.fail("Khong lay duoc MUD serial: " + e.getMessage());
-            throw new RuntimeException("TC28 FAIL - khong co MUD serial!", e);
+            throw new RuntimeException("TC25 FAIL - khong co MUD serial!", e);
         }
         final String mudSerialToApply = mudSerial;
 
@@ -626,16 +626,16 @@ public class TC28 extends BaseTest1 {
         }
 
         System.out.println("========================================");
-        System.out.println("TC28 - " + PROMOTION_CODE);
+        System.out.println("TC25 - " + PROMOTION_CODE);
         System.out.println("MUD serial: " + mudSerialToApply);
         System.out.println("Ma don   : " + orderCode);
         System.out.println("========================================");
 
         if (orderCreationFailed != null) {
-            throw new AssertionError("TC28 FAIL: " + orderCreationFailed.getMessage(), orderCreationFailed);
+            throw new AssertionError("TC25 FAIL: " + orderCreationFailed.getMessage(), orderCreationFailed);
         }
 
-        test.pass("TC28 xong - KM " + PROMOTION_CODE + " serial=" + mudSerialToApply + " | Don: " + orderCode);
+        test.pass("TC25 xong - KM " + PROMOTION_CODE + " serial=" + mudSerialToApply + " | Don: " + orderCode);
     }
 
     private void searchAndAddProduct(JavascriptExecutor js, String sku) throws InterruptedException {

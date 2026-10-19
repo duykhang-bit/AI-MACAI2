@@ -31,9 +31,9 @@ public class TC13 extends BaseTest1 {
     private static final String SHOP_CODE       = "80006";
     private static final String INSIDE_CODE     = "00017";
     private static final String CUSTOMER_PHONE  = "0835089254";
-    private static final String PROMOTION_CODE  = "KM-1026-106";
-    private static final String CAMPAIGN_CODE   = "3753";
-    private static final String BUY_PRODUCT_1   = "00033695";
+    private static final String PROMOTION_CODE  = "KM-1026-107";
+    private static final String CAMPAIGN_CODE   = "3754";
+    private static final String BUY_PRODUCT_1   = "00032958";
     private static final int    BUY_QTY         = 1;
 
     @Override
@@ -74,7 +74,7 @@ public class TC13 extends BaseTest1 {
         wait = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(30));
     }
 
-    @Test(priority = 1, description = "KM-1026-106 - TK Gia Dinh - Giam gia 30% - Bot Nuoc Mat Datino Herbal Drink Powder (10 goi x 8g)", invocationCount = 1)
+    @Test(priority = 1, description = "KM-1026-107 - TK Gia Dinh - Giam gia 30% - Sua tam goi cho be La Beauty Baby Gentle Wash (250ml)", invocationCount = 1)
     public void TC013() throws InterruptedException {
 
         JavascriptExecutor js = (JavascriptExecutor) driver;
@@ -83,7 +83,7 @@ public class TC13 extends BaseTest1 {
         String mudSerial = null;
         boolean useProdMode = true;
         try {
-            mudSerial = utils.MudCodeProvider.getNextMudCode("mud13", useProdMode);
+            mudSerial = utils.MudCodeProvider.getNextMudCode("mud14", useProdMode);
             if (mudSerial == null || mudSerial.isEmpty()) {
                 throw new RuntimeException("PROD pool (mud01) het serial!");
             }
@@ -560,7 +560,7 @@ public class TC13 extends BaseTest1 {
                 throw new RuntimeException("Tao don khong co tac dung");
             }
 
-            ExtentTest tc14 = test.createNode("TC14 - Click Tong tien");
+            ExtentTest tc14 = test.createNode("TC13 - Click Tong tien");
             WebElement btnTongTien = wait.until(ExpectedConditions.elementToBeClickable(
                     By.xpath("//button[contains(.,'T\u1ed5ng ti\u1ec1n')] | " +
                             "//*[contains(text(),'T\u1ed5ng ti\u1ec1n') and contains(text(),'Shift')]")));

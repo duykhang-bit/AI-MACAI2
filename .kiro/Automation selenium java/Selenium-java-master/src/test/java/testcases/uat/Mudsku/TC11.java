@@ -31,9 +31,9 @@ public class TC11 extends BaseTest1 {
     private static final String SHOP_CODE       = "80006";
     private static final String INSIDE_CODE     = "00017";
     private static final String CUSTOMER_PHONE  = "0835089254";
-    private static final String PROMOTION_CODE  = "KM-1026-104";
-    private static final String CAMPAIGN_CODE   = "3751";
-    private static final String BUY_PRODUCT_1   = "00047904";
+    private static final String PROMOTION_CODE  = "KM-1026-105";
+    private static final String CAMPAIGN_CODE   = "3752";
+    private static final String BUY_PRODUCT_1   = "00046430";
     private static final int    BUY_QTY         = 1;
 
     @Override
@@ -74,7 +74,7 @@ public class TC11 extends BaseTest1 {
         wait = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(30));
     }
 
-    @Test(priority = 1, description = "KM-1026-104 - TK Gia Dinh - Giam gia 30% - Xit thom mieng Aro Mouth 10ml", invocationCount = 1)
+    @Test(priority = 1, description = "KM-1026-105 - TK Gia Dinh - Giam gia 30% - Siro Bo Phe Labebe (120ml)", invocationCount = 1)
     public void TC011() throws InterruptedException {
 
         JavascriptExecutor js = (JavascriptExecutor) driver;
@@ -83,7 +83,7 @@ public class TC11 extends BaseTest1 {
         String mudSerial = null;
         boolean useProdMode = true;
         try {
-            mudSerial = utils.MudCodeProvider.getNextMudCode("mud11", useProdMode);
+            mudSerial = utils.MudCodeProvider.getNextMudCode("mud12", useProdMode);
             if (mudSerial == null || mudSerial.isEmpty()) {
                 throw new RuntimeException("PROD pool (mud01) het serial!");
             }
@@ -304,30 +304,6 @@ public class TC11 extends BaseTest1 {
 
         /*
          * =========================
-         * TC07.5 - XU LY MODAL "CANH BAO THAY DOI GIA" (TRUOC KHI SEARCH PRODUCT)
-         * =========================
-         */
-        ExtentTest tc07c = test.createNode("TC07.5 - Xu ly modal canh bao thay doi gia");
-        
-        try {
-            WebElement modalThayDoiGia = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(5))
-                    .until(ExpectedConditions.visibilityOfElementLocated(
-                            By.xpath("//*[contains(@class,'ant-modal') and .//*[contains(text(),'Cảnh báo có sp thay đổi giá')]]")));
-            
-            tc07c.info("Phat hien modal 'Canh bao co sp thay doi gia' - click 'De sau'");
-            
-            WebElement btnDeSau = modalThayDoiGia.findElement(
-                    By.xpath(".//button[contains(.,'Để sau') or contains(.,'De sau')]"));
-            js.executeScript("arguments[0].click();", btnDeSau);
-            Thread.sleep(1500);
-            
-            tc07c.pass("Da click 'De sau' tren modal thay doi gia");
-        } catch (TimeoutException e) {
-            tc07c.info("Khong co modal canh bao thay doi gia");
-        }
-
-        /*
-         * =========================
          * TC08 - THEM SAN PHAM
          * =========================
          */
@@ -452,7 +428,7 @@ public class TC11 extends BaseTest1 {
          * TC12 - VERIFY CTKM
          * =========================
          */
-        ExtentTest tc12 = test.createNode("TC12 - Verify CTKM " + PROMOTION_CODE);
+        ExtentTest tc12 = test.createNode("TC11 - Verify CTKM " + PROMOTION_CODE);
 
         try {
             WebElement promotionLink = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(8))

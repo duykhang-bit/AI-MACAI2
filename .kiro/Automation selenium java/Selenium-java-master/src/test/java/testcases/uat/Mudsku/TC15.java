@@ -31,9 +31,9 @@ public class TC15 extends BaseTest1 {
     private static final String SHOP_CODE       = "80006";
     private static final String INSIDE_CODE     = "00017";
     private static final String CUSTOMER_PHONE  = "0835089254";
-    private static final String PROMOTION_CODE  = "KM-1026-108";
-    private static final String CAMPAIGN_CODE   = "3755";
-    private static final String BUY_PRODUCT_1   = "00042313";
+    private static final String PROMOTION_CODE  = "KM-1026-109";
+    private static final String CAMPAIGN_CODE   = "3756";
+    private static final String BUY_PRODUCT_1   = "00032637";
     private static final int    BUY_QTY         = 1;
 
     @Override
@@ -74,7 +74,7 @@ public class TC15 extends BaseTest1 {
         wait = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(30));
     }
 
-    @Test(priority = 1, description = "KM-1026-108 - TK Gia Dinh - Giam gia 30% - Sua tam Neo Acnes giam mun lung tinh chat tram tra (250ml)", invocationCount = 1)
+    @Test(priority = 1, description = "KM-1026-109 - TK Gia Dinh - Giam gia 30% - Tam chi ke rang Jomi Disposable Flosser (80 cay)", invocationCount = 1)
     public void TC015() throws InterruptedException {
 
         JavascriptExecutor js = (JavascriptExecutor) driver;
@@ -83,7 +83,7 @@ public class TC15 extends BaseTest1 {
         String mudSerial = null;
         boolean useProdMode = true;
         try {
-            mudSerial = utils.MudCodeProvider.getNextMudCode("mud15", useProdMode);
+            mudSerial = utils.MudCodeProvider.getNextMudCode("mud16", useProdMode);
             if (mudSerial == null || mudSerial.isEmpty()) {
                 throw new RuntimeException("PROD pool (mud01) het serial!");
             }
@@ -250,6 +250,9 @@ public class TC15 extends BaseTest1 {
         try {
             WebElement insideOption = wait.until(ExpectedConditions.elementToBeClickable(
                     By.xpath("//*[contains(text(),'Tr\u1ea7n Th\u1ecb Thanh Th\u1ea3o') or contains(text(),'(" + INSIDE_CODE + ")')]")));
+            // Fix ElementClickIntercepted: scroll and use JS click
+            js.executeScript("arguments[0].scrollIntoView({block: 'center'});", insideOption);
+            Thread.sleep(500); // Let overlay disappear
             js.executeScript("arguments[0].click();", insideOption);
             Thread.sleep(500);
         } catch (TimeoutException e) { }

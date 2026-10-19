@@ -31,9 +31,9 @@ public class TC12 extends BaseTest1 {
     private static final String SHOP_CODE       = "80006";
     private static final String INSIDE_CODE     = "00017";
     private static final String CUSTOMER_PHONE  = "0835089254";
-    private static final String PROMOTION_CODE  = "KM-1026-105";
-    private static final String CAMPAIGN_CODE   = "3752";
-    private static final String BUY_PRODUCT_1   = "00046430";
+    private static final String PROMOTION_CODE  = "KM-1026-106";
+    private static final String CAMPAIGN_CODE   = "3753";
+    private static final String BUY_PRODUCT_1   = "00033695";
     private static final int    BUY_QTY         = 1;
 
     @Override
@@ -74,7 +74,7 @@ public class TC12 extends BaseTest1 {
         wait = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(30));
     }
 
-    @Test(priority = 1, description = "KM-1026-105 - TK Gia Dinh - Giam gia 30% - Siro Bo Phe Labebe (120ml)", invocationCount = 1)
+    @Test(priority = 1, description = "KM-1026-106 - TK Gia Dinh - Giam gia 30% - Bot Nuoc Mat Datino Herbal Drink Powder (10 goi x 8g)", invocationCount = 1)
     public void TC012() throws InterruptedException {
 
         JavascriptExecutor js = (JavascriptExecutor) driver;
@@ -83,7 +83,7 @@ public class TC12 extends BaseTest1 {
         String mudSerial = null;
         boolean useProdMode = true;
         try {
-            mudSerial = utils.MudCodeProvider.getNextMudCode("mud12", useProdMode);
+            mudSerial = utils.MudCodeProvider.getNextMudCode("mud13", useProdMode);
             if (mudSerial == null || mudSerial.isEmpty()) {
                 throw new RuntimeException("PROD pool (mud01) het serial!");
             }
@@ -487,7 +487,7 @@ public class TC12 extends BaseTest1 {
         String orderCode = "";
         Exception orderCreationFailed = null;
         try {
-            ExtentTest tc13 = test.createNode("TC13 - Click Tao don");
+            ExtentTest tc13 = test.createNode("TC12 - Click Tao don");
 
             // Chờ 2s để React render xong button
             Thread.sleep(2000);

@@ -31,9 +31,9 @@ public class TC14 extends BaseTest1 {
     private static final String SHOP_CODE       = "80006";
     private static final String INSIDE_CODE     = "00017";
     private static final String CUSTOMER_PHONE  = "0835089254";
-    private static final String PROMOTION_CODE  = "KM-1026-107";
-    private static final String CAMPAIGN_CODE   = "3754";
-    private static final String BUY_PRODUCT_1   = "00032958";
+    private static final String PROMOTION_CODE  = "KM-1026-108";
+    private static final String CAMPAIGN_CODE   = "3755";
+    private static final String BUY_PRODUCT_1   = "00042313";
     private static final int    BUY_QTY         = 1;
 
     @Override
@@ -74,7 +74,7 @@ public class TC14 extends BaseTest1 {
         wait = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(30));
     }
 
-    @Test(priority = 1, description = "KM-1026-107 - TK Gia Dinh - Giam gia 30% - Sua tam goi cho be La Beauty Baby Gentle Wash (250ml)", invocationCount = 1)
+    @Test(priority = 1, description = "KM-1026-108 - TK Gia Dinh - Giam gia 30% - Sua tam Neo Acnes giam mun lung tinh chat tram tra (250ml)", invocationCount = 1)
     public void TC014() throws InterruptedException {
 
         JavascriptExecutor js = (JavascriptExecutor) driver;
@@ -83,7 +83,7 @@ public class TC14 extends BaseTest1 {
         String mudSerial = null;
         boolean useProdMode = true;
         try {
-            mudSerial = utils.MudCodeProvider.getNextMudCode("mud14", useProdMode);
+            mudSerial = utils.MudCodeProvider.getNextMudCode("mud15", useProdMode);
             if (mudSerial == null || mudSerial.isEmpty()) {
                 throw new RuntimeException("PROD pool (mud01) het serial!");
             }
@@ -568,7 +568,7 @@ public class TC14 extends BaseTest1 {
             Thread.sleep(3000);
             tc14.pass("Da click Tong tien");
 
-            ExtentTest tc15 = test.createNode("TC15 - Hoan tat don");
+            ExtentTest tc15 = test.createNode("TC14 - Hoan tat don");
             WebElement btnHoanTatFinal = wait.until(ExpectedConditions.elementToBeClickable(
                     By.xpath("//button[contains(.,'Ho\u00e0n t\u1ea5t')]")));
             js.executeScript("arguments[0].click();", btnHoanTatFinal);

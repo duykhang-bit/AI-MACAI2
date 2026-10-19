@@ -31,9 +31,9 @@ public class TC3 extends BaseTest1 {
     private static final String SHOP_CODE       = "80006";
     private static final String INSIDE_CODE     = "00017";
     private static final String CUSTOMER_PHONE  = "0835089254";
-    private static final String PROMOTION_CODE  = "KM-1026-096";
-    private static final String CAMPAIGN_CODE   = "3743";
-    private static final String BUY_PRODUCT_1   = "00040886";
+    private static final String PROMOTION_CODE  = "KM-1026-097";
+    private static final String CAMPAIGN_CODE   = "3744";
+    private static final String BUY_PRODUCT_1   = "00039925";
     private static final int    BUY_QTY         = 2;
 
     @Override
@@ -74,7 +74,7 @@ public class TC3 extends BaseTest1 {
         wait = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(30));
     }
 
-    @Test(priority = 1, description = "KM-1026-096 - TK Gia Dinh - Mua 2 tang 1 - Tra Thao Moc Atiso Datino Premium Tea 20 tui", invocationCount = 1)
+    @Test(priority = 1, description = "KM-1026-097 - TK Gia Dinh - Mua 2 tang 1 - Vien sui Kudos Vitamin C 20 vien", invocationCount = 1)
     public void TC003() throws InterruptedException {
 
         JavascriptExecutor js = (JavascriptExecutor) driver;
@@ -83,7 +83,7 @@ public class TC3 extends BaseTest1 {
         String mudSerial = null;
         boolean useProdMode = true;
         try {
-            mudSerial = utils.MudCodeProvider.getNextMudCode("mud03", useProdMode);
+            mudSerial = utils.MudCodeProvider.getNextMudCode("mud04", useProdMode);
             if (mudSerial == null || mudSerial.isEmpty()) {
                 throw new RuntimeException("PROD pool (mud01) het serial!");
             }

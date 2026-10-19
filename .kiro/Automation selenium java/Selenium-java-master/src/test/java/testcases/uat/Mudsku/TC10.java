@@ -31,9 +31,9 @@ public class TC10 extends BaseTest1 {
     private static final String SHOP_CODE       = "80006";
     private static final String INSIDE_CODE     = "00017";
     private static final String CUSTOMER_PHONE  = "0835089254";
-    private static final String PROMOTION_CODE  = "KM-1026-103";
-    private static final String CAMPAIGN_CODE   = "3750";
-    private static final String BUY_PRODUCT_1   = "00033612";
+    private static final String PROMOTION_CODE  = "KM-1026-104";
+    private static final String CAMPAIGN_CODE   = "3751";
+    private static final String BUY_PRODUCT_1   = "00047904";
     private static final int    BUY_QTY         = 1;
 
     @Override
@@ -74,7 +74,7 @@ public class TC10 extends BaseTest1 {
         wait = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(30));
     }
 
-    @Test(priority = 1, description = "KM-1026-103 - TK Gia Dinh - Giam gia 30% - Tinh dau Thao Nguyen huong sa chanh 30ml", invocationCount = 1)
+    @Test(priority = 1, description = "KM-1026-104 - TK Gia Dinh - Giam gia 30% - Xit thom mieng Aro Mouth 10ml", invocationCount = 1)
     public void TC010() throws InterruptedException {
 
         JavascriptExecutor js = (JavascriptExecutor) driver;
@@ -83,7 +83,7 @@ public class TC10 extends BaseTest1 {
         String mudSerial = null;
         boolean useProdMode = true;
         try {
-            mudSerial = utils.MudCodeProvider.getNextMudCode("mud10", useProdMode);
+            mudSerial = utils.MudCodeProvider.getNextMudCode("mud11", useProdMode);
             if (mudSerial == null || mudSerial.isEmpty()) {
                 throw new RuntimeException("PROD pool (mud01) het serial!");
             }
@@ -375,7 +375,7 @@ public class TC10 extends BaseTest1 {
          * TC11 - APPLY SERIAL MUD
          * =========================
          */
-        ExtentTest tc11 = test.createNode("TC11 - Apply serial MUD: " + mudSerialToApply);
+        ExtentTest tc11 = test.createNode("TC10 - Apply serial MUD: " + mudSerialToApply);
 
         Thread.sleep(2000);
 

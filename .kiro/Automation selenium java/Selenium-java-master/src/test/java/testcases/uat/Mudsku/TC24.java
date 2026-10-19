@@ -31,9 +31,9 @@ public class TC24 extends BaseTest1 {
     private static final String SHOP_CODE       = "80006";
     private static final String INSIDE_CODE     = "00017";
     private static final String CUSTOMER_PHONE  = "0835089254";
-    private static final String PROMOTION_CODE  = "KM-1026-117";
-    private static final String CAMPAIGN_CODE   = "3764";
-    private static final String BUY_PRODUCT_1   = "00038981";
+    private static final String PROMOTION_CODE  = "KM-1026-119";
+    private static final String CAMPAIGN_CODE   = "3766";
+    private static final String BUY_PRODUCT_1   = "D042300000205";
     private static final int    BUY_QTY         = 1;
 
     @Override
@@ -74,7 +74,7 @@ public class TC24 extends BaseTest1 {
         wait = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(30));
     }
 
-    @Test(priority = 1, description = "KM-1026-117 - TK Gia Dinh - Giam gia 50% - Vien uong dep da VwhiteSkin Ocavill (30 vien)", invocationCount = 1)
+    @Test(priority = 1, description = "KM-1026-119 - TK Gia Dinh - Qua Tang - Khau trang tre em Dolphin Mask 3D cho tre tu 2-6 tuoi (10 cai)", invocationCount = 1)
     public void TC024() throws InterruptedException {
 
         JavascriptExecutor js = (JavascriptExecutor) driver;
@@ -83,7 +83,7 @@ public class TC24 extends BaseTest1 {
         String mudSerial = null;
         boolean useProdMode = true;
         try {
-            mudSerial = utils.MudCodeProvider.getNextMudCode("mud24", useProdMode);
+            mudSerial = utils.MudCodeProvider.getNextMudCode("mud26", useProdMode);
             if (mudSerial == null || mudSerial.isEmpty()) {
                 throw new RuntimeException("PROD pool (mud01) het serial!");
             }
@@ -301,30 +301,6 @@ public class TC24 extends BaseTest1 {
         phoneInput.sendKeys(Keys.ENTER);
         Thread.sleep(2000);
         tc07.pass("Da nhap SDT " + CUSTOMER_PHONE);
-
-        /*
-         * =========================
-         * TC07.5 - XU LY MODAL "CANH BAO THAY DOI GIA" (TRUOC KHI SEARCH PRODUCT)
-         * =========================
-         */
-        ExtentTest tc07c = test.createNode("TC07.5 - Xu ly modal canh bao thay doi gia");
-        
-        try {
-            WebElement modalThayDoiGia = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(5))
-                    .until(ExpectedConditions.visibilityOfElementLocated(
-                            By.xpath("//*[contains(@class,'ant-modal') and .//*[contains(text(),'Cảnh báo có sp thay đổi giá')]]")));
-            
-            tc07c.info("Phat hien modal 'Canh bao co sp thay doi gia' - click 'De sau'");
-            
-            WebElement btnDeSau = modalThayDoiGia.findElement(
-                    By.xpath(".//button[contains(.,'Để sau') or contains(.,'De sau')]"));
-            js.executeScript("arguments[0].click();", btnDeSau);
-            Thread.sleep(1500);
-            
-            tc07c.pass("Da click 'De sau' tren modal thay doi gia");
-        } catch (TimeoutException e) {
-            tc07c.info("Khong co modal canh bao thay doi gia");
-        }
 
         /*
          * =========================

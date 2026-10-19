@@ -31,9 +31,9 @@ public class TC16 extends BaseTest1 {
     private static final String SHOP_CODE       = "80006";
     private static final String INSIDE_CODE     = "00017";
     private static final String CUSTOMER_PHONE  = "0835089254";
-    private static final String PROMOTION_CODE  = "KM-1026-109";
-    private static final String CAMPAIGN_CODE   = "3756";
-    private static final String BUY_PRODUCT_1   = "00032637";
+    private static final String PROMOTION_CODE  = "KM-1026-110";
+    private static final String CAMPAIGN_CODE   = "3757";
+    private static final String BUY_PRODUCT_1   = "00031901";
     private static final int    BUY_QTY         = 1;
 
     @Override
@@ -74,7 +74,7 @@ public class TC16 extends BaseTest1 {
         wait = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(30));
     }
 
-    @Test(priority = 1, description = "KM-1026-109 - TK Gia Dinh - Giam gia 30% - Tam chi ke rang Jomi Disposable Flosser (80 cay)", invocationCount = 1)
+    @Test(priority = 1, description = "KM-1026-110 - TK Gia Dinh - Giam gia 30% - Vien uong bo sung vitamin C 500mg Nature's Bounty (100 vien)", invocationCount = 1)
     public void TC016() throws InterruptedException {
 
         JavascriptExecutor js = (JavascriptExecutor) driver;
@@ -83,7 +83,7 @@ public class TC16 extends BaseTest1 {
         String mudSerial = null;
         boolean useProdMode = true;
         try {
-            mudSerial = utils.MudCodeProvider.getNextMudCode("mud16", useProdMode);
+            mudSerial = utils.MudCodeProvider.getNextMudCode("mud17", useProdMode);
             if (mudSerial == null || mudSerial.isEmpty()) {
                 throw new RuntimeException("PROD pool (mud01) het serial!");
             }
@@ -250,9 +250,6 @@ public class TC16 extends BaseTest1 {
         try {
             WebElement insideOption = wait.until(ExpectedConditions.elementToBeClickable(
                     By.xpath("//*[contains(text(),'Tr\u1ea7n Th\u1ecb Thanh Th\u1ea3o') or contains(text(),'(" + INSIDE_CODE + ")')]")));
-            // Fix ElementClickIntercepted: scroll and use JS click
-            js.executeScript("arguments[0].scrollIntoView({block: 'center'});", insideOption);
-            Thread.sleep(500); // Let overlay disappear
             js.executeScript("arguments[0].click();", insideOption);
             Thread.sleep(500);
         } catch (TimeoutException e) { }
@@ -313,17 +310,24 @@ public class TC16 extends BaseTest1 {
         ExtentTest tc08 = test.createNode("TC08 - Nhap SP " + BUY_PRODUCT_1 + " SL=" + BUY_QTY);
         searchAndAddProduct(js, BUY_PRODUCT_1);
 
-        ExtentTest tc08b = test.createNode("TC08b - Nhap SL " + BUY_QTY);
-        Thread.sleep(1500);
-        WebElement qtyInput1 = wait.until(ExpectedConditions.elementToBeClickable(
-                By.xpath("//input[contains(@id,'input-quantity-product')]")));
-        js.executeScript(
-                "var el=arguments[0]; var s=Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype,'value').set;" +
-                "s.call(el,'" + BUY_QTY + "'); el.dispatchEvent(new Event('input',{bubbles:true})); el.dispatchEvent(new Event('change',{bubbles:true})); el.blur();",
-                qtyInput1);
-        Thread.sleep(1500);
-        tc08.pass("Da them SP " + BUY_PRODUCT_1);
-        tc08b.pass("Da nhap SL " + BUY_QTY);
+        // TC08b - Nhap SL: voi SP Tem vang, san pham CHUA vao gio o buoc nay
+        // (phai qua barcode + Them vao gio o TC08bb/bc). Nen o so luong co the chua ton tai.
+        // -> Bọc try-catch, neu chua co o so luong thi bo qua (se nhap sau khi them vao gio).
+        ExtentTest tc08b = test.createNode("TC08b - Nhap SL " + BUY_QTY + " (neu o so luong da co)");
+        try {
+            Thread.sleep(2000);
+            WebElement qtyInput1 = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(5))
+                    .until(ExpectedConditions.elementToBeClickable(
+                            By.xpath("//input[contains(@id,'input-quantity-product')]")));
+            js.executeScript(
+                    "var el=arguments[0]; var s=Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype,'value').set;" +
+                    "s.call(el,'" + BUY_QTY + "'); el.dispatchEvent(new Event('input',{bubbles:true})); el.dispatchEvent(new Event('change',{bubbles:true})); el.blur();",
+                    qtyInput1);
+            Thread.sleep(1500);
+            tc08b.pass("Da nhap SL " + BUY_QTY);
+        } catch (TimeoutException e) {
+            tc08b.info("O so luong chua co o buoc nay (SP Tem vang) -> se xu ly sau khi them vao gio");
+        }
         /*
          * =========================
          * TC08.5 - XU LY MODAL "CANH BAO THAY DOI GIA"
@@ -348,6 +352,86 @@ public class TC16 extends BaseTest1 {
             tc08c.info("Khong co modal canh bao thay doi gia");
         }
 
+
+        /*
+         * =========================
+         * TC08bb - NHAP BARCODE VAO O "THEM BARCODE (F1)"
+         * =========================
+         */
+        // O "Them barcode (F1)" la ant-select: chu "Them barcode (F1)" nam trong span placeholder,
+        // KHONG phai <input placeholder>. Phai click vao .ant-select-selector de mo dropdown.
+        ExtentTest tc08bb = test.createNode("TC08bb - Click o Them barcode (F1)");
+        WebElement barcodeSelector = wait.until(ExpectedConditions.elementToBeClickable(
+                By.xpath("//span[contains(@class,'ant-select-selection-placeholder') and contains(.,'barcode')]" +
+                        "/ancestor::div[contains(@class,'ant-select-selector')][1]")));
+        js.executeScript("arguments[0].scrollIntoView({block:'center'});", barcodeSelector);
+        Thread.sleep(500);
+        // ant-select mo bang mousedown -> dung click that (Actions), khong dung JS click
+        new org.openqa.selenium.interactions.Actions(driver).moveToElement(barcodeSelector).click().perform();
+        Thread.sleep(1500);
+        tc08bb.pass("Da click o Them barcode (F1)");
+
+        /*
+         * =========================
+         * TC08bbb - CHON BARCODE TU DROPDOWN
+         * =========================
+         */
+        ExtentTest tc08bbb = test.createNode("TC08bbb - Chon barcode tu dropdown");
+        By barcodeOption = By.xpath("//div[contains(@class,'ant-select-dropdown') and not(contains(@class,'ant-select-dropdown-hidden'))]" +
+                "//div[contains(@class,'ant-select-item-option')]");
+        WebElement barcodeDropdownItem;
+        try {
+            // Uu tien option dau tien hien ra sau khi mo dropdown
+            barcodeDropdownItem = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(8))
+                    .until(ExpectedConditions.elementToBeClickable(barcodeOption));
+        } catch (TimeoutException e) {
+            // Dropdown chua co option -> go barcode vao o search cua ant-select de loc
+            WebElement searchInput = barcodeSelector.findElement(
+                    By.xpath(".//input[contains(@class,'ant-select-selection-search-input')]"));
+            searchInput.sendKeys("02499882"); // Barcode cua san pham 00031901
+            Thread.sleep(1500);
+            barcodeDropdownItem = wait.until(ExpectedConditions.elementToBeClickable(barcodeOption));
+        }
+        tc08bbb.info("Barcode option: " + barcodeDropdownItem.getText());
+        js.executeScript("arguments[0].scrollIntoView({block: 'center'});", barcodeDropdownItem);
+        Thread.sleep(500);
+        new org.openqa.selenium.interactions.Actions(driver).moveToElement(barcodeDropdownItem).click().perform();
+        Thread.sleep(1500);
+        tc08bbb.pass("Da chon barcode tu dropdown");
+
+        /*
+         * =========================
+         * TC08bc - CLICK BUTTON "THEM VAO GIO (F4)" TRONG MODAL
+         * =========================
+         */
+        ExtentTest tc08bc = test.createNode("TC08bc - Click button Them vao gio (F4)");
+        WebElement btnThemGioHang = wait.until(ExpectedConditions.elementToBeClickable(
+                By.xpath("//div[contains(@class,'ant-modal')]//button[contains(.,'Thêm vào giỏ') or contains(.,'F4')] | " +
+                        "//button[contains(@class,'ant-btn-primary') and contains(.,'Thêm')]")));
+        js.executeScript("arguments[0].scrollIntoView({block: 'center'});", btnThemGioHang);
+        Thread.sleep(500);
+        js.executeScript("arguments[0].click();", btnThemGioHang);
+        Thread.sleep(2500); // Wait for product to be added
+        tc08bc.pass("Da click button Them vao gio (F4)");
+
+        // Nhap so luong SAU khi san pham da vao gio (SP Tem vang)
+        ExtentTest tc08bd = test.createNode("TC08bd - Nhap SL " + BUY_QTY + " sau khi them vao gio");
+        try {
+            Thread.sleep(2000);
+            WebElement qtyAfter = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(8))
+                    .until(ExpectedConditions.elementToBeClickable(
+                            By.xpath("//input[contains(@id,'input-quantity-product')]")));
+            js.executeScript(
+                    "var el=arguments[0]; var s=Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype,'value').set;" +
+                    "s.call(el,'" + BUY_QTY + "'); el.dispatchEvent(new Event('input',{bubbles:true})); el.dispatchEvent(new Event('change',{bubbles:true})); el.blur();",
+                    qtyAfter);
+            Thread.sleep(1500);
+            tc08bd.pass("Da nhap SL " + BUY_QTY + " sau khi them vao gio");
+        } catch (TimeoutException e) {
+            tc08bd.info("Khong tim thay o so luong sau khi them vao gio (SL mac dinh = 1)");
+        }
+
+        tc08.pass("Da them SP " + BUY_PRODUCT_1);
 
         /*
          * =========================
@@ -664,7 +748,19 @@ public class TC16 extends BaseTest1 {
         js.executeScript("arguments[0].click();", searchBtn);
         Thread.sleep(3000);
 
-        // Dropdown ket qua / panel Tem vang (barcode) / SKU khong co tren UAT -> SKIP
-        utils.MudskuHelper.addProductAfterSearch(driver, js, sku);
+        // SP Tem vang (00031901): sau khi search, panel "Chon san pham" mo ra voi o barcode.
+        // KHONG chon item tu search-input-dropdown (dropdown nay khong mo voi SP Tem vang).
+        // Viec chon san pham se do buoc barcode (TC08bb/bbb/bc) xu ly:
+        //   click o barcode (F1) -> nhap/chon barcode -> Them vao gio (F4).
+        // Thu chon item tu dropdown neu co (SP thuong), khong co thi bo qua.
+        try {
+            WebElement productItem = new org.openqa.selenium.support.ui.WebDriverWait(driver, Duration.ofSeconds(3))
+                    .until(ExpectedConditions.elementToBeClickable(
+                            By.xpath("//div[contains(@class,'search-input-dropdown')]//div[contains(@class,'ant-select-item-option')]")));
+            js.executeScript("arguments[0].click();", productItem);
+            Thread.sleep(2500);
+        } catch (TimeoutException e) {
+            System.out.println("[TC16] Khong co search-input-dropdown (SP Tem vang) -> xu ly qua o barcode");
+        }
     }
 }
